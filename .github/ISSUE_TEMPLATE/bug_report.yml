@@ -1,0 +1,26 @@
+name: Falha no aplicativo
+description: Registrar uma falha reproduzível
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Versão e ambiente
+      placeholder: v0.1.0, navegador ou modelo Android
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para reproduzir
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Resultado esperado e observado
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidência e cartão do Trello
