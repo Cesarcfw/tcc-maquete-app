@@ -9,5 +9,7 @@ Consultadas em 30/09/2026. São referências de tecnologia; o comportamento do p
 5. [GitHub — GitHub flow](https://docs.github.com/en/get-started/using-github/github-flow): branches, PRs e revisão.
 6. [Semantic Versioning](https://semver.org/): formato das versões e distinção de versões iniciais.
 7. [Node-RED — Working with messages](https://nodered.org/docs/user-guide/messages): referência para o contrato de integração futura.
+8. [Expo — SDK 57](https://docs.expo.dev/versions/v57.0.0/): versões compatíveis de React/React Native e requisitos do ambiente.
+9. [Expo — Using ESLint](https://docs.expo.dev/guides/using-eslint/): configuração de verificação do código.
 
 O código inicial parte do template blank-typescript do create-expo-app. O arquivo LICENSE preserva a licença MIT desse template. A interface, simulador e regras da maquete foram desenvolvidos neste trabalho com apoio do Codex; não foram copiados de um tutorial. Não registrar como experimento físico o que foi executado somente no simulador.
