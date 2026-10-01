@@ -1,6 +1,6 @@
 # Maquete conectada
 
-Aplicativo de César para reunir sensores e controles da maquete. **v0.1.0: protótipo com dados simulados**, candidato para revisão. Nenhum ESP32 ou Node-RED conectado nesta versão.
+Aplicativo de César para reunir sensores e controles da maquete. **v0.2.0: prévia visual com dados simulados**, candidata para revisão. Layout de celular, tablet e computador com identidade compartilhada. Nenhum ESP32 ou Node-RED conectado nesta versão.
 
 ## O que experimentar
 
@@ -33,7 +33,8 @@ A exportação fica em dist, sem publicação automática. O estado da sessão �
 ## Documentação
 
 - [Arquitetura e regras](docs/arquitetura.md)
-- [Registro da versão](docs/registro-v0.1.0.md)
+- [Registro da versão atual e evidências](docs/registro-v0.2.0.md)
+- [Registro histórico v0.1.0](docs/registro-v0.1.0.md)
 - [Roteiro de evidências](docs/evidencias.md)
 - [Referências técnicas reais](docs/referencias.md)
 - [Como desenvolver por versões](CONTRIBUTING.md)

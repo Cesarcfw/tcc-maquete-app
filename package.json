@@ -1,6 +1,6 @@
 {
   "name": "tcc-maquete-app",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "index.ts",
   "dependencies": {
     "@react-native-community/slider": "5.2.0",
@@ -9,6 +9,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
+    "react-native-safe-area-context": "~5.7.0",
     "react-native-web": "^0.21.2"
   },
   "devDependencies": {
