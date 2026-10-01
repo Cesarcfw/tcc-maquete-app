@@ -1,9 +1,48 @@
 # Maquete conectada
 
-Aplicativo desenvolvido por César para monitorar e controlar as funções de uma maquete de automação.
+Aplicativo de César para reunir sensores e controles da maquete. **v0.1.0: protótipo com dados simulados**, candidato para revisão. Nenhum ESP32 ou Node-RED conectado nesta versão.
 
-Este repositório acompanha o desenvolvimento por versões. O primeiro protótipo, v0.1.0, usa dados simulados e será proposto em uma branch própria para revisão.
+## O que experimentar
 
-Documentação: https://app.notion.com/p/3ecc1303cee08168a95bf47b2694b67d
+- Painel com temperatura, umidade e indicação de atualização.
+- Luz do quarto: ligar/desligar, intensidade 0 a 100% e atalhos.
+- Indicador externo com as cinco cores de Manchester e opção de apagar, com seleção manual.
+- Cenários: operação normal, desconexão, dado antigo e comando sem confirmação.
+- Roteiro de prints e vídeos em Evidências.
 
-Planejamento: https://trello.com/b/GiwurIG1/tcc-monografia-aplicativo-e-maquete
+## Executar
+
+Node.js 24 LTS e npm. Na pasta do projeto:
+
+```sh
+npm ci
+npm run web
+```
+
+Para iniciar o ambiente móvel: `npm start`. O teste Android precisa de dispositivo/emulador e ambiente Expo compatível com SDK 57; verificar o fluxo oficial antes de considerar a execução móvel validada. Neste registro, a prévia web foi o ambiente utilizado.
+
+```sh
+npm run lint
+npm run typecheck
+npm test
+npm run export:web
+```
+
+A exportação fica em dist, sem publicação automática. O estado da sessão é perdido ao recarregar.
+
+## Documentação
+
+- [Arquitetura e regras](docs/arquitetura.md)
+- [Registro da versão](docs/registro-v0.1.0.md)
+- [Roteiro de evidências](docs/evidencias.md)
+- [Referências técnicas reais](docs/referencias.md)
+- [Como desenvolver por versões](CONTRIBUTING.md)
+- [Histórico de alterações](CHANGELOG.md)
+- [Notion — documentação do aplicativo](https://app.notion.com/p/3ecc1303cee08168a95bf47b2694b67d)
+- [Trello — tarefas da equipe](https://trello.com/b/GiwurIG1/tcc-monografia-aplicativo-e-maquete)
+
+main recebe entregas revisadas por PR. Branches feat/, fix/ e docs/ para mudanças. Tags identificam as versões; não são criadas branches permanentes para cada número de versão.
+
+## Origem
+
+Base gerada com o template blank-typescript do Expo; sua licença é preservada em LICENSE. Código específico de interface, simulação e documentação desenvolvido neste projeto com apoio do Codex. Ver docs/referencias.md para fontes e limites de uso acadêmico.
