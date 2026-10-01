@@ -1,5 +1,12 @@
 # Histórico de versões
 
+## Planejamento — protótipo Figma de contas e permissões
+
+- 35 telas editáveis mobile/web e 217 ligações de navegação no Figma.
+- Propostas de conta por convite, gestão de conexões e acesso por pessoa, ambiente e grupo de funções.
+- Registro de referências, critérios de autorização, evidências e limitações em docs/prototipo-figma-contas-permissoes.md.
+- Documentação de planejamento: não altera a versão ou o código executável do aplicativo.
+
 ## 0.2.0 — prévia visual em revisão
 
 - Identidade escura inspirada nas referências escolhidas por César, implementada com componentes próprios.
