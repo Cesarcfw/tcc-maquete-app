@@ -6,7 +6,7 @@ Aplicativo de César para reunir sensores e controles da maquete. **v0.1.0: prot
 
 - Painel com temperatura, umidade e indicação de atualização.
 - Luz do quarto: ligar/desligar, intensidade 0 a 100% e atalhos.
-- Indicador externo com quatro estados.
+- Indicador externo com as cinco cores de Manchester e opção de apagar, com seleção manual.
 - Cenários: operação normal, desconexão, dado antigo e comando sem confirmação.
 - Roteiro de prints e vídeos em Evidências.
 

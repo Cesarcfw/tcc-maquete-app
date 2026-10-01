@@ -27,7 +27,7 @@ flowchart LR
 - Sem comunicação ou leitura com pelo menos 10 s de idade: controles desabilitados, última leitura preservada e aviso explícito.
 - Falha de comando: após 5 s, informar não confirmado e manter estado reportado.
 - Trocar cenário ou reiniciar cancela comandos pendentes. Eles não são reaplicados ao reconectar.
-- Azul, verde, vermelho e desligado são opções de indicador, sem significado clínico atribuído.
+- Indicador manual do Protocolo de Manchester: vermelho (emergente), laranja (muito urgente), amarelo (urgente), verde (pouco urgente) e azul (não urgente). Desligado apenas apaga o LED, sem representar uma categoria. O app exibe a classificação selecionada e não realiza triagem.
 - Reiniciar ou recarregar perde a sessão, pois não há persistência nesta versão.
 
 Os intervalos são parâmetros escolhidos para demonstração e devem ser medidos/revisados na integração real.

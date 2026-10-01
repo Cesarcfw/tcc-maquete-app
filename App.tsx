@@ -12,6 +12,7 @@ import {
 import Slider from "@react-native-community/slider";
 import {
   colorNames,
+  indicatorPriorities,
   IndicatorColor,
   Scenario,
   toggleLight,
@@ -30,6 +31,8 @@ const colors: Record<IndicatorColor, string> = {
   blue: "#487FDB",
   green: "#2B9B77",
   red: "#CD6262",
+  orange: "#EF8B24",
+  yellow: "#EAC82F",
   off: "#829097",
 };
 type Tab = "Painel" | "Configurações" | "Evidências";
@@ -268,7 +271,7 @@ export default function App() {
                   <Card>
                     <Text style={s.sectionTitle}>Indicador externo</Text>
                     <Text style={s.small}>
-                      Escolha a cor exibida na entrada do quarto.
+                      Protocolo de Manchester · seleção manual da cor.
                     </Text>
                     <View style={s.indicatorPreview}>
                       <View
@@ -280,11 +283,21 @@ export default function App() {
                       <Text style={s.indicatorName}>
                         {colorNames[sim.device.indicator]}
                       </Text>
+                      <Text style={s.small}>
+                        {indicatorPriorities[sim.device.indicator]}
+                      </Text>
                       <Text style={s.small}>Confirmado na simulação</Text>
                     </View>
                     <View style={s.colorGrid}>
                       {(
-                        ["blue", "green", "red", "off"] as IndicatorColor[]
+                        [
+                          "red",
+                          "orange",
+                          "yellow",
+                          "green",
+                          "blue",
+                          "off",
+                        ] as IndicatorColor[]
                       ).map((color) => (
                         <Pressable
                           key={color}
@@ -308,13 +321,21 @@ export default function App() {
                               { backgroundColor: colors[color] },
                             ]}
                           />
-                          <Text style={s.colorText}>{colorNames[color]}</Text>
+                          <View>
+                            <Text style={s.colorText}>{colorNames[color]}</Text>
+                            <Text style={s.small}>
+                              {color === "off"
+                                ? "Apagar indicador"
+                                : indicatorPriorities[color]}
+                            </Text>
+                          </View>
                         </Pressable>
                       ))}
                     </View>
                     <Text style={s.footnote}>
-                      Legenda em definição pela equipe. A seleção não realiza
-                      triagem automática.
+                      Representa na maquete uma classificação já definida. O
+                      aplicativo não realiza a triagem. Desligado apenas apaga o
+                      indicador e não é uma categoria do protocolo.
                     </Text>
                   </Card>
                   <Card>
