@@ -22,6 +22,7 @@ Verificações realizadas no Windows:
 - No navegador: intensidade de 25% confirmada; desligar/religar restaurou 25%; slider alterou para 50%; indicador mudou para verde.
 - Sem comunicação: controles de luz e intensidade desabilitados e leitura preservada.
 - Falha de comando: tentativa de 100% expirou após 5 s e manteve 50% reportado.
+- Na exportação web, a falha foi repetida partindo de 65%; a tentativa de 100% manteve 65%, conforme a captura E06.
 - Recuperação: voltou a operação normal mantendo 50%, sem executar o comando falho.
 - Dado antigo: aviso com leitura de 18 s e controles pausados.
 - Largura web de 390 px: documento sem transbordamento horizontal. Isto verifica disposição web em largura móvel, sem substituir teste Android.
