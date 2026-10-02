@@ -89,3 +89,11 @@ Reconhecer mantém a janela aberta e a detecção ativa. Depois, “Voltar ao ap
 Verificação desta alteração: lint, tipos, oito testes e exportação web passaram. No navegador, conferidos reconhecimento, retorno ao painel com detecção mantida, reabertura e layout em 390 px. Validação nativa e gravação ainda pendentes.
 
 Revisão de largura e loop: lint, tipos, oito testes e exportação web passaram novamente. Faixa conferida em 1280 e 390 px. Na web, limites laterais em 0 e 1280 px; deslocamentos das listras continuaram mudando em observações separadas após vários ciclos. Capturas mostram faixa sem margens laterais. Esse registro não substitui a gravação nem validação em Android/iOS nativos.
+
+## Saída da faixa para a direita
+
+“Voltar ao aplicativo” desloca a faixa inteira para a direita em 380 ms, ao mesmo tempo que retira o fundo escurecido. A janela fecha ao concluir a animação, sem apagar a detecção nem alterar Manchester. O botão fica desabilitado durante a saída para evitar acionamentos repetidos. Ao reabrir, a faixa retorna à posição inicial. Com movimentos reduzidos, o fechamento é imediato. O retorno físico do Android usa o mesmo fechamento após reconhecimento; validação nativa desse gesto ainda pendente.
+
+**TIRE PRINT DESTA PARTE:** captura intermediária real da saída em `docs/capturas/v0.3.0-gas-saida-direita.png`. **MOSTRE FUNCIONANDO EM VÍDEO OU GIF:** reconhecer, voltar ao aplicativo, observar deslocamento para a direita e painel com detecção preservada; reabrir e repetir com movimentos reduzidos. Captura estática não comprova duração ou fluidez do movimento.
+
+Verificação: lint, tipos, oito testes e exportação web passaram. Na web, saída observada em 1280 e 390 px, retorno à página, detecção mantida, reabertura e fechamento sem animação com movimentos reduzidos. A imagem foi capturada durante a transição. Teste em Android/iOS e gravação ainda pendentes.

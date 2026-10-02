@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Easing,
@@ -27,6 +27,28 @@ export function GasAlarm({
 }) {
   const { width } = useWindowDimensions();
   const [motion] = useState(() => new Animated.Value(0));
+  const [exit] = useState(() => new Animated.Value(0));
+  const [closing, setClosing] = useState(false);
+  const closingRef = useRef(false);
+  useEffect(() => () => exit.stopAnimation(), [exit]);
+  function closeAlarm() {
+    if (!acknowledged || closingRef.current) return;
+    closingRef.current = true;
+    setClosing(true);
+    if (reduced) {
+      onClose();
+      return;
+    }
+    Animated.timing(exit, {
+      toValue: 1,
+      duration: 380,
+      easing: Easing.inOut(Easing.cubic),
+      isInteraction: false,
+      useNativeDriver: false,
+    }).start(({ finished }) => {
+      if (finished) onClose();
+    });
+  }
   useEffect(() => {
     motion.setValue(0);
     if (reduced) return;
@@ -77,13 +99,38 @@ export function GasAlarm({
       transparent
       visible
       animationType={reduced ? "none" : "fade"}
-      onRequestClose={() => {
-        if (acknowledged) onClose();
-      }}
+      onRequestClose={closeAlarm}
     >
-      <View style={s.backdrop}>
+      <View style={s.overlay}>
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            s.backdrop,
+            {
+              opacity: exit.interpolate({
+                inputRange: [0, 1],
+                outputRange: [1, 0],
+              }),
+            },
+          ]}
+        />
         <ScrollView contentContainerStyle={s.scroll}>
-          <View style={s.banner} accessibilityViewIsModal>
+          <Animated.View
+            style={[
+              s.banner,
+              {
+                transform: [
+                  {
+                    translateX: exit.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, width],
+                    }),
+                  },
+                ],
+              },
+            ]}
+            accessibilityViewIsModal
+          >
             {strip(false)}
             <View style={s.content}>
               <Text
@@ -110,7 +157,8 @@ export function GasAlarm({
                     mode="contained"
                     buttonColor="#181810"
                     textColor="#FFE16B"
-                    onPress={onClose}
+                    onPress={closeAlarm}
+                    disabled={closing}
                   >
                     Voltar ao aplicativo
                   </Button>
@@ -127,14 +175,22 @@ export function GasAlarm({
               )}
             </View>
             {strip(true)}
-          </View>
+          </Animated.View>
         </ScrollView>
       </View>
     </Modal>
   );
 }
 const s = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: "rgba(3, 8, 18, 0.85)" },
+  overlay: { flex: 1, overflow: "hidden" },
+  backdrop: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: "rgba(3, 8, 18, 0.85)",
+  },
   scroll: {
     flexGrow: 1,
     justifyContent: "center",
