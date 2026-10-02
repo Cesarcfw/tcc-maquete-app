@@ -80,10 +80,12 @@ Verificação: lint, tipos, oito testes e exportação web passaram. No navegado
 
 ## Aviso sobreposto com duas faixas
 
-A apresentação atual substitui o aviso dentro da página por uma janela sobre toda a interface, com fundo escurecido. Listras pretas e amarelas ficam em cima e embaixo do aviso e percorrem direções opostas, com ciclo suave de três segundos. Com movimentos reduzidos, ficam estáticas.
+A apresentação atual substitui o aviso dentro da página por uma faixa sobre toda a interface, com fundo escurecido. A faixa vai da borda esquerda à direita da tela, sem margens laterais ou cantos arredondados; texto e botões permanecem centralizados em área de até 820 px. Listras pretas e amarelas ficam em cima e embaixo e percorrem direções opostas em loop infinito, com velocidade constante e ciclo de três segundos. A repetição desloca exatamente um intervalo de listras, para continuidade visual. A animação usa o controlador JavaScript compartilhado entre web e aplicativo e é interrompida ao fechar o aviso. Com movimentos reduzidos, fica estática.
 
 Reconhecer mantém a janela aberta e a detecção ativa. Depois, “Voltar ao aplicativo” fecha apenas a janela; o cartão continua indicando gás detectado e oferece “Ver alerta de gás” para reabri-la. Uma nova ocorrência exige reconhecimento novamente. O aviso não altera Manchester nem identifica toxicidade.
 
-**TIRE PRINT DESTA PARTE:** janela sobreposta no computador e celular: `docs/capturas/v0.3.0-gas-sobreposto.png` e `docs/capturas/v0.3.0-gas-sobreposto-mobile.png`. **MOSTRE FUNCIONANDO EM VÍDEO OU GIF:** detectar gás na Conta, mostrar movimento das duas faixas, reconhecer, voltar ao painel e reabrir; mostrar redução de movimentos com listras estáticas. Identificar a demonstração como simulação.
+**TIRE PRINT DESTA PARTE:** faixa de ponta a ponta no computador e celular: `docs/capturas/v0.3.0-gas-faixa-inteira.png` e `docs/capturas/v0.3.0-gas-faixa-inteira-mobile.png`. As capturas gas-sobreposto anteriores registram o formato de janela substituído. **MOSTRE FUNCIONANDO EM VÍDEO OU GIF:** detectar gás na Conta, mostrar movimento das duas faixas por pelo menos três ciclos, reconhecer, voltar ao painel e reabrir; mostrar redução de movimentos com listras estáticas. Identificar a demonstração como simulação.
 
 Verificação desta alteração: lint, tipos, oito testes e exportação web passaram. No navegador, conferidos reconhecimento, retorno ao painel com detecção mantida, reabertura e layout em 390 px. Validação nativa e gravação ainda pendentes.
+
+Revisão de largura e loop: lint, tipos, oito testes e exportação web passaram novamente. Faixa conferida em 1280 e 390 px. Na web, limites laterais em 0 e 1280 px; deslocamentos das listras continuaram mudando em observações separadas após vários ciclos. Capturas mostram faixa sem margens laterais. Esse registro não substitui a gravação nem validação em Android/iOS nativos.

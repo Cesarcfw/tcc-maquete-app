@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Animated,
+  Easing,
   Modal,
   ScrollView,
   StyleSheet,
@@ -33,8 +34,11 @@ export function GasAlarm({
       Animated.timing(motion, {
         toValue: 1,
         duration: 3000,
-        useNativeDriver: true,
+        easing: Easing.linear,
+        isInteraction: false,
+        useNativeDriver: false,
       }),
+      { iterations: -1 },
     );
     animation.start();
     return () => animation.stop();
@@ -135,17 +139,15 @@ const s = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 16,
     paddingVertical: 48,
   },
   banner: {
     backgroundColor: "#FFE16B",
-    borderRadius: 16,
     overflow: "hidden",
-    borderWidth: 1,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
     borderColor: "#C8A900",
     width: "100%",
-    maxWidth: 820,
   },
   strip: { height: 28, overflow: "hidden", backgroundColor: "#FFE16B" },
   stripes: { flexDirection: "row", height: 40 },
@@ -157,7 +159,13 @@ const s = StyleSheet.create({
     backgroundColor: "#181810",
     transform: [{ skewX: "-30deg" }],
   },
-  content: { padding: 24, gap: 18 },
+  content: {
+    padding: 24,
+    gap: 18,
+    width: "100%",
+    maxWidth: 820,
+    alignSelf: "center",
+  },
   title: { color: "#181810", fontWeight: "700" },
   text: { color: "#181810" },
   button: { alignSelf: "flex-start", borderColor: "#181810" },
