@@ -2,14 +2,16 @@
   "expo": {
     "name": "Maquete conectada",
     "slug": "tcc-maquete-app",
-    "version": "0.1.0",
+    "version": "0.3.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "package": "com.cesarcfw.tccmaqueteapp",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -20,6 +22,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0462f5be-cde2-4860-9e93-e2776fca94f7"
+      }
+    },
+    "owner": "cesarcfw"
   }
 }

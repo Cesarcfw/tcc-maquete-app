@@ -6,6 +6,10 @@ import {
   describeCommand,
   initialState,
   Scenario,
+  GasStatus,
+  gasStatusLabels,
+  applyGasReading,
+  acknowledgeGas,
 } from "../domain/maquette";
 export type LogEntry = {
   id: number;
@@ -78,7 +82,7 @@ export function useSimulator() {
     setNotice(message);
     log(message);
   }
-  function send(command: Command) {
+  function send(command: Command, actor?: string) {
     if (
       busy.current ||
       connectionState(scenarioRef.current, device.receivedAt, Date.now()) !==
@@ -88,7 +92,7 @@ export function useSimulator() {
     busy.current = true;
     setPending(true);
     const revision = generation.current,
-      label = describeCommand(command);
+      label = `${actor ? `${actor}: ` : ""}${describeCommand(command)}`;
     setNotice(`${label}: aguardando confirmação simulada…`);
     log(`${label}: solicitado.`);
     const fails = scenarioRef.current === "timeout";
@@ -122,6 +126,39 @@ export function useSimulator() {
     setNotice("Simulação reiniciada. Luz em 65% e indicador azul.");
   }
   return {
+    simulateGas(status: GasStatus) {
+      if (
+        connectionState(scenarioRef.current, device.receivedAt, Date.now()) !==
+        "online"
+      )
+        return;
+      setDevice((previous) => ({
+        ...previous,
+        ...applyGasReading(previous, status),
+        receivedAt: Date.now(),
+      }));
+      log(
+        `Sensor de gás (simulação): ${gasStatusLabels[status]}.`,
+        status === "detected" ? "error" : "info",
+      );
+    },
+    acknowledgeGasAlert(actor: string) {
+      if (device.gas !== "detected" || device.gasAcknowledged) return;
+      setDevice((previous) => acknowledgeGas(previous));
+      log(
+        `${actor}: alerta de gás reconhecido. Detecção e triagem preservadas.`,
+        "info",
+      );
+    },
+    cancelPending() {
+      generation.current++;
+      if (timeout.current) clearTimeout(timeout.current);
+      busy.current = false;
+      setPending(false);
+      setNotice(
+        "Sessão alterada. Comandos pendentes cancelados; último estado preservado.",
+      );
+    },
     device,
     scenario,
     now,
