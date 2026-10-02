@@ -22,6 +22,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0462f5be-cde2-4860-9e93-e2776fca94f7"
+      }
+    },
+    "owner": "cesarcfw"
   }
 }
