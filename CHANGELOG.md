@@ -2,6 +2,7 @@
 
 ## 0.3.0 — protótipo interativo em revisão
 
+- Preparação do APK Android: perfil EAS preview, identificador Android e exclusões de artefatos/documentação no envio; autenticação, vinculação, compilação e teste nativo ainda precisam ser concluídos.
 - Ao voltar ao aplicativo, faixa de gás desliza para a direita em 380 ms e fundo escurecido desaparece junto; movimentos reduzidos fecham imediatamente.
 - Alerta ambiental sobreposto de uma borda à outra da tela, com faixas pretas/amarelas em cima e embaixo em loop contínuo e velocidade constante; reconhecimento independente e triagem do paciente explícita.
 - Sensor de gás incluído: sem detecção, detectado e indisponível; laboratório e grupo Sensores.
