@@ -6,6 +6,8 @@ import {
   describeCommand,
   initialState,
   Scenario,
+  GasStatus,
+  gasStatusLabels,
 } from "../domain/maquette";
 export type LogEntry = {
   id: number;
@@ -122,6 +124,22 @@ export function useSimulator() {
     setNotice("Simulação reiniciada. Luz em 65% e indicador azul.");
   }
   return {
+    simulateGas(status: GasStatus) {
+      if (
+        connectionState(scenarioRef.current, device.receivedAt, Date.now()) !==
+        "online"
+      )
+        return;
+      setDevice((previous) => ({
+        ...previous,
+        gas: status,
+        receivedAt: Date.now(),
+      }));
+      log(
+        `Sensor de gás (simulação): ${gasStatusLabels[status]}.`,
+        status === "detected" ? "error" : "info",
+      );
+    },
     cancelPending() {
       generation.current++;
       if (timeout.current) clearTimeout(timeout.current);

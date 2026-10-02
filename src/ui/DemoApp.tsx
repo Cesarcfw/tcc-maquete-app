@@ -49,6 +49,8 @@ import {
   IndicatorColor,
   indicatorPriorities,
   Scenario,
+  GasStatus,
+  gasStatusLabels,
   toggleLight,
 } from "../domain/maquette";
 import { useSimulator } from "../hooks/useSimulator";
@@ -829,9 +831,6 @@ function DemoApp({
                         )}
                         <Panel title="Possíveis expansões">
                           <View style={s.chips}>
-                            <Chip icon="gas-cylinder" disabled>
-                              Sensor de gás
-                            </Chip>
                             <Chip icon="lock-outline" disabled>
                               Fechadura
                             </Chip>
@@ -883,6 +882,32 @@ function DemoApp({
                             title="Sensores restritos"
                             text="As leituras não estão disponíveis para seu perfil."
                           />
+                        )}
+                        {read("sensors") && (
+                          <Panel
+                            title="Sensor de gás"
+                            subtitle="Detecção simulada · sem leitura em ppm"
+                          >
+                            <Avatar.Icon size={36} icon="gas-cylinder" />
+                            <Note
+                              title={gasStatusLabels[sim.device.gas]}
+                              warning={sim.device.gas !== "clear"}
+                              text={
+                                sim.connection !== "online" ||
+                                !connection.active
+                                  ? "Último estado recebido. Sem leitura atual para confirmar a detecção."
+                                  : sim.device.gas === "detected"
+                                    ? "Alerta demonstrativo de presença de gás. Verifique o ambiente na integração real."
+                                    : sim.device.gas === "unavailable"
+                                      ? "Sem dados do sensor de gás. Ausência de leitura não significa ausência de gás."
+                                      : "Não há detecção no cenário simulado. Não representa uma medição física."
+                              }
+                            />
+                            <Text variant="bodySmall">
+                              O sensor de gás não altera a classificação
+                              Manchester do quarto.
+                            </Text>
+                          </Panel>
                         )}
                         {read("indicator") ? (
                           <Panel
@@ -1143,6 +1168,39 @@ function DemoApp({
                             </Chip>
                           ))}
                         </View>
+                        {read("sensors") && (
+                          <>
+                            <Text variant="titleSmall">
+                              Teste do sensor de gás
+                            </Text>
+                            <View style={s.chips}>
+                              {(
+                                [
+                                  "clear",
+                                  "detected",
+                                  "unavailable",
+                                ] as GasStatus[]
+                              ).map((status) => (
+                                <Chip
+                                  key={status}
+                                  selected={sim.device.gas === status}
+                                  disabled={!ready}
+                                  accessibilityLabel={`Simular gás: ${gasStatusLabels[status]}`}
+                                  onPress={() => {
+                                    if (read("sensors") && ready)
+                                      sim.simulateGas(status);
+                                  }}
+                                >
+                                  {gasStatusLabels[status]}
+                                </Chip>
+                              ))}
+                            </View>
+                            <Text variant="bodySmall">
+                              Injeção de dados fictícios para testar o painel,
+                              sem comando enviado ao sensor.
+                            </Text>
+                          </>
+                        )}
                         <Note title="Teste o retorno" text={sim.notice} />
                         <Button
                           mode="outlined"

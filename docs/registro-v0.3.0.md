@@ -19,7 +19,7 @@ Identidade compartilhada: navegação inferior no celular, menu lateral no compu
 
 ## Limitações
 
-Dados, usuários, teste de conexão e confirmações são simulados. Não há autenticação, senha, convite, recuperação, persistência, API, proteção no servidor ou ESP32 real. Recarregar reinicia a sessão. Permissões locais demonstram a regra; a versão integrada deverá validá-las no backend. Um ambiente demonstrativo, sem cadastro de vários ambientes nesta entrega. Gás e fechadura aparecem como futuras expansões desabilitadas. Manchester é seleção manual de sinalização; não classifica pacientes.
+Dados, usuários, teste de conexão e confirmações são simulados. Não há autenticação, senha, convite, recuperação, persistência, API, proteção no servidor ou ESP32 real. Recarregar reinicia a sessão. Permissões locais demonstram a regra; a versão integrada deverá validá-las no backend. Um ambiente demonstrativo, sem cadastro de vários ambientes nesta entrega. Fechadura permanece como expansão futura. Manchester é seleção manual de sinalização; não classifica pacientes.
 
 ## Validação realizada
 
@@ -55,3 +55,15 @@ Capturas: `docs/capturas/v0.3.0-web-claro.png`, `v0.3.0-web-escuro.png`, `v0.3.0
 - Referências visuais e Manchester permanecem em `docs/referencias.md` e `docs/manchester.md`. Usadas como inspiração documentada, sem reprodução de imagens proprietárias.
 
 Código próprio e documentação produzidos com apoio do Codex. Para a monografia, revisar o texto, confrontar os resultados com os registros e citar as fontes externas utilizadas.
+
+## Ajustes após teste do usuário no telefone
+
+César informou que testou no telefone; sistema operacional e roteiro completo ainda não informados.
+
+Sensor de gás incluído no escopo atual e implementado no painel: sem detecção, gás detectado e sensor indisponível. Cenários fictícios na Conta, disponíveis a perfis com leitura do grupo Sensores. Offline ou leitura antiga preservam o último estado e identificam a falta de leitura atual; o laboratório bloqueia novas injeções. Eventos ficam no histórico. Nenhuma leitura em ppm ou limite físico definido: sensor, gás-alvo e calibração serão acordados com Gabriel. Manchester permanece independente do alerta de gás.
+
+**TIRE PRINT DESTA PARTE:** cartão de gás em alerta e sem dados. **MOSTRE FUNCIONANDO EM VÍDEO OU GIF:** Conta → testar gás detectado → painel; depois indisponível e offline. Usar dados simulados na descrição.
+
+**Visual para depois das funções:** borda fina referente ao quarto, com brilho pulsante suave na cor Manchester ativa. Implementar só após funções validadas, respeitando redução de movimentos; indicador apagado não deve pulsar. Anotação de melhoria, ainda não implementada.
+
+Verificação complementar: lint, tipos, sete testes e exportação web passaram. Novo teste confirma que comandos de luz/Manchester preservam detecção de gás.

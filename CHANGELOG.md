@@ -2,6 +2,9 @@
 
 ## 0.3.0 — protótipo interativo em revisão
 
+- Sensor de gás incluído: sem detecção, detectado e indisponível; laboratório e grupo Sensores.
+- Borda pulsante Manchester anotada para a etapa visual após validar funções.
+
 - React Native Paper, temas claro/escuro e movimentos reduzidos.
 - Perfis fictícios, criação local e concessões por ambiente/grupo.
 - Administração de conexão simulada e cancelamento de comandos ao trocar sessão.

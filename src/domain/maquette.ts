@@ -1,12 +1,19 @@
 export type IndicatorColor =
   "red" | "orange" | "yellow" | "green" | "blue" | "off";
 export type Scenario = "normal" | "offline" | "stale" | "timeout";
+export type GasStatus = "clear" | "detected" | "unavailable";
+export const gasStatusLabels: Record<GasStatus, string> = {
+  clear: "Sem detecção",
+  detected: "Gás detectado",
+  unavailable: "Sensor indisponível",
+};
 export type Command =
   | { kind: "light"; on: boolean; intensity: number }
   | { kind: "indicator"; color: IndicatorColor };
 export type DeviceState = {
   temperature: number;
   humidity: number;
+  gas: GasStatus;
   receivedAt: number;
   lightOn: boolean;
   intensity: number;
@@ -17,6 +24,7 @@ export function initialState(now = Date.now()): DeviceState {
   return {
     temperature: 24.6,
     humidity: 58,
+    gas: "clear",
     receivedAt: now,
     lightOn: true,
     intensity: 65,
