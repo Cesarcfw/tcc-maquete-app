@@ -2,6 +2,7 @@
 
 ## 0.3.0 — protótipo interativo em revisão
 
+- Web v0.3.0 publicada em https://tcc-maquete-app.vercel.app, projeto Vercel vinculado ao GitHub; configuração de build/exportação em dist e exclusão de artefatos locais. Acesso HTTP sem login e fluxo de luz/gás conferidos. Configuração proposta na branch feat/publicacao-vercel.
 - APK Android v0.3.0 (1) gerado com sucesso no EAS preview, projeto vinculado à conta cesarcfw e exclusões de artefatos/documentação no envio; instalação e teste nativo ainda pendentes.
 - Ao voltar ao aplicativo, faixa de gás desliza para a direita em 380 ms e fundo escurecido desaparece junto; movimentos reduzidos fecham imediatamente.
 - Alerta ambiental sobreposto de uma borda à outra da tela, com faixas pretas/amarelas em cima e embaixo em loop contínuo e velocidade constante; reconhecimento independente e triagem do paciente explícita.

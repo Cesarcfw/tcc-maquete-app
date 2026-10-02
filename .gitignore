@@ -8,6 +8,7 @@ node_modules/
 dist/
 web-build/
 entregas/
+.vercel/
 expo-env.d.ts
 
 # Native
@@ -44,3 +45,6 @@ playwright-report/
 # generated native folders
 /ios
 /android
+
+.vercel
+.env*
