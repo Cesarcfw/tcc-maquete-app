@@ -296,6 +296,7 @@ function DemoApp({
   const [screen, setScreen] = useState<Screen>("Painel");
   const [draft, setDraft] = useState<number | null>(null);
   const [snack, setSnack] = useState("");
+  const [gasOverlayClosed, setGasOverlayClosed] = useState(false);
   const [editingUser, setEditingUser] = useState("matheus");
   const [dialog, setDialog] = useState<
     "user" | "connection" | "disable" | null
@@ -351,6 +352,7 @@ function DemoApp({
     setTestStatus("idle");
   }
   function changeSession(id: string | null) {
+    setGasOverlayClosed(false);
     sim.cancelPending();
     closeDialog();
     setSession(id);
@@ -654,17 +656,21 @@ function DemoApp({
                     {user.name} · {user.admin ? "admin" : "usuário"}
                   </Chip>
                 </View>
-                {read("sensors") && sim.device.gas === "detected" && (
-                  <GasAlarm
-                    room={connection.name}
-                    acknowledged={sim.device.gasAcknowledged}
-                    stale={sim.connection !== "online" || !connection.active}
-                    reduced={reduced}
-                    onAcknowledge={() => {
-                      if (read("sensors")) sim.acknowledgeGasAlert(user.name);
-                    }}
-                  />
-                )}
+                {read("sensors") &&
+                  sim.device.gas === "detected" &&
+                  (!sim.device.gasAcknowledged || !gasOverlayClosed) && (
+                    <GasAlarm
+                      room={connection.name}
+                      acknowledged={sim.device.gasAcknowledged}
+                      stale={sim.connection !== "online" || !connection.active}
+                      reduced={reduced}
+                      onAcknowledge={() => {
+                        setGasOverlayClosed(false);
+                        if (read("sensors")) sim.acknowledgeGasAlert(user.name);
+                      }}
+                      onClose={() => setGasOverlayClosed(true)}
+                    />
+                  )}
                 {screen === "Painel" && (
                   <>
                     <View style={[s.grid, !wide && s.stack]}>
@@ -901,6 +907,15 @@ function DemoApp({
                             subtitle="Detecção simulada · sem leitura em ppm"
                           >
                             <Avatar.Icon size={36} icon="gas-cylinder" />
+                            {sim.device.gas === "detected" && (
+                              <Button
+                                mode="outlined"
+                                icon="alert-outline"
+                                onPress={() => setGasOverlayClosed(false)}
+                              >
+                                Ver alerta de gás
+                              </Button>
+                            )}
                             <Note
                               title={gasStatusLabels[sim.device.gas]}
                               warning={sim.device.gas !== "clear"}

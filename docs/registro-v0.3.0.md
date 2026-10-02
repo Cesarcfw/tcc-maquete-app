@@ -77,3 +77,13 @@ Faixa preta/amarela com movimento contínuo suave nas listras para detecção de
 **TIRE PRINT DESTA PARTE:** faixa de gás com LED Manchester verde preservado, captura docs/capturas/v0.3.0-gas-faixa.png. **MOSTRE FUNCIONANDO EM VÍDEO OU GIF:** definir Manchester verde, simular gás detectado, reconhecer e observar faixa persistente; retornar a sem detecção e provocar nova ocorrência. Respeitar a identificação de simulação no vídeo.
 
 Verificação: lint, tipos, oito testes e exportação web passaram. No navegador, detecção e reconhecimento mantiveram Manchester verde e faixa visível. Teste nativo desta alteração ainda pendente.
+
+## Aviso sobreposto com duas faixas
+
+A apresentação atual substitui o aviso dentro da página por uma janela sobre toda a interface, com fundo escurecido. Listras pretas e amarelas ficam em cima e embaixo do aviso e percorrem direções opostas, com ciclo suave de três segundos. Com movimentos reduzidos, ficam estáticas.
+
+Reconhecer mantém a janela aberta e a detecção ativa. Depois, “Voltar ao aplicativo” fecha apenas a janela; o cartão continua indicando gás detectado e oferece “Ver alerta de gás” para reabri-la. Uma nova ocorrência exige reconhecimento novamente. O aviso não altera Manchester nem identifica toxicidade.
+
+**TIRE PRINT DESTA PARTE:** janela sobreposta no computador e celular: `docs/capturas/v0.3.0-gas-sobreposto.png` e `docs/capturas/v0.3.0-gas-sobreposto-mobile.png`. **MOSTRE FUNCIONANDO EM VÍDEO OU GIF:** detectar gás na Conta, mostrar movimento das duas faixas, reconhecer, voltar ao painel e reabrir; mostrar redução de movimentos com listras estáticas. Identificar a demonstração como simulação.
+
+Verificação desta alteração: lint, tipos, oito testes e exportação web passaram. No navegador, conferidos reconhecimento, retorno ao painel com detecção mantida, reabertura e layout em 390 px. Validação nativa e gravação ainda pendentes.

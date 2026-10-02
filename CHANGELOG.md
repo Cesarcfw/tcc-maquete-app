@@ -2,7 +2,7 @@
 
 ## 0.3.0 — protótipo interativo em revisão
 
-- Alerta ambiental com faixa preta/amarela animada, reconhecimento independente e triagem do paciente explícita.
+- Alerta ambiental sobreposto à interface, com faixas pretas/amarelas animadas em cima e embaixo; reconhecimento independente e triagem do paciente explícita.
 - Sensor de gás incluído: sem detecção, detectado e indisponível; laboratório e grupo Sensores.
 - Borda pulsante Manchester anotada para a etapa visual após validar funções.
 
