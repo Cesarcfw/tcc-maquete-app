@@ -8,6 +8,8 @@ import {
   Scenario,
   GasStatus,
   gasStatusLabels,
+  applyGasReading,
+  acknowledgeGas,
 } from "../domain/maquette";
 export type LogEntry = {
   id: number;
@@ -132,12 +134,20 @@ export function useSimulator() {
         return;
       setDevice((previous) => ({
         ...previous,
-        gas: status,
+        ...applyGasReading(previous, status),
         receivedAt: Date.now(),
       }));
       log(
         `Sensor de gás (simulação): ${gasStatusLabels[status]}.`,
         status === "detected" ? "error" : "info",
+      );
+    },
+    acknowledgeGasAlert(actor: string) {
+      if (device.gas !== "detected" || device.gasAcknowledged) return;
+      setDevice((previous) => acknowledgeGas(previous));
+      log(
+        `${actor}: alerta de gás reconhecido. Detecção e triagem preservadas.`,
+        "info",
       );
     },
     cancelPending() {

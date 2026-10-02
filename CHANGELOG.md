@@ -2,13 +2,14 @@
 
 ## 0.3.0 — protótipo interativo em revisão
 
+- Alerta ambiental com faixa preta/amarela animada, reconhecimento independente e triagem do paciente explícita.
 - Sensor de gás incluído: sem detecção, detectado e indisponível; laboratório e grupo Sensores.
 - Borda pulsante Manchester anotada para a etapa visual após validar funções.
 
 - React Native Paper, temas claro/escuro e movimentos reduzidos.
 - Perfis fictícios, criação local e concessões por ambiente/grupo.
 - Administração de conexão simulada e cancelamento de comandos ao trocar sessão.
-- Seis testes de domínio e registro de validação/evidências em docs/registro-v0.3.0.md.
+- Oito testes de domínio e registro de validação/evidências em docs/registro-v0.3.0.md.
 - Sem autenticação real, persistência ou integração ESP32 nesta etapa.
 
 ## Planejamento — protótipo Figma de contas e permissões

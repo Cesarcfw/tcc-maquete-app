@@ -33,6 +33,7 @@ import {
   useTheme,
 } from "react-native-paper";
 import { appTheme } from "./theme";
+import { GasAlarm } from "./GasAlarm";
 import {
   canAccess,
   emptyGrants,
@@ -653,6 +654,17 @@ function DemoApp({
                     {user.name} · {user.admin ? "admin" : "usuário"}
                   </Chip>
                 </View>
+                {read("sensors") && sim.device.gas === "detected" && (
+                  <GasAlarm
+                    room={connection.name}
+                    acknowledged={sim.device.gasAcknowledged}
+                    stale={sim.connection !== "online" || !connection.active}
+                    reduced={reduced}
+                    onAcknowledge={() => {
+                      if (read("sensors")) sim.acknowledgeGasAlert(user.name);
+                    }}
+                  />
+                )}
                 {screen === "Painel" && (
                   <>
                     <View style={[s.grid, !wide && s.stack]}>
@@ -911,8 +923,8 @@ function DemoApp({
                         )}
                         {read("indicator") ? (
                           <Panel
-                            title="Indicador externo"
-                            subtitle="Protocolo Manchester · seleção manual"
+                            title="Triagem do paciente"
+                            subtitle="Indicador externo · Manchester · seleção manual"
                           >
                             <View style={s.row}>
                               <View

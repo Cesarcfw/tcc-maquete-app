@@ -67,3 +67,13 @@ Sensor de gás incluído no escopo atual e implementado no painel: sem detecçã
 **Visual para depois das funções:** borda fina referente ao quarto, com brilho pulsante suave na cor Manchester ativa. Implementar só após funções validadas, respeitando redução de movimentos; indicador apagado não deve pulsar. Anotação de melhoria, ainda não implementada.
 
 Verificação complementar: lint, tipos, sete testes e exportação web passaram. Novo teste confirma que comandos de luz/Manchester preservam detecção de gás.
+
+## Alerta ambiental e triagem separados
+
+Manchester representa somente a classificação manual de triagem do paciente. O sensor de gás tem seu próprio estado, aviso e reconhecimento; não muda a classificação, a cor do LED externo nem o futuro brilho da borda Manchester.
+
+Faixa preta/amarela com movimento contínuo suave nas listras para detecção de gás simulada. Respeita redução de movimentos com listras estáticas. Disponível nas telas para perfis autorizados a ler sensores, enquanto a detecção permanece ativa. Reconhecer registra evento, mantém a detecção e não apaga o aviso; uma nova ocorrência após normalização exige novo reconhecimento. Offline mantém o aviso da última detecção e informa falta de leitura atual. Não afirma toxicidade ou identifica o gás com um sensor genérico.
+
+**TIRE PRINT DESTA PARTE:** faixa de gás com LED Manchester verde preservado, captura docs/capturas/v0.3.0-gas-faixa.png. **MOSTRE FUNCIONANDO EM VÍDEO OU GIF:** definir Manchester verde, simular gás detectado, reconhecer e observar faixa persistente; retornar a sem detecção e provocar nova ocorrência. Respeitar a identificação de simulação no vídeo.
+
+Verificação: lint, tipos, oito testes e exportação web passaram. No navegador, detecção e reconhecimento mantiveram Manchester verde e faixa visível. Teste nativo desta alteração ainda pendente.

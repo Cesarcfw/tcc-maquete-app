@@ -14,6 +14,7 @@ export type DeviceState = {
   temperature: number;
   humidity: number;
   gas: GasStatus;
+  gasAcknowledged: boolean;
   receivedAt: number;
   lightOn: boolean;
   intensity: number;
@@ -25,6 +26,7 @@ export function initialState(now = Date.now()): DeviceState {
     temperature: 24.6,
     humidity: 58,
     gas: "clear",
+    gasAcknowledged: false,
     receivedAt: now,
     lightOn: true,
     intensity: 65,
@@ -39,6 +41,22 @@ export function connectionState(
 ): "online" | "offline" | "stale" {
   if (scenario === "offline") return "offline";
   return now - receivedAt >= 10000 ? "stale" : "online";
+}
+export function applyGasReading(
+  state: DeviceState,
+  gas: GasStatus,
+): DeviceState {
+  return {
+    ...state,
+    gas,
+    gasAcknowledged:
+      gas === "detected" && state.gas === "detected"
+        ? state.gasAcknowledged
+        : false,
+  };
+}
+export function acknowledgeGas(state: DeviceState): DeviceState {
+  return state.gas === "detected" ? { ...state, gasAcknowledged: true } : state;
 }
 export function applyCommand(
   state: DeviceState,
