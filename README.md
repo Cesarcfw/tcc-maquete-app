@@ -35,6 +35,7 @@ A exportação fica em dist, sem publicação automática. O estado da sessão �
 
 ## Documentação
 
+- [Publicação web no Vercel](docs/publicacao-vercel.md)
 - [Preparação e geração do APK de teste](docs/gerar-apk.md)
 - [Arquitetura e regras](docs/arquitetura.md)
 - [Registro da versão atual e evidências](docs/registro-v0.3.0.md)
