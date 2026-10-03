@@ -13,7 +13,7 @@ Usamos GitHub flow: main contém entregas revisadas. Cada alteração acontece e
 
 ## Numeração
 
-Versões 0.x indicam desenvolvimento inicial. Nesta equipe, 0.1.0 é o protótipo simulado, 0.2.0 é a integração candidata com Node-RED e 0.3.0 é a integração candidata com ESP32. Estes números são planos, não entregas realizadas. Correções sem novo escopo incrementam o terceiro número. Prévia: `v0.1.0-preview.1`.
+Versões 0.x indicam desenvolvimento inicial. As entregas atuais são 0.1.0 (base simulada), 0.2.0 (identidade visual) e 0.3.0 (protótipo interativo com temas, perfis e permissões locais, gás e distribuição web/APK). Node-RED e ESP32 ainda não estão integrados; versões futuras serão definidas pelo escopo aceito. Correções sem novo escopo incrementam o terceiro número. Identificar prévias explicitamente, por exemplo `v0.3.0-preview.1`; não criar tag/release final sem revisão de César.
 
 ## Credenciais e autoria
 

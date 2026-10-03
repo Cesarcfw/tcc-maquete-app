@@ -37,7 +37,8 @@ A exportação fica em dist, sem publicação automática. O estado da sessão �
 
 - [Publicação web no Vercel](docs/publicacao-vercel.md)
 - [Preparação e geração do APK de teste](docs/gerar-apk.md)
-- [Arquitetura e regras](docs/arquitetura.md)
+- [Documentação completa da arquitetura atual](docs/arquitetura.md)
+- [Manual de estudo e manutenção do aplicativo](docs/manual-desenvolvimento.md)
 - [Registro da versão atual e evidências](docs/registro-v0.3.0.md)
 - [Registro histórico v0.1.0](docs/registro-v0.1.0.md)
 - [Roteiro de evidências](docs/evidencias.md)
@@ -45,6 +46,8 @@ A exportação fica em dist, sem publicação automática. O estado da sessão �
 - [Como desenvolver por versões](CONTRIBUTING.md)
 - [Histórico de alterações](CHANGELOG.md)
 - [Notion — documentação do aplicativo](https://app.notion.com/p/3ecc1303cee08168a95bf47b2694b67d)
+- [Notion — arquitetura completa v0.3.0](https://app.notion.com/p/3eec1303cee081729a05d0416329f1a9)
+- [Notion — manual de estudo e manutenção](https://app.notion.com/p/3eec1303cee081a68c30d4d2f3c6d77b)
 - [Trello — tarefas da equipe](https://trello.com/b/GiwurIG1/tcc-monografia-aplicativo-e-maquete)
 
 main recebe entregas revisadas por PR. Branches feat/, fix/ e docs/ para mudanças. Tags identificam as versões; não são criadas branches permanentes para cada número de versão.
