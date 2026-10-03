@@ -46,6 +46,8 @@ A exportação fica em dist, sem publicação automática. O estado da sessão �
 - [Como desenvolver por versões](CONTRIBUTING.md)
 - [Histórico de alterações](CHANGELOG.md)
 - [Notion — documentação do aplicativo](https://app.notion.com/p/3ecc1303cee08168a95bf47b2694b67d)
+- [Notion — arquitetura completa v0.3.0](https://app.notion.com/p/3eec1303cee081729a05d0416329f1a9)
+- [Notion — manual de estudo e manutenção](https://app.notion.com/p/3eec1303cee081a68c30d4d2f3c6d77b)
 - [Trello — tarefas da equipe](https://trello.com/b/GiwurIG1/tcc-monografia-aplicativo-e-maquete)
 
 main recebe entregas revisadas por PR. Branches feat/, fix/ e docs/ para mudanças. Tags identificam as versões; não são criadas branches permanentes para cada número de versão.
