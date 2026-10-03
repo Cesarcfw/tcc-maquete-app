@@ -37,7 +37,8 @@ A exportação fica em dist, sem publicação automática. O estado da sessão �
 
 - [Publicação web no Vercel](docs/publicacao-vercel.md)
 - [Preparação e geração do APK de teste](docs/gerar-apk.md)
-- [Arquitetura e regras](docs/arquitetura.md)
+- [Documentação completa da arquitetura atual](docs/arquitetura.md)
+- [Manual de estudo e manutenção do aplicativo](docs/manual-desenvolvimento.md)
 - [Registro da versão atual e evidências](docs/registro-v0.3.0.md)
 - [Registro histórico v0.1.0](docs/registro-v0.1.0.md)
 - [Roteiro de evidências](docs/evidencias.md)

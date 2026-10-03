@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## Documentação — arquitetura da base v0.3.0
+
+- Documentação de Arquitetura de Software reconstruída a partir da main 47398c1: contexto, módulos, dados, fluxos, permissões, gás/Manchester, distribuição, decisões, limites e proposta de integração claramente separada.
+- Manual de estudo e manutenção com mapa de alterações, exemplos, roteiro de testes, explicação ao orientador e marcações de prints/vídeos/GIFs.
+- Corrigida a numeração histórica em CONTRIBUTING: v0.2/v0.3 são entregas de protótipo; Node-RED/ESP32 continuam futuros. Sem alteração no código do app ou na versão 0.3.0.
+
 ## 0.3.0 — protótipo interativo em revisão
 
 - Web v0.3.0 publicada em https://tcc-maquete-app.vercel.app, projeto Vercel vinculado ao GitHub; configuração de build/exportação em dist e exclusão de artefatos locais. Acesso HTTP sem login e fluxo de luz/gás conferidos. Configuração proposta na branch feat/publicacao-vercel.
