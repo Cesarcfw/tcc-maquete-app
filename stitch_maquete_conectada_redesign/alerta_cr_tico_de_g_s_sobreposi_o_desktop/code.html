@@ -1,0 +1,413 @@
+<!DOCTYPE html><html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Maquete Conectada - Quarto Hospitalar IoT</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration Verbatim -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface-variant": "#3f4850",
+            "surface-variant": "#dae2fd",
+            "secondary-fixed": "#cde5ff",
+            "on-tertiary": "#ffffff",
+            "primary-fixed-dim": "#93ccff",
+            "surface-container-high": "#e2e7ff",
+            "background": "#faf8ff",
+            "primary-fixed": "#cce5ff",
+            "surface": "#faf8ff",
+            "primary": "#006194",
+            "on-error": "#ffffff",
+            "surface-container": "#eaedff",
+            "inverse-primary": "#93ccff",
+            "error": "#ba1a1a",
+            "on-secondary-container": "#004f7b",
+            "on-secondary-fixed": "#001d32",
+            "on-surface": "#131b2e",
+            "on-secondary-fixed-variant": "#004b74",
+            "tertiary": "#00685f",
+            "surface-container-highest": "#dae2fd",
+            "on-error-container": "#93000a",
+            "secondary": "#006399",
+            "tertiary-fixed": "#89f5e7",
+            "outline-variant": "#bfc7d2",
+            "surface-bright": "#faf8ff",
+            "secondary-fixed-dim": "#94ccff",
+            "tertiary-fixed-dim": "#6bd8cb",
+            "outline": "#707881",
+            "surface-tint": "#006398",
+            "on-tertiary-fixed-variant": "#005049",
+            "surface-container-low": "#f2f3ff",
+            "primary-container": "#007bb9",
+            "on-background": "#131b2e",
+            "on-primary-fixed-variant": "#004b73",
+            "inverse-on-surface": "#eef0ff",
+            "on-primary-container": "#fdfcff",
+            "error-container": "#ffdad6",
+            "surface-dim": "#d2d9f4",
+            "inverse-surface": "#283044",
+            "on-primary": "#ffffff",
+            "on-primary-fixed": "#001d31",
+            "on-tertiary-container": "#f4fffc",
+            "on-secondary": "#ffffff",
+            "on-tertiary-fixed": "#00201d",
+            "secondary-container": "#7bc2ff",
+            "tertiary-container": "#008378",
+            "surface-container-lowest": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "margin": "1rem",
+            "gutter-desktop": "1.5rem",
+            "margin-desktop": "2rem",
+            "space-lg": "1.5rem",
+            "space-md": "1rem",
+            "gutter": "1.25rem"
+          },
+          "fontFamily": {
+            "body-lg": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "title-sm": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "headline-xl-mobile": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "metric-display": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "title-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-xl": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+            "headline-xl-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }],
+            "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "metric-display": ["32px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .hazard-stripe-pattern {
+      background: repeating-linear-gradient(
+        -45deg,
+        #f59e0b,
+        #f59e0b 14px,
+        #000000 14px,
+        #000000 28px
+      );
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased overflow-hidden min-h-screen relative font-body-md">
+<!-- ==================== BACKGROUND DESKTOP DASHBOARD (BLURRED / DIMMED) ==================== -->
+<div class="flex h-screen w-full filter blur-[6px] opacity-40 pointer-events-none select-none transition-all duration-300" id="desktop-canvas">
+<!-- SideNavBar (Shared Components JSON Anchor) -->
+<aside class="fixed top-0 left-0 h-screen w-64 flex flex-col justify-between bg-surface-container-lowest border-r border-outline-variant shadow-sm z-10 p-4">
+<div class="flex flex-col gap-6">
+<!-- Brand Header -->
+<div class="flex items-center gap-3 px-2"><div class="w-10 h-10 rounded-xl overflow-hidden bg-primary-container flex items-center justify-center shrink-0"><img src="https://lh3.googleusercontent.com/aida/AEtjO1WrulZLadNFTl1mMmi7U8tFDCMGbnTNPvhdJxNIDZLhj4skiuXuuHwTYoCNTCVzqVTy0wARhdu4zT7cGvc0IZURKmJWy_Ah0Uo_EnbRq-BcMACumDPvnB5WopoCuV4GB_i5gZ1XQVIjMlCC0FRKuLXe8NYjSpDtCETiy2fs-CdehvA12wNNoCY_ejpQR1Ss3zsXVYnXtrBkQ_fcEWxKlyqU8tQL6rCc7a_o9SLN_PQju-viGP-iJ_0JIA" alt="NexoConecta Logo" class="w-full h-full object-cover"></div><div><h1 class="text-headline-md font-headline-md text-primary leading-tight font-bold">NexoConecta</h1><p class="text-body-sm font-body-sm text-on-surface-variant">Clinical IoT Ecosystem</p></div></div>
+<!-- CTA ESP32 -->
+<button class="w-full py-2.5 px-4 bg-secondary-container text-on-secondary-container rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+          Testar ESP32
+        </button>
+<!-- Navigation Tabs -->
+<nav class="flex flex-col gap-1.5">
+<!-- Visão Geral -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-md font-label-md">Visão Geral</span>
+</a>
+<!-- Iluminação -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="light">light</span>
+<span class="text-label-md font-label-md">Iluminação</span>
+</a>
+<!-- Telemetria & Gás (Active Match) -->
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+<span class="text-label-md font-label-md">Telemetria &amp; Gás</span>
+</a>
+<!-- Triagem Manchester -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="emergency">emergency</span>
+<span class="text-label-md font-label-md">Triagem Manchester</span>
+</a>
+<!-- Histórico & Logs -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="text-label-md font-label-md">Histórico &amp; Logs</span>
+</a>
+</nav>
+</div>
+<!-- Footer Actions -->
+<div class="flex flex-col gap-1 pt-4 border-t border-outline-variant">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high" href="#">
+<span class="material-symbols-outlined" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span class="text-label-md font-label-md">Permissões</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high" href="#">
+<span class="material-symbols-outlined" data-icon="wifi">wifi</span>
+<span class="text-label-md font-label-md">Conexão ESP32</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<div class="flex-1 ml-64 flex flex-col h-screen overflow-y-auto">
+<!-- TopNavBar (Shared Components JSON Anchor) -->
+<header class="flex justify-between items-center w-full px-4 lg:px-8 py-3 bg-surface-container-lowest border-b border-outline-variant shadow-sm shrink-0">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2.5"><img src="https://lh3.googleusercontent.com/aida/AEtjO1WrulZLadNFTl1mMmi7U8tFDCMGbnTNPvhdJxNIDZLhj4skiuXuuHwTYoCNTCVzqVTy0wARhdu4zT7cGvc0IZURKmJWy_Ah0Uo_EnbRq-BcMACumDPvnB5WopoCuV4GB_i5gZ1XQVIjMlCC0FRKuLXe8NYjSpDtCETiy2fs-CdehvA12wNNoCY_ejpQR1Ss3zsXVYnXtrBkQ_fcEWxKlyqU8tQL6rCc7a_o9SLN_PQju-viGP-iJ_0JIA" alt="NexoConecta Logo" class="w-7 h-7 rounded-lg object-cover"><span class="text-headline-md font-headline-md text-primary font-bold tracking-tight">NexoConecta</span></div>
+<!-- Simulation Chip -->
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-primary border border-outline-variant text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+            Modo de Demonstração
+          </div>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-low text-on-surface-variant text-label-sm font-label-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary animate-pulse"></span>
+            ESP32 Conectado
+          </div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-9 h-9 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-label-md ml-1">
+            CL
+          </div>
+</div>
+</header>
+<!-- Dashboard Mock Content Behind Blur -->
+<main class="p-8 space-y-6 flex-1 bg-surface-container-low">
+<div class="grid grid-cols-12 gap-6">
+<!-- Metric 1: Temp -->
+<div class="col-span-4 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-title-sm font-title-sm text-on-surface-variant">Temperatura do Quarto</span>
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="thermostat">thermostat</span>
+</div>
+</div>
+<div class="my-4">
+<span class="text-metric-display font-metric-display text-on-surface">22.4 °C</span>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Sensor DHT22 Estável</p>
+</div>
+</div>
+<!-- Metric 2: Umidade -->
+<div class="col-span-4 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-title-sm font-title-sm text-on-surface-variant">Umidade Relativa</span>
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="humidity_percentage">humidity_percentage</span>
+</div>
+</div>
+<div class="my-4">
+<span class="text-metric-display font-metric-display text-on-surface">48 %</span>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Parâmetro ideal clínico</p>
+</div>
+</div>
+<!-- Metric 3: Gás Bruto MQ -->
+<div class="col-span-4 bg-surface-container-lowest p-6 rounded-xl border border-error shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-title-sm font-title-sm text-error font-bold">Presença de Gás (MQ-2)</span>
+<div class="w-10 h-10 rounded-xl bg-error-container flex items-center justify-center text-error">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+</div>
+</div>
+<div class="my-4">
+<span class="text-metric-display font-metric-display text-error">POSITIVO</span>
+<p class="text-body-sm font-body-sm text-error">Leitura acima da linha de base</p>
+</div>
+</div>
+</div>
+<!-- Simulation Bed Panel -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+<h2 class="text-headline-md font-headline-md text-on-surface mb-2">Quarto 01 - Leito de Simulação Clínica</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">Status Geral de Automação e Triagem Manchester em andamento.</p>
+</div>
+</main>
+</div>
+</div>
+<!-- ==================== PERSISTENT BACKGROUND HAZARD TOP-BANNER ==================== -->
+<!-- Visível sob o modal e preparado para permanecer fixo após reconhecimento -->
+<div class="fixed top-0 left-0 w-full z-40 bg-error text-on-error py-2.5 px-6 shadow-md flex items-center justify-between border-b-2 border-on-error-container" id="persistent-hazard-banner">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-error animate-pulse" data-icon="crisis_alert">crisis_alert</span>
+<div>
+<span class="text-label-md font-label-md uppercase tracking-wider font-bold">ALERTA AMBIENTAL PERSISTENTE ATIVO:</span>
+<span class="text-body-md font-body-md ml-1 font-semibold">Detecção de Gás no Quarto 01 (Simulação IoT ESP32)</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-body-sm font-body-sm bg-black/25 px-3 py-1 rounded-full text-on-error font-medium">Reconhecimento pendente</span>
+<span class="w-3 h-3 rounded-full bg-error-container animate-ping"></span>
+</div>
+</div>
+<!-- ==================== BACKDROP SEMI-TRANSPARENTE ESCURECIDO ==================== -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/75 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 transition-all duration-300" id="modal-backdrop">
+<!-- ==================== MODAL DE ALERTA DE EMERGÊNCIA AMBIENTAL ==================== -->
+<div aria-describedby="modal-alert-desc" aria-labelledby="modal-alert-title" aria-modal="true" class="relative w-full max-w-2xl bg-surface-container-lowest rounded-2xl shadow-2xl overflow-hidden border-2 border-[#d97706] ring-4 ring-amber-500/20 transform transition-all animate-in fade-in zoom-in-95 duration-200" id="critical-alert-modal" role="alertdialog">
+<!-- Faixa Zebrada de Advertência Amarela e Preta (#f59e0b / #000000) -->
+<div class="w-full h-4 hazard-stripe-pattern border-b border-amber-600"></div>
+<!-- Cabeçalho de Urgência -->
+<div class="px-6 sm:px-8 pt-6 pb-4 bg-surface-container-low border-b border-outline-variant">
+<div class="flex items-start justify-between gap-4">
+<div class="flex items-center gap-3.5">
+<!-- Ícone de triângulo de perigo com glow -->
+<div class="w-12 h-12 rounded-xl bg-amber-500/15 text-amber-600 border border-amber-500/30 flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-3xl" data-icon="warning" data-weight="fill" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-bold uppercase tracking-wider">
+                  Severidade Crítica
+                </span>
+<span class="text-label-sm font-label-sm text-on-surface-variant font-medium">ESP32 · MQ-Sensor</span>
+</div>
+<h2 class="text-headline-lg font-headline-lg text-on-surface tracking-tight mt-1 flex items-center gap-2" id="modal-alert-title">
+                ALERTA DE GÁS · SIMULAÇÃO
+              </h2>
+</div>
+</div>
+<!-- Badge indicador Quarto 01 -->
+<div class="hidden sm:flex flex-col items-end">
+<span class="text-label-sm font-label-sm text-on-surface-variant">Local</span>
+<span class="text-title-sm font-title-sm text-primary font-bold">Quarto 01</span>
+</div>
+</div>
+</div>
+<!-- Corpo da Mensagem do Modal -->
+<div class="px-6 sm:px-8 py-6 space-y-5">
+<!-- Mensagem Textual em Estrita Conformidade -->
+<div class="p-4 rounded-xl bg-amber-50/80 border-l-4 border-[#d97706] border-y border-r border-amber-200">
+<p class="text-title-sm font-title-sm text-amber-950 font-bold" id="modal-alert-desc">
+            Possível presença de gás ou fumaça no Quarto 01
+          </p>
+<p class="text-body-md font-body-md text-amber-900/90 mt-1">
+            Alerta ambiental independente da triagem clínica do paciente. Tipo de gás não identificado.
+          </p>
+</div>
+<!-- Dados Rápidos de Telemetria Ambiental do Alerta -->
+<div class="grid grid-cols-2 gap-3 py-1">
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant">
+<span class="text-label-sm font-label-sm text-on-surface-variant block">Leitura do Sensor Analógico</span>
+<span class="text-headline-md font-headline-md text-error font-bold">682 ppm</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant block">Limiar de disparo: &gt; 350 ppm</span>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant">
+<span class="text-label-sm font-label-sm text-on-surface-variant block">Classificação de Risco</span>
+<span class="text-headline-md font-headline-md text-on-surface font-bold">Ambiente Físico</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant block">Sem aferição toxicológica</span>
+</div>
+</div>
+<!-- Aviso Explícito de Segurança Mandatório -->
+<div class="flex items-start gap-3 p-4 rounded-xl bg-surface-container border border-outline-variant/60">
+<span class="material-symbols-outlined text-primary shrink-0 mt-0.5" data-icon="info">info</span>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-relaxed">
+<strong class="text-on-surface font-bold">Atenção:</strong> reconhecer este alerta não significa que o ambiente voltou ao normal. A ventilação e inspeção presencial são necessárias se persistir.
+          </p>
+</div>
+</div>
+<!-- Rodapé com Ações -->
+<div class="px-6 sm:px-8 py-5 bg-surface-container-lowest border-t border-outline-variant flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
+<!-- Botão Secundário: Ver Telemetria -->
+<button class="w-full sm:w-auto px-5 py-3 rounded-lg border border-primary/30 text-primary bg-surface-container-lowest hover:bg-surface-container font-label-md text-label-md transition-colors flex items-center justify-center gap-2" id="btn-telemetry" onclick="openTelemetryDetails()" type="button"><span class="material-symbols-outlined" data-icon="sensors">sensors</span>Ver Telemetria</button>
+<!-- Botão Primário Destacado: Reconhecer Alerta e Voltar ao Aplicativo -->
+<button class="w-full sm:w-auto px-6 py-3 rounded-lg bg-[#005a9e] hover:bg-primary text-on-primary font-label-md text-label-md shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 font-bold" id="btn-acknowledge" onclick="acknowledgeAlert()" type="button"><span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>Reconhecer Alerta e Voltar ao Aplicativo</button>
+</div>
+<!-- Barra inferior zebrada sutil para fechamento do contêiner de segurança -->
+<div class="w-full h-1.5 hazard-stripe-pattern"></div>
+</div>
+</div>
+<!-- BottomNavBar (Shared Components JSON Anchor para Telas Pequenas) -->
+<nav class="fixed bottom-0 left-0 w-full z-30 md:hidden flex justify-around items-center px-2 py-2 bg-surface-container-lowest border-t border-outline-variant shadow-md">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-sm font-label-sm">Painel</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="light">light</span>
+<span class="text-label-sm font-label-sm">Luzes</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl px-3 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+<span class="text-label-sm font-label-sm">Sensores</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="emergency">emergency</span>
+<span class="text-label-sm font-label-sm">Triagem</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="wifi">wifi</span>
+<span class="text-label-sm font-label-sm">ESP32</span>
+</a>
+</nav>
+<!-- ==================== JAVASCRIPT MICRO-INTERACTIONS ==================== -->
+<script>
+    function acknowledgeAlert() {
+      const modalBackdrop = document.getElementById('modal-backdrop');
+      const desktopCanvas = document.getElementById('desktop-canvas');
+      const banner = document.getElementById('persistent-hazard-banner');
+
+      // Suaviza a saída do modal
+      modalBackdrop.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        modalBackdrop.style.display = 'none';
+        // Remove blur do fundo mantendo a aplicação funcional
+        desktopCanvas.classList.remove('filter', 'blur-[6px]', 'opacity-40', 'pointer-events-none', 'select-none');
+        desktopCanvas.classList.add('opacity-100');
+        
+        // Atualiza a barra de alerta fixada no topo indicando que foi reconhecido mas persiste
+        banner.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-on-error animate-pulse" data-icon="warning">warning</span>
+            <div>
+              <span class="text-label-md font-label-md uppercase tracking-wider font-bold">ALERTA RECONHECIDO · DETECÇÃO ATIVA:</span>
+              <span class="text-body-md font-body-md ml-1">Gás em Quarto 01 não normalizado. Providencie ventilação local.</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-body-sm font-body-sm bg-black/20 px-3 py-1 rounded-full text-on-error">Operador Clínico Ciente</span>
+          </div>
+        `;
+      }, 250);
+    }
+
+    function openTelemetryDetails() {
+      // Simulação de navegação direta para a aba de telemetria
+      acknowledgeAlert();
+    }
+  </script>
+
+
+</body></html>

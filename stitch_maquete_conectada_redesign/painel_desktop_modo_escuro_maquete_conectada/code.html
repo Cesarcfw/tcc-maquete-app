@@ -1,0 +1,623 @@
+<!DOCTYPE html><html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>SAMAHI - Quarto Hospitalar IoT</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface-variant": "#3f4850",
+            "surface-variant": "#dae2fd",
+            "secondary-fixed": "#cde5ff",
+            "on-tertiary": "#ffffff",
+            "primary-fixed-dim": "#93ccff",
+            "surface-container-high": "#e2e7ff",
+            "background": "#faf8ff",
+            "primary-fixed": "#cce5ff",
+            "surface": "#faf8ff",
+            "primary": "#006194",
+            "on-error": "#ffffff",
+            "surface-container": "#eaedff",
+            "inverse-primary": "#93ccff",
+            "error": "#ba1a1a",
+            "on-secondary-container": "#004f7b",
+            "on-secondary-fixed": "#001d32",
+            "on-surface": "#131b2e",
+            "on-secondary-fixed-variant": "#004b74",
+            "tertiary": "#00685f",
+            "surface-container-highest": "#dae2fd",
+            "on-error-container": "#93000a",
+            "secondary": "#006399",
+            "tertiary-fixed": "#89f5e7",
+            "outline-variant": "#bfc7d2",
+            "surface-bright": "#faf8ff",
+            "secondary-fixed-dim": "#94ccff",
+            "tertiary-fixed-dim": "#6bd8cb",
+            "outline": "#707881",
+            "surface-tint": "#006398",
+            "on-tertiary-fixed-variant": "#005049",
+            "surface-container-low": "#f2f3ff",
+            "primary-container": "#007bb9",
+            "on-background": "#131b2e",
+            "on-primary-fixed-variant": "#004b73",
+            "inverse-on-surface": "#eef0ff",
+            "on-primary-container": "#fdfcff",
+            "error-container": "#ffdad6",
+            "surface-dim": "#d2d9f4",
+            "inverse-surface": "#283044",
+            "on-primary": "#ffffff",
+            "on-primary-fixed": "#001d31",
+            "on-tertiary-container": "#f4fffc",
+            "on-secondary": "#ffffff",
+            "on-tertiary-fixed": "#00201d",
+            "secondary-container": "#7bc2ff",
+            "tertiary-container": "#008378",
+            "surface-container-lowest": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "margin": "1rem",
+            "gutter-desktop": "1.5rem",
+            "margin-desktop": "2rem",
+            "space-lg": "1.5rem",
+            "space-md": "1rem",
+            "gutter": "1.25rem"
+          },
+          "fontFamily": {
+            "body-lg": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "title-sm": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "headline-xl-mobile": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "metric-display": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "title-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-xl": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+            "headline-xl-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }],
+            "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "metric-display": ["32px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    /* Clinical low-glare dark background styling */
+    body {
+      background-color: #0b132b;
+      color: #eef0ff;
+    }
+    .custom-dark-card {
+      background-color: #131c31;
+      border: 1px solid #1e293b;
+      box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.45);
+    }
+    .custom-dark-inner {
+      background-color: #0d1629;
+      border: 1px solid #1c2742;
+    }
+    /* Custom subtle slider styling */
+    input[type=range]::-webkit-slider-thumb {
+      appearance: none;
+      height: 22px;
+      width: 22px;
+      border-radius: 9999px;
+      background: #93ccff;
+      border: 3px solid #006194;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(147, 204, 255, 0.4);
+    }
+    /* Pulsing animations */
+    @keyframes subtlePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.15); }
+    }
+    .pulse-esp {
+      animation: subtlePulse 2.4s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="font-body-md text-body-md antialiased overflow-x-hidden min-h-screen flex flex-col justify-between">
+<!-- SEMANTIC SHELL: SideNavBar (JSON Derived) -->
+<aside class="fixed top-0 left-0 h-screen w-64 flex flex-col justify-between z-40 hidden md:flex border-r border-outline-variant/20 shadow-sm bg-surface-container-lowest dark:bg-inverse-surface">
+<!-- Header / Brand -->
+<div class="p-4 flex flex-col gap-4">
+<div class="flex items-center gap-3"><img src="https://lh3.googleusercontent.com/aida/AEtjO1XoW_mUPCDo2KZ6gJUvjz2MfcjjplgxkXaZdKcxHNZH6kqqwzR9oxLHHqdIkyNpQ11U6EQ9qqBXdqXGuReHz_TEAPUvc2eNR7DCuN9LVdkWS9-nlnxy_ia0e2lcm-zYAchN8bocFBq1TC19eBIQCoMYHKn-A4M1CoKI6I2D6IGvfQU7CurgFEOluXIGsJgWG1bQbGiMpbfOJIWa9IJWn0VnZLY1jFhX7wnA_pjTntAjRrGW62hBUSSp8Gs" alt="SAMAHI" class="h-10 w-full object-contain"></div>
+<!-- Navigation Tabs -->
+<nav class="flex flex-col gap-1.5 mt-2">
+<!-- Tab 1: Painel (Active Semantic Match to 'Visão Geral') -->
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container rounded-lg font-bold transition-colors duration-150 ease-in-out" href="#painel">
+<span class="material-symbols-outlined" data-icon="dashboard" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-label-md font-label-md">Visão Geral</span>
+</a>
+<!-- Tab 2: Iluminação -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant rounded-lg font-normal hover:bg-surface-container-high dark:hover:bg-surface-container hover:text-on-surface transition-colors duration-150 ease-in-out" href="#iluminacao">
+<span class="material-symbols-outlined" data-icon="light">light</span>
+<span class="text-label-md font-label-md">Iluminação</span>
+</a>
+<!-- Tab 3: Telemetria & Gás -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant rounded-lg font-normal hover:bg-surface-container-high dark:hover:bg-surface-container hover:text-on-surface transition-colors duration-150 ease-in-out" href="#telemetria">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+<span class="text-label-md font-label-md">Telemetria &amp; Gás</span>
+</a>
+<!-- Tab 4: Triagem Manchester -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant rounded-lg font-normal hover:bg-surface-container-high dark:hover:bg-surface-container hover:text-on-surface transition-colors duration-150 ease-in-out" href="#triagem">
+<span class="material-symbols-outlined" data-icon="emergency">emergency</span>
+<span class="text-label-md font-label-md">Triagem Manchester</span>
+</a>
+<!-- Tab 5: Histórico & Logs -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant rounded-lg font-normal hover:bg-surface-container-high dark:hover:bg-surface-container hover:text-on-surface transition-colors duration-150 ease-in-out" href="#historico">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="text-label-md font-label-md">Histórico &amp; Logs</span>
+</a>
+</nav>
+</div>
+<!-- CTA & Footer Tabs -->
+<div class="p-4 flex flex-col gap-3">
+<!-- Hardware Test Action CTA -->
+<button class="w-full py-2.5 px-4 rounded-xl bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary-container transition-all shadow-sm">
+<span class="material-symbols-outlined text-base" data-icon="memory">memory</span>
+<span class="">Testar ESP32</span>
+</button>
+<div class="pt-3 border-t border-outline-variant/20 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container text-label-md font-label-md transition-colors" href="#permissoes">
+<span class="material-symbols-outlined text-lg" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span class="">Permissões</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container text-label-md font-label-md transition-colors" href="#conexao">
+<span class="material-symbols-outlined text-lg" data-icon="wifi">wifi</span>
+<span class="">Conexão ESP32</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- MAIN VIEWPORT CONTAINER -->
+<div class="flex-1 flex flex-col md:pl-64">
+<!-- SEMANTIC SHELL: TopNavBar (JSON Injected + Enhanced Prompt Elements) -->
+<header class="sticky top-0 z-30 flex justify-between items-center w-full px-4 lg:px-8 py-3 bg-surface-container-lowest/90 dark:bg-inverse-surface/90 backdrop-blur-md shadow-sm transition-all duration-200">
+<!-- Left: Room & Bed Identifier -->
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary" data-icon="meeting_room">meeting_room</span>
+<span class="text-headline-md font-headline-md tracking-tight text-on-surface dark:text-inverse-on-surface">Quarto 01 - Leito Clínico</span>
+</div>
+<!-- Simulation Environment Badge (Style Guidance standard) -->
+<div class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-label-sm font-label-sm bg-sky-950/60 border border-sky-500/40 text-sky-300">
+<span class="material-symbols-outlined text-xs" data-icon="science">science</span>
+<span class="">Modo de Demonstração (Dados Simulados)</span>
+</div>
+</div>
+<!-- Right: ESP32 status, Theme switcher & Trailing Actions -->
+<div class="flex items-center gap-3 md:gap-4">
+<!-- Live ESP32 Pulse Indicator -->
+<div class="flex items-center gap-2.5 px-3 py-1.5 rounded-full custom-dark-inner border border-outline-variant/30">
+<div class="relative flex h-2.5 w-2.5">
+<span class="pulse-esp absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+</div>
+<span class="text-label-sm font-label-sm text-surface-variant font-medium hidden sm:inline">ESP32 Conectado</span>
+<span class="text-xs text-outline-variant font-mono hidden lg:inline">| 22ms</span>
+</div>
+<!-- Trailing action icons from JSON: notifications, settings -->
+<button aria-label="Notificações" class="p-2 rounded-xl text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="notifications">notifications</span>
+</button>
+<!-- Theme Selector (Dark Mode Toggle) -->
+<button aria-label="Seletor de tema" class="p-2 rounded-xl text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="dark_mode">dark_mode</span>
+</button>
+<button aria-label="Configurações" class="p-2 rounded-xl text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+</button>
+<!-- Profile Avatar Placeholder -->
+<div class="flex items-center pl-2 border-l border-outline-variant/20">
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-xs shadow-inner">
+            OP
+          </div>
+</div>
+</div>
+</header>
+<!-- MAIN BENTO CANVAS CONTENT -->
+<main class="flex-1 p-4 lg:p-6 space-y-6 max-w-7xl mx-auto w-full pb-20 md:pb-6">
+<!-- TOP SECTION: Asymmetric 12-Column Grid (Lighting & Physical Ward Map) -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Physical Architectural Schematic (Col 7) -->
+<div class="lg:col-span-7 custom-dark-card rounded-2xl p-5 flex flex-col justify-between overflow-hidden relative group">
+<div class="flex justify-between items-start mb-4 z-10">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed-dim" data-icon="apartment">apartment</span>
+<h2 class="text-headline-md font-headline-md text-inverse-on-surface">Mapeamento Arquitetônico</h2>
+</div>
+<p class="text-body-sm font-body-sm text-outline-variant mt-0.5">Visão esquemática em repouso noturno com iluminação focada no leito</p>
+</div>
+<span class="px-2.5 py-1 rounded text-label-sm font-label-sm bg-primary/20 text-inverse-primary border border-primary/30">Planta Baixa IoT</span>
+</div>
+<!-- Architectural Floorplan Canvas Schematic -->
+<div class="relative w-full h-64 md:h-72 custom-dark-inner rounded-xl overflow-hidden border border-outline-variant/30 flex items-center justify-center">
+<!-- Room Blueprint SVG Floorplan -->
+<svg class="w-full h-full p-4" fill="none" viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg">
+<!-- Grid Floor Grid Lines -->
+<defs>
+<pattern height="30" id="floorGrid" patternUnits="userSpaceOnUse" width="30">
+<path d="M 30 0 L 0 0 0 30" fill="none" stroke="#1e2a47" stroke-dasharray="2 3" stroke-width="0.75"></path>
+</pattern>
+<!-- Warm Glow for Hospital Bed -->
+<radialGradient cx="62%" cy="48%" id="bedWarmLight" r="42%">
+<stop offset="0%" stop-color="#ffb74d" stop-opacity="0.45"></stop>
+<stop offset="45%" stop-color="#ff9800" stop-opacity="0.18"></stop>
+<stop offset="100%" stop-color="#0b132b" stop-opacity="0"></stop>
+</radialGradient>
+<!-- Manchester Blue Entrance Glow -->
+<radialGradient cx="12%" cy="84%" id="manchesterGlow" r="35%">
+<stop offset="0%" stop-color="#3b82f6" stop-opacity="0.8"></stop>
+<stop offset="35%" stop-color="#2563eb" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="#0b132b" stop-opacity="0"></stop>
+</radialGradient>
+</defs>
+<!-- Floor Background Texture -->
+<rect fill="#0b1329" height="340" rx="8" width="580" x="10" y="10"></rect>
+<rect fill="url(#floorGrid)" height="340" width="580" x="10" y="10"></rect>
+<!-- Outer Room Structural Walls -->
+<rect fill="none" height="320" rx="4" stroke="#334155" stroke-width="3" width="560" x="20" y="20"></rect>
+<!-- Entrance Door Cavity & Door Arc (Bottom Left) -->
+<path d="M 20 280 L 20 340" stroke="#0b1329" stroke-width="5"></path>
+<path d="M 20 280 A 60 60 0 0 1 80 340" fill="none" stroke="#475569" stroke-dasharray="3 3" stroke-width="1.5"></path>
+<line stroke="#94a3b8" stroke-width="3" x1="20" x2="65" y1="280" y2="325"></line>
+<!-- Doorway Sensor / Manchester Triage LED Placement -->
+<circle cx="20" cy="275" fill="url(#manchesterGlow)" r="50"></circle>
+<circle class="animate-pulse" cx="20" cy="275" fill="#3b82f6" r="7" stroke="#93c5fd" stroke-width="2"></circle>
+<text fill="#93c5fd" font-family="Plus Jakarta Sans" font-size="11" font-weight="700" x="35" y="268">LED Manchester (Porta)</text>
+<text fill="#64748b" font-family="Plus Jakarta Sans" font-size="9" x="35" y="282">Triagem: Não Urgente (Azul)</text>
+<!-- Patient Rest Area Warm Lighting Conic Beam -->
+<circle cx="360" cy="170" fill="url(#bedWarmLight)" r="160"></circle>
+<!-- Hospital Bed Clinical Layout -->
+<!-- Bed Frame -->
+<rect fill="#15213b" height="130" rx="10" stroke="#38bdf8" stroke-width="1.5" width="130" x="300" y="110"></rect>
+<!-- Pillow -->
+<rect fill="#1e293b" height="100" rx="4" stroke="#475569" stroke-width="1" width="28" x="312" y="125"></rect>
+<!-- Bed Coverlet Blanket with warm tint -->
+<rect fill="#1e3256" height="110" rx="6" stroke="#ffb74d" stroke-width="0.8" width="75" x="345" y="120"></rect>
+<!-- Clinical Bed Marker -->
+<text fill="#cbd5e1" font-family="Plus Jakarta Sans" font-size="12" font-weight="600" x="330" y="180">Leito 01</text>
+<!-- Ambient Sensor Node (ESP32) on North Wall -->
+<rect fill="#0284c7" height="14" rx="2" stroke="#38bdf8" stroke-width="1" width="36" x="270" y="16"></rect>
+<circle class="animate-ping" cx="288" cy="23" fill="#34d399" r="3"></circle>
+<text fill="#7dd3fc" font-family="Plus Jakarta Sans" font-size="10" x="245" y="44">Microcontrolador ESP32</text>
+<!-- Medical Gas & Infusion Tower -->
+<rect fill="#0f172a" height="40" rx="3" stroke="#64748b" stroke-width="1" width="22" x="445" y="110"></rect>
+<circle cx="456" cy="120" fill="#38bdf8" r="4"></circle>
+<circle cx="456" cy="132" fill="#facc15" r="4"></circle>
+<!-- Washroom partition wall -->
+<line stroke="#334155" stroke-width="2.5" x1="20" x2="150" y1="120" y2="120"></line>
+<line stroke="#334155" stroke-width="2.5" x1="150" x2="150" y1="20" y2="120"></line>
+<text fill="#475569" font-family="Plus Jakarta Sans" font-size="11" x="45" y="70">Sanitário</text>
+</svg>
+<!-- Bottom schematic micro-status overlay -->
+<div class="absolute bottom-3 left-4 right-4 flex items-center justify-between text-body-sm font-body-sm px-3 py-1.5 rounded-lg bg-slate-950/80 backdrop-blur-md border border-slate-800">
+<span class="flex items-center gap-2 text-slate-300">
+<span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                Iluminação de Repouso Ativa (Leito)
+              </span>
+<span class="font-mono text-xs text-sky-400">Firmware v2.4.1</span>
+</div>
+</div>
+</div>
+<!-- Room Lighting Controls Module (Col 5) -->
+<div class="lg:col-span-5 custom-dark-card rounded-2xl p-5 flex flex-col justify-between" id="iluminacao">
+<div>
+<!-- Header with Master Toggle -->
+<div class="flex justify-between items-center pb-4 border-b border-outline-variant/20">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+<span class="material-symbols-outlined" data-icon="lightbulb" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+</div>
+<div>
+<h2 class="text-headline-md font-headline-md text-inverse-on-surface">Iluminação do Quarto</h2>
+<span class="text-label-sm font-label-sm text-outline-variant">Luminária Principal &amp; Fita Leito</span>
+</div>
+</div>
+<!-- State Switch -->
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm text-emerald-400 font-bold">LIGADO</span>
+<button aria-label="Alternar luzes" class="w-12 h-6 rounded-full bg-primary p-0.5 flex items-center justify-end transition-all shadow-inner">
+<div class="w-5 h-5 rounded-full bg-on-primary shadow"></div>
+</button>
+</div>
+</div>
+<!-- Slider & Confirmed Readout -->
+<div class="mt-6 space-y-4">
+<div class="flex justify-between items-end">
+<span class="text-label-md font-label-md text-surface-variant">Intensidade do Quarto</span>
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded bg-emerald-950/70 border border-emerald-500/40 text-emerald-300">
+                    Sincronizado
+                  </span>
+<span class="text-headline-lg font-headline-lg text-inverse-primary tracking-tight">65% Confirmado</span>
+</div>
+</div>
+<!-- Slider Track -->
+<div class="relative py-2">
+<input aria-label="Intensidade da iluminação" class="w-full h-2.5 rounded-lg bg-slate-800 appearance-none cursor-pointer accent-primary" max="100" min="0" type="range" value="65">
+<div class="flex justify-between text-label-sm font-label-sm text-outline-variant mt-2 font-mono">
+<span class="">0% (Off)</span>
+<span class="">50%</span>
+<span class="">100% (Máx)</span>
+</div>
+</div>
+<!-- Tactical Quick-Select Buttons (Per Style Guidance) -->
+<div class="pt-2">
+<span class="text-label-sm font-label-sm text-outline-variant block mb-2 font-medium">Atalhos Táteis Rápidos</span>
+<div class="grid grid-cols-4 gap-2">
+<button class="py-2 rounded-xl text-label-md font-label-md custom-dark-inner border border-outline-variant/30 text-surface-variant hover:border-primary transition-all active:scale-95 text-center">
+                    Apagar
+                  </button>
+<button class="py-2 rounded-xl text-label-md font-label-md custom-dark-inner border border-outline-variant/30 text-surface-variant hover:border-primary transition-all active:scale-95 text-center">
+                    25%
+                  </button>
+<button class="py-2 rounded-xl text-label-md font-label-md custom-dark-inner border border-outline-variant/30 text-surface-variant hover:border-primary transition-all active:scale-95 text-center">
+                    50%
+                  </button>
+<button class="py-2 rounded-xl text-label-md font-label-md bg-primary-container/40 border border-primary text-inverse-primary font-bold transition-all active:scale-95 text-center shadow-sm">
+                    65%
+                  </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Ambient Preset Clinical Profiles -->
+<div class="mt-6 pt-4 border-t border-outline-variant/20 flex items-center justify-between">
+<span class="text-body-sm font-body-sm text-outline-variant">Perfil Selecionado:</span>
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-800/80 text-amber-300 border border-amber-500/30 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-sm" data-icon="bedtime">bedtime</span>
+<span class="">Repouso Noturno Clínico</span>
+</div>
+</div>
+</div>
+</section>
+<!-- MIDDLE SECTION: Telemetry Metrics & Manchester Clinical Triage -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Telemetry & Sensor Cards Cluster (Col 7) -->
+<div class="lg:col-span-7 flex flex-col gap-4" id="telemetria">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed-dim" data-icon="sensors">sensors</span>
+<h2 class="text-headline-md font-headline-md text-inverse-on-surface">Telemetria de Sensores</h2>
+</div>
+<span class="text-label-sm font-label-sm text-outline-variant">Amostragem: a cada 2s</span>
+</div>
+<!-- 3-Tile Metric Bento Display -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<!-- Temperature Metric Card -->
+<div class="custom-dark-card rounded-2xl p-4 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-3">
+<span class="text-label-md font-label-md text-outline-variant">Temperatura</span>
+<div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+<span class="material-symbols-outlined" data-icon="thermostat">thermostat</span>
+</div>
+</div>
+<div>
+<div class="text-metric-display font-metric-display text-inverse-on-surface">
+                  24,6 <span class="text-headline-md font-headline-md text-outline-variant">°C</span>
+</div>
+<div class="flex items-center gap-1 text-emerald-400 text-body-sm font-body-sm mt-1">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+<span class="">Faixa Térmica Ideal</span>
+</div>
+</div>
+</div>
+<!-- Humidity Metric Card -->
+<div class="custom-dark-card rounded-2xl p-4 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-3">
+<span class="text-label-md font-label-md text-outline-variant">Umidade Relativa</span>
+<div class="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400">
+<span class="material-symbols-outlined" data-icon="humidity_percentage">humidity_percentage</span>
+</div>
+</div>
+<div>
+<div class="text-metric-display font-metric-display text-inverse-on-surface">
+                  58 <span class="text-headline-md font-headline-md text-outline-variant">%</span>
+</div>
+<div class="flex items-center gap-1 text-emerald-400 text-body-sm font-body-sm mt-1">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+<span class="">Conforto Respiratório</span>
+</div>
+</div>
+</div>
+<!-- Environmental Gas Presence Sensor Card (Strict Style Separation) -->
+<div class="custom-dark-card rounded-2xl p-4 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-3">
+<span class="text-label-md font-label-md text-outline-variant">Sensor de Gás</span>
+<div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+<span class="material-symbols-outlined" data-icon="air">air</span>
+</div>
+</div>
+<div>
+<div class="text-headline-lg font-headline-lg text-emerald-400 tracking-tight flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                  Sem detecção
+                </div>
+<div class="text-body-sm font-body-sm text-outline-variant mt-1 leading-snug">
+                  Ar ambiente estabilizado
+                </div>
+</div>
+</div>
+</div>
+<!-- Hazard Alert Micro-Banner (Per Style Guidance: Gas detection is non-toxicological) -->
+<div class="custom-dark-inner rounded-xl p-3 border border-outline-variant/30 flex items-center gap-3">
+<span class="material-symbols-outlined text-outline-variant text-lg" data-icon="info">info</span>
+<p class="text-body-sm font-body-sm text-outline-variant">
+<strong class="text-surface-variant font-semibold">Nota Técnica Ambiental:</strong> Detecção de gás genérica. Sem aferição toxicológica específica.
+            </p>
+</div>
+</div>
+<!-- Manchester Patient Clinical Triage (Col 5) -->
+<div class="lg:col-span-5 custom-dark-card rounded-2xl p-5 flex flex-col justify-between" id="triagem">
+<div>
+<div class="flex justify-between items-start mb-4">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-blue-400" data-icon="emergency">emergency</span>
+<h2 class="text-headline-md font-headline-md text-inverse-on-surface">Triagem Manchester</h2>
+</div>
+<p class="text-body-sm font-body-sm text-outline-variant mt-0.5">Prioridade clínica sincronizada ao LED físico do quarto</p>
+</div>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-blue-950/80 text-blue-300 border border-blue-600/40">
+                Leito Ocupado
+              </span>
+</div>
+<!-- Triage Active Status Callout (Blue Selected per user prompt) -->
+<div class="p-3.5 rounded-xl bg-blue-950/40 border-l-4 border-l-[#3b82f6] border border-blue-500/20 mb-4 flex items-center justify-between">
+<div>
+<div class="text-title-sm font-title-sm text-blue-300 flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"></span>
+                  Nível 5: Não Urgente (Azul)
+                </div>
+<p class="text-body-sm font-body-sm text-slate-400 mt-0.5">Tempo alvo de atendimento: até 240 minutos</p>
+</div>
+<span class="text-label-sm font-label-sm font-mono text-blue-400 bg-blue-900/40 px-2 py-1 rounded">ATIVO</span>
+</div>
+<!-- Tactical Segmented 5-Color Manchester Buttons + Off State -->
+<div class="space-y-2">
+<span class="text-label-sm font-label-sm text-outline-variant block font-medium">Alterar Protocolo de Gravidade:</span>
+<div class="grid grid-cols-5 gap-2">
+<!-- Vermelho - Emergência -->
+<button class="flex flex-col items-center justify-center py-2.5 px-1 rounded-xl bg-slate-900 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all active:scale-95 group" title="Vermelho - Emergência Imediata">
+<span class="w-3.5 h-3.5 rounded-full bg-[#ef4444] mb-1 group-hover:scale-110 transition-transform"></span>
+<span class="text-[10px] font-bold tracking-tight">Vermelho</span>
+</button>
+<!-- Laranja - Muito Urgente -->
+<button class="flex flex-col items-center justify-center py-2.5 px-1 rounded-xl bg-slate-900 border border-orange-500/30 text-orange-400 hover:bg-orange-500/20 transition-all active:scale-95 group" title="Laranja - Muito Urgente (10 min)">
+<span class="w-3.5 h-3.5 rounded-full bg-[#f97316] mb-1 group-hover:scale-110 transition-transform"></span>
+<span class="text-[10px] font-bold tracking-tight">Laranja</span>
+</button>
+<!-- Amarelo - Urgente -->
+<button class="flex flex-col items-center justify-center py-2.5 px-1 rounded-xl bg-slate-900 border border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/20 transition-all active:scale-95 group" title="Amarelo - Urgente (60 min)">
+<span class="w-3.5 h-3.5 rounded-full bg-[#eab308] mb-1 group-hover:scale-110 transition-transform"></span>
+<span class="text-[10px] font-bold tracking-tight">Amarelo</span>
+</button>
+<!-- Verde - Pouco Urgente -->
+<button class="flex flex-col items-center justify-center py-2.5 px-1 rounded-xl bg-slate-900 border border-green-500/30 text-green-400 hover:bg-green-500/20 transition-all active:scale-95 group" title="Verde - Pouco Urgente (120 min)">
+<span class="w-3.5 h-3.5 rounded-full bg-[#22c55e] mb-1 group-hover:scale-110 transition-transform"></span>
+<span class="text-[10px] font-bold tracking-tight">Verde</span>
+</button>
+<!-- Azul - Não Urgente (Currently Selected) -->
+<button class="flex flex-col items-center justify-center py-2.5 px-1 rounded-xl bg-blue-900/60 border-2 border-blue-400 text-blue-200 font-bold transition-all shadow-[0_0_12px_rgba(59,130,246,0.3)]" title="Azul - Não Urgente (240 min) [Ativo]">
+<span class="w-3.5 h-3.5 rounded-full bg-[#3b82f6] mb-1 ring-2 ring-blue-300"></span>
+<span class="text-[10px] font-bold tracking-tight">Azul</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Bottom Action: Disable / Turn Off LED Option -->
+<div class="mt-4 pt-3 border-t border-outline-variant/20 flex justify-between items-center">
+<span class="text-body-sm font-body-sm text-outline-variant">Sinalizador Físico do Leito</span>
+<button class="px-3 py-1.5 rounded-lg custom-dark-inner border border-outline-variant/30 text-on-surface-variant dark:text-surface-variant hover:text-error hover:border-error/40 transition-colors text-label-sm font-label-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm" data-icon="power_settings_new">power_settings_new</span>
+<span class="">Desligar Sinalizador</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER CONNECTIVITY & LATENCY BANNER (Discreet Microcontroller Status) -->
+<footer class="w-full bg-[#0d1629] border-t border-slate-800/80 px-4 lg:px-8 py-2.5 text-xs text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-2">
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1.5 text-emerald-400 font-medium">
+<span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>
+          ESP32 Online
+        </span>
+<span class="text-slate-600">|</span>
+<span class="font-mono">IP: 192.168.1.104</span>
+<span class="text-slate-600 hidden md:inline">|</span>
+<span class="hidden md:inline text-slate-300 font-mono">Latência: <strong class="text-emerald-300">18ms (Estável)</strong></span>
+<span class="text-slate-600 hidden lg:inline">|</span>
+<span class="hidden lg:inline">Taxa de Atualização: 500ms</span>
+</div>
+<div class="flex items-center gap-4 text-outline-variant">
+<span class="">MQTT Broker: <span class="text-slate-300">Conectado (TLS v1.3)</span></span>
+<span class="font-mono text-[11px] bg-slate-900 px-2 py-0.5 rounded border border-slate-800">QoS 1</span>
+</div>
+</footer>
+</div>
+<!-- SEMANTIC SHELL: BottomNavBar (JSON Derived for Mobile Responsive Pivot) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 md:hidden flex justify-around items-center px-2 py-2 bg-surface-container-lowest dark:bg-inverse-surface border-t border-outline-variant/20 shadow-md">
+<!-- Item 1: Painel (Active) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container rounded-xl px-3 py-1 active:scale-95 transition-transform duration-150" href="#painel">
+<span class="material-symbols-outlined text-lg" data-icon="dashboard" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-label-sm font-label-sm">Painel</span>
+</a>
+<!-- Item 2: Luzes -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 active:scale-95 transition-transform duration-150" href="#iluminacao">
+<span class="material-symbols-outlined text-lg" data-icon="light">light</span>
+<span class="text-label-sm font-label-sm">Luzes</span>
+</a>
+<!-- Item 3: Sensores -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 active:scale-95 transition-transform duration-150" href="#telemetria">
+<span class="material-symbols-outlined text-lg" data-icon="sensors">sensors</span>
+<span class="text-label-sm font-label-sm">Sensores</span>
+</a>
+<!-- Item 4: Triagem -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 active:scale-95 transition-transform duration-150" href="#triagem">
+<span class="material-symbols-outlined text-lg" data-icon="emergency">emergency</span>
+<span class="text-label-sm font-label-sm">Triagem</span>
+</a>
+<!-- Item 5: ESP32 -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 active:scale-95 transition-transform duration-150" href="#conexao">
+<span class="material-symbols-outlined text-lg" data-icon="wifi">wifi</span>
+<span class="text-label-sm font-label-sm">ESP32</span>
+</a>
+</nav>
+<!-- Interactive State Vanilla Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Simple range slider readout reactivity demo
+      const slider = document.querySelector('input[type="range"]');
+      const confirmedDisplay = document.querySelector('.text-headline-lg.text-inverse-primary');
+      if (slider && confirmedDisplay) {
+        slider.addEventListener('input', (e) => {
+          confirmedDisplay.textContent = `${e.target.value}% Confirmado`;
+        });
+      }
+    });
+  </script>
+
+
+</body></html>

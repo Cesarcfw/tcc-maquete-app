@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 90" width="420" height="90" fill="none">
+  <defs>
+    <linearGradient id="samahiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#005a9e"/>
+      <stop offset="50%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <linearGradient id="crossGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f0f9ff"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#005a9e" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  
+  <!-- Icon Group -->
+  <g transform="translate(10, 8)" filter="url(#glow)">
+    <!-- Hexagonal Node Shield Background -->
+    <path d="M37 2 L65 18 L65 52 L37 68 L9 52 L9 18 Z" fill="url(#samahiGrad)" rx="6"/>
+    
+    <!-- Medical Cross with Rounded Edges -->
+    <path d="M32 20 C32 18.3 33.3 17 35 17 L39 17 C40.7 17 42 18.3 42 20 L42 29 L51 29 C52.7 29 54 30.3 54 32 L54 36 C54 37.7 52.7 39 51 39 L42 39 L42 48 C42 49.7 40.7 51 39 51 L35 51 C33.3 51 32 49.7 32 48 L32 39 L23 39 C21.3 39 20 37.7 20 36 L20 32 C20 30.3 21.3 29 23 29 L32 29 Z" fill="url(#crossGrad)"/>
+    
+    <!-- Central IoT Smart Dot / Pulse Core -->
+    <circle cx="37" cy="34" r="3.5" fill="#005a9e"/>
+    
+    <!-- IoT Network Nodes & Connectivity Orbits -->
+    <circle cx="37" cy="8" r="3" fill="#38bdf8"/>
+    <circle cx="60" cy="22" r="2.5" fill="#38bdf8"/>
+    <circle cx="60" cy="48" r="2.5" fill="#38bdf8"/>
+    <circle cx="37" cy="62" r="3" fill="#38bdf8"/>
+    <circle cx="14" cy="48" r="2.5" fill="#38bdf8"/>
+    <circle cx="14" cy="22" r="2.5" fill="#38bdf8"/>
+    
+    <!-- Pulse signal wave on top right -->
+    <path d="M68 28 C71 31 71 39 68 42" stroke="#0284c7" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M73 24 C78 28 78 42 73 46" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 2"/>
+  </g>
+  
+  <!-- Typography Group -->
+  <g transform="translate(98, 14)">
+    <!-- Main Acronym SAMAHI -->
+    <text x="0" y="32" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="30" font-weight="800" letter-spacing="1.5" fill="#005a9e">SAMAHI</text>
+    
+    <!-- Subtitle Line 1 -->
+    <text x="1" y="47" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.4" fill="#0284c7">SISTEMA DE AUTOMAÇÃO E MONITORAMENTO</text>
+    
+    <!-- Subtitle Line 2 -->
+    <text x="1" y="58" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="9.5" font-weight="600" letter-spacing="0.3" fill="#64748b">DE AMBIENTES HOSPITALARES INTELIGENTES</text>
+  </g>
+</svg>

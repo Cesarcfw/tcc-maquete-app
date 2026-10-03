@@ -1,0 +1,423 @@
+<!DOCTYPE html><html lang="pt-BR" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title class="">SAMAHI - Gestão de Leitos &amp; Quartos Hospitalares</title>
+<!-- Google Fonts: Inter & Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus Jakarta Sans:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary-container": "#50586e",
+            "inverse-on-surface": "#eaf1ff",
+            "secondary-fixed-dim": "#93ccff",
+            "surface-dim": "#cbdbf5",
+            "on-background": "#0b1c30",
+            "secondary-fixed": "#cce5ff",
+            "on-tertiary-container": "#c7cee9",
+            "surface-container-lowest": "#ffffff",
+            "on-error": "#ffffff",
+            "surface-container": "#e5eeff",
+            "error-container": "#ffdad6",
+            "on-primary-fixed": "#001c38",
+            "on-error-container": "#93000a",
+            "surface-container-highest": "#d3e4fe",
+            "tertiary-fixed": "#dae2fd",
+            "secondary-container": "#5bb8fe",
+            "secondary": "#006398",
+            "on-surface-variant": "#414750",
+            "surface-tint": "#1260a5",
+            "on-tertiary": "#ffffff",
+            "primary-container": "#005a9e",
+            "on-secondary-fixed-variant": "#004b73",
+            "on-primary": "#ffffff",
+            "surface-container-high": "#dce9ff",
+            "surface": "#f8f9ff",
+            "tertiary": "#394156",
+            "on-secondary-fixed": "#001d31",
+            "tertiary-fixed-dim": "#bec6e0",
+            "on-surface": "#0b1c30",
+            "on-primary-container": "#b1d1ff",
+            "on-secondary": "#ffffff",
+            "primary-fixed": "#d3e4ff",
+            "on-tertiary-fixed-variant": "#3f465c",
+            "primary": "#004277",
+            "surface-container-low": "#eff4ff",
+            "on-tertiary-fixed": "#131b2e",
+            "outline-variant": "#c1c7d2",
+            "surface-bright": "#f8f9ff",
+            "surface-variant": "#d3e4fe",
+            "error": "#ba1a1a",
+            "inverse-surface": "#213145",
+            "inverse-primary": "#a2c9ff",
+            "background": "#f8f9ff",
+            "on-secondary-container": "#00476e",
+            "on-primary-fixed-variant": "#004881",
+            "outline": "#727782",
+            "primary-fixed-dim": "#a2c9ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "margin-tablet": "1.5rem",
+            "margin-desktop": "2rem",
+            "gutter-desktop": "1.5rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "gutter-tablet": "1.25rem",
+            "gutter": "1rem",
+            "space-xs": "0.25rem",
+            "space-lg": "1.5rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "telemetry-value": ["Inter"],
+            "headline-xl-mobile": ["Plus Jakarta Sans"],
+            "headline-lg-mobile": ["Plus Jakarta Sans"],
+            "label-md": ["Inter"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "body-md": ["Inter"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "body-sm": ["Inter"],
+            "label-sm": ["Inter"],
+            "label-lg": ["Inter"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "telemetry-unit": ["Inter"],
+            "body-lg": ["Inter"]
+          },
+          "fontSize": {
+            "telemetry-value": ["32px", { "lineHeight": "36px", "fontWeight": "700" }],
+            "headline-xl-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-xl": ["36px", { "lineHeight": "44px", "fontWeight": "700" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "700" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "telemetry-unit": ["13px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+    }
+    .material-symbols-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    }
+    /* Hide scrollbar for horizontal pill scrolling */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen pb-28 selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TOP APP BAR (Compact Mobile Clinical Header) -->
+<header class="sticky top-0 z-40 bg-surface-container-lowest/95 backdrop-blur-md shadow-sm px-4 py-2.5 flex items-center justify-between">
+<!-- Brand / Identity -->
+<div class="flex items-center gap-2.5"><img alt="SAMAHI - Sistema de Automação e Monitoramento de Ambientes Hospitalares Inteligentes" class="h-8 object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XoW_mUPCDo2KZ6gJUvjz2MfcjjplgxkXaZdKcxHNZH6kqqwzR9oxLHHqdIkyNpQ11U6EQ9qqBXdqXGuReHz_TEAPUvc2eNR7DCuN9LVdkWS9-nlnxy_ia0e2lcm-zYAchN8bocFBq1TC19eBIQCoMYHKn-A4M1CoKI6I2D6IGvfQU7CurgFEOluXIGsJgWG1bQbGiMpbfOJIWa9IJWn0VnZLY1jFhX7wnA_pjTntAjRrGW62hBUSSp8Gs"><div class="flex flex-col"></div></div>
+<!-- Status & Operator Info -->
+<div class="flex items-center gap-2">
+<!-- MQTT ESP32 Beacon Badge -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-surface-container-low rounded-full border border-outline-variant/60 shadow-xs">
+<span class="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-primary font-bold">MQTT 14ms</span>
+</div>
+<!-- Avatar César -->
+<div class="relative w-8 h-8 rounded-full bg-primary-container text-on-primary font-bold flex items-center justify-center text-xs ring-2 ring-primary/20">
+<span class="">CR</span>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#16A34A] border-2 border-surface-container-lowest rounded-full"></span>
+</div>
+</div>
+</header>
+<!-- MAIN CANVAS -->
+<main class="max-w-md mx-auto px-4 pt-4 space-y-4">
+<!-- PAGE TITLE & SUBTITLE -->
+<section class="flex items-center justify-between">
+<div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-extrabold tracking-tight">Leitos &amp; Quartos</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Monitoramento de telemetria e segurança em tempo real</p>
+</div>
+<!-- Demonstration Mode Chip -->
+<span class="px-2.5 py-1 rounded-full bg-surface-container font-label-sm text-label-sm text-primary font-bold flex items-center gap-1 border border-outline-variant/40">
+<span class="material-symbols-outlined text-sm" data-icon="hub">hub</span>
+        IoT Ativo
+      </span>
+</section>
+<!-- HORIZONTAL FILTER CAROUSEL -->
+<section class="overflow-x-auto no-scrollbar -mx-4 px-4 flex items-center gap-2 py-1">
+<button class="px-3.5 py-1.5 rounded-full bg-primary-container text-on-primary font-label-md text-label-md whitespace-nowrap shadow-xs font-semibold">
+        Todos (8)
+      </button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container transition-colors">
+        Maquetes ESP32
+      </button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container transition-colors">
+        UTI
+      </button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container transition-colors">
+        Semi-intensiva
+      </button>
+<button class="px-3.5 py-1.5 rounded-full bg-error-container/70 border border-error/40 text-on-error-container font-label-md text-label-md whitespace-nowrap font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+        Em Alerta (1)
+      </button>
+</section>
+<!-- QUICK METRIC INDICATORS SUMMARY (Bento Mini Strip) -->
+<section class="grid grid-cols-3 gap-2">
+<!-- 8 Ativos -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-2.5 flex flex-col justify-between shadow-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Ativos</span>
+<span class="material-symbols-outlined text-base text-primary" data-icon="bed">bed</span>
+</div>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">8</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">quartos</span>
+</div>
+</div>
+<!-- 1 Alerta de Gás -->
+<div class="bg-amber-50 border border-amber-300 rounded-xl p-2.5 flex flex-col justify-between shadow-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-amber-900 font-bold">Gás &amp; Alerta</span>
+<span class="material-symbols-outlined text-base text-amber-700 animate-bounce" data-icon="warning">warning</span>
+</div>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="font-headline-md text-headline-md font-bold text-amber-900">1</span>
+<span class="font-label-sm text-label-sm text-amber-700 font-bold">crítico</span>
+</div>
+</div>
+<!-- 7 Online -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-2.5 flex flex-col justify-between shadow-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">ESP32 Online</span>
+<span class="material-symbols-outlined text-base text-[#16A34A]" data-icon="wifi">wifi</span>
+</div>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="font-headline-md text-headline-md font-bold text-[#16A34A]">7</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">nós IoT</span>
+</div>
+</div>
+</section>
+<!-- LIST OF ROOM CARDS (Tactile Clinical Cards) -->
+<section class="space-y-3 pt-1">
+<!-- CARD 1: Quarto 01 - Leito Clínico (Maquete Física ESP32) -->
+<article class="bg-surface-container-lowest border border-outline-variant/80 rounded-xl shadow-xs overflow-hidden transition-all duration-150 active:scale-[0.99]">
+<!-- Top border status ribbon for Manchester Azul -->
+<div class="h-1.5 w-full bg-[#0284C7]"></div>
+<div class="p-4 space-y-3.5">
+<!-- Room Header & Manchester Protocol -->
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">Quarto 01 - Leito Clínico</h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1.5 mt-0.5">
+<span class="w-2 h-2 rounded-full bg-[#16A34A]"></span>
+                Maquete Física ESP32 <span class="text-xs text-outline">• Ping 14ms</span>
+</p>
+</div>
+<!-- Manchester Azul Badge -->
+<span class="px-2.5 py-1 rounded-full bg-[#E0F2FE] text-[#0369A1] border border-[#BAE6FD] font-label-sm text-label-sm font-bold inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#0284C7]"></span>
+              Manchester Azul
+            </span>
+</div>
+<!-- Telemetry 4-Metric Grid -->
+<div class="grid grid-cols-4 gap-2 bg-surface-container-low/70 p-2.5 rounded-lg border border-outline-variant/40">
+<!-- Temp -->
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-0.5">
+<span class="material-symbols-outlined text-xs" data-icon="device_thermostat">device_thermostat</span> Temp
+              </span>
+<span class="font-telemetry-value text-base font-bold text-on-surface mt-0.5">24.6<span class="text-xs text-on-surface-variant font-normal">°C</span></span>
+</div>
+<!-- Umidade -->
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-0.5">
+<span class="material-symbols-outlined text-xs" data-icon="humidity_percentage">humidity_percentage</span> Umid
+              </span>
+<span class="font-telemetry-value text-base font-bold text-on-surface mt-0.5">58<span class="text-xs text-on-surface-variant font-normal">%</span></span>
+</div>
+<!-- Gás -->
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-0.5">
+<span class="material-symbols-outlined text-xs" data-icon="air">air</span> Gás MQ-2
+              </span>
+<span class="font-label-md text-label-md font-bold text-[#16A34A] mt-1">Seguro</span>
+</div>
+<!-- Luz -->
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-0.5">
+<span class="material-symbols-outlined text-xs" data-icon="light">light</span> Luz
+              </span>
+<span class="font-telemetry-value text-base font-bold text-on-surface mt-0.5">65<span class="text-xs text-on-surface-variant font-normal">%</span></span>
+</div>
+</div>
+<!-- Action Button: Ergonomic 48px tactile target -->
+<button class="w-full min-h-[48px] bg-primary-container text-on-primary hover:bg-[#00487E] active:bg-[#003761] active:translate-y-0.5 transition-all font-label-lg text-label-lg rounded-lg flex items-center justify-center gap-2 font-bold shadow-xs">
+<span class="">Acessar Quarto</span>
+<span class="material-symbols-outlined text-lg" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</article>
+<!-- CARD 2: Quarto 03 - Isolamento (Em Alerta de Gás) -->
+<article class="bg-surface-container-lowest border-2 border-amber-500 rounded-xl shadow-md overflow-hidden relative">
+<!-- Top alert ribbon Manchester Laranja -->
+<div class="h-2 w-full bg-[#EA580C]"></div>
+<div class="p-4 space-y-3">
+<!-- Room Header & Manchester Protocol -->
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">Quarto 03 - Isolamento</h2>
+</div>
+<p class="font-body-sm text-body-sm text-error font-semibold flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-sm animate-spin" data-icon="sync">sync</span>
+                Disparo de sensor detectado
+              </p>
+</div>
+<!-- Manchester Laranja Badge -->
+<span class="px-2.5 py-1 rounded-full bg-orange-100 text-[#C2410C] border border-orange-300 font-label-sm text-label-sm font-bold inline-flex items-center gap-1 animate-pulse">
+<span class="w-2 h-2 rounded-full bg-[#EA580C]"></span>
+              Manchester Laranja
+            </span>
+</div>
+<!-- High Attention Callout Banner -->
+<div class="bg-amber-50 border-l-4 border-amber-600 p-3 rounded-r-lg flex items-start gap-2.5">
+<span class="material-symbols-outlined text-amber-700 text-xl shrink-0 mt-0.5" data-icon="emergency">emergency</span>
+<div class="flex-1">
+<p class="font-label-md text-label-md font-bold text-amber-950">Detecção de gás genérica em aferição</p>
+<p class="font-body-sm text-body-sm text-amber-800 leading-snug mt-0.5">Concentração acima da margem segura (148 ppm). Válvula de exaustão em acionamento prioritário.</p>
+</div>
+</div>
+<!-- Key Metrics comparison -->
+<div class="grid grid-cols-3 gap-2 bg-surface-container-low p-2 rounded-lg border border-outline-variant/40">
+<div class="text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">MQ-2 Telemetria</span>
+<p class="font-headline-sm text-headline-sm font-bold text-amber-700">148 PPM</p>
+</div>
+<div class="text-center border-x border-outline-variant/50">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Exaustor</span>
+<p class="font-label-md text-label-md font-bold text-primary mt-1">100% ATIVO</p>
+</div>
+<div class="text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Leito Status</span>
+<p class="font-label-md text-label-md font-bold text-error mt-1">ALERTA</p>
+</div>
+</div>
+<!-- Tactile Emergency Button 48px -->
+<button class="w-full min-h-[48px] bg-error hover:bg-[#A31616] active:bg-[#821010] text-on-error font-label-lg text-label-lg rounded-lg flex items-center justify-center gap-2 font-bold tracking-wide uppercase transition-all shadow-sm active:translate-y-0.5">
+<span class="material-symbols-outlined text-xl" data-icon="warning">warning</span>
+<span class="">Acessar Alerta</span>
+</button>
+</div>
+</article>
+<!-- CARD 3: Quarto 02 - Terapia Intensiva (Manchester Amarelo) -->
+<article class="bg-surface-container-lowest border border-outline-variant/80 rounded-xl shadow-xs overflow-hidden transition-all duration-150 active:scale-[0.99]">
+<!-- Top border status ribbon Manchester Amarelo -->
+<div class="h-1.5 w-full bg-[#EAB308]"></div>
+<div class="p-4 space-y-3.5">
+<!-- Room Header & Manchester Protocol -->
+<div class="flex items-start justify-between">
+<div>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">Quarto 02 - Terapia Intensiva</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1.5 mt-0.5">
+<span class="w-2 h-2 rounded-full bg-[#16A34A]"></span>
+                Nó IoT Conectado <span class="text-xs text-outline">• Leito Monitorado</span>
+</p>
+</div>
+<!-- Manchester Amarelo Badge -->
+<span class="px-2.5 py-1 rounded-full bg-yellow-50 text-yellow-800 border border-yellow-300 font-label-sm text-label-sm font-bold inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#EAB308]"></span>
+              Manchester Amarelo
+            </span>
+</div>
+<!-- Telemetry mini bar -->
+<div class="flex items-center justify-between bg-surface-container-low/70 px-3 py-2 rounded-lg border border-outline-variant/40">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base" data-icon="thermostat">thermostat</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Temperatura do Quarto:</span>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">22.0°C</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-xs font-bold">Estável</span>
+</div>
+<!-- Standard button -->
+<button class="w-full min-h-[48px] border-2 border-primary text-primary hover:bg-surface-container active:bg-surface-container-high transition-colors font-label-lg text-label-lg rounded-lg flex items-center justify-center gap-2 font-bold">
+<span class="">Acessar Leito</span>
+<span class="material-symbols-outlined text-lg" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</article>
+<!-- CARD 4: Dashed Add Room Card -->
+<button class="w-full min-h-[72px] border-2 border-dashed border-outline hover:border-primary bg-surface-container-lowest/50 hover:bg-surface-container-low transition-all rounded-xl p-4 flex items-center justify-center gap-3 text-on-surface-variant hover:text-primary group">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary-container group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="add">add</span>
+</div>
+<div class="text-left">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface block leading-tight">Cadastrar Novo Quarto</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Vincular nova maquete ou módulo ESP32</span>
+</div>
+</button>
+</section>
+</main>
+<!-- BOTTOM NAVBAR (Fixed Mobile Clinical App Bar) -->
+<!-- Strict compliance with BottomNavBar JSON styling & active semantics -->
+<nav class="fixed bottom-0 left-0 w-full z-50 md:hidden flex justify-around items-center px-2 py-2 bg-surface-container-lowest dark:bg-inverse-surface shadow-md">
+<!-- Tab 1: Leitos (Active Destination: exact match for this selection screen) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container rounded-xl px-3 py-1 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-xl material-symbols-fill" data-icon="bed">bed</span>
+<span class="font-label-sm text-label-sm font-bold mt-0.5">Leitos</span>
+</a>
+<!-- Tab 2: Painel -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-surface-container dark:hover:bg-surface-container-high active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm font-normal mt-0.5">Painel</span>
+</a>
+<!-- Tab 3: Sensores -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-surface-container dark:hover:bg-surface-container-high active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="sensors">sensors</span>
+<span class="font-label-sm text-label-sm font-normal mt-0.5">Sensores</span>
+</a>
+<!-- Tab 4: Alertas (with red notification badge) -->
+<a class="relative flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-surface-container dark:hover:bg-surface-container-high active:scale-95 transition-transform duration-150" href="#">
+<span class="absolute top-1 right-2.5 w-2 h-2 rounded-full bg-error"></span>
+<span class="material-symbols-outlined text-xl" data-icon="emergency">emergency</span>
+<span class="font-label-sm text-label-sm font-normal mt-0.5">Alertas</span>
+</a>
+<!-- Tab 5: ESP32 -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-surface-container dark:hover:bg-surface-container-high active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="wifi">wifi</span>
+<span class="font-label-sm text-label-sm font-normal mt-0.5">ESP32</span>
+</a>
+</nav>
+
+
+</body></html>

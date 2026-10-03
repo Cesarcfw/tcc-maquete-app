@@ -1,0 +1,565 @@
+<!DOCTYPE html><html class="h-full" lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>SAMAHI - Usuários, Perfis e Matriz de Permissões</title>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Verbatim Tailwind Theme Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "error": "#ba1a1a",
+            "tertiary-fixed": "#89f5e7",
+            "surface-variant": "#dae2fd",
+            "inverse-surface": "#283044",
+            "on-error": "#ffffff",
+            "secondary-fixed-dim": "#94ccff",
+            "tertiary-container": "#008378",
+            "on-primary": "#ffffff",
+            "on-tertiary-fixed": "#00201d",
+            "on-primary-fixed": "#001d31",
+            "on-secondary": "#ffffff",
+            "secondary-fixed": "#cde5ff",
+            "secondary": "#006399",
+            "on-surface-variant": "#3f4850",
+            "on-primary-container": "#fdfcff",
+            "surface-container-high": "#e2e7ff",
+            "primary-fixed-dim": "#93ccff",
+            "on-secondary-container": "#004f7b",
+            "primary": "#006194",
+            "on-secondary-fixed-variant": "#004b74",
+            "error-container": "#ffdad6",
+            "on-surface": "#131b2e",
+            "on-primary-fixed-variant": "#004b73",
+            "surface-dim": "#d2d9f4",
+            "surface-bright": "#faf8ff",
+            "primary-container": "#007bb9",
+            "surface-container-low": "#f2f3ff",
+            "on-error-container": "#93000a",
+            "surface-container-lowest": "#ffffff",
+            "surface-tint": "#006398",
+            "background": "#faf8ff",
+            "on-background": "#131b2e",
+            "surface-container-highest": "#dae2fd",
+            "secondary-container": "#7bc2ff",
+            "on-tertiary-fixed-variant": "#005049",
+            "primary-fixed": "#cce5ff",
+            "tertiary-fixed-dim": "#6bd8cb",
+            "outline-variant": "#bfc7d2",
+            "on-tertiary": "#ffffff",
+            "outline": "#707881",
+            "on-secondary-fixed": "#001d32",
+            "surface-container": "#eaedff",
+            "surface": "#faf8ff",
+            "inverse-on-surface": "#eef0ff",
+            "tertiary": "#00685f",
+            "on-tertiary-container": "#f4fffc",
+            "inverse-primary": "#93ccff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin": "1rem",
+            "space-md": "1rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1.5rem",
+            "space-xl": "2rem",
+            "margin-desktop": "2rem",
+            "gutter": "1.25rem",
+            "space-xs": "0.25rem"
+          },
+          "fontFamily": {
+            "body-md": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "headline-xl-mobile": ["Plus Jakarta Sans"],
+            "metric-display": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "title-sm": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "headline-xl-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }],
+            "metric-display": ["32px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "headline-xl": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+            "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "title-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body-md h-full flex flex-col antialiased">
+<div class="flex h-full min-h-screen">
+<!-- ========================================== -->
+<!-- SideNavBar (Shared Component Execution)    -->
+<!-- ========================================== -->
+<aside class="fixed top-0 left-0 h-screen w-64 flex flex-col justify-between bg-surface-container-lowest border-r border-outline-variant shadow-sm z-30">
+<div class="p-4 flex flex-col gap-6">
+<!-- Header / Logo -->
+<div class="flex items-center px-1 pt-1"><img src="https://lh3.googleusercontent.com/aida/AEtjO1XoW_mUPCDo2KZ6gJUvjz2MfcjjplgxkXaZdKcxHNZH6kqqwzR9oxLHHqdIkyNpQ11U6EQ9qqBXdqXGuReHz_TEAPUvc2eNR7DCuN9LVdkWS9-nlnxy_ia0e2lcm-zYAchN8bocFBq1TC19eBIQCoMYHKn-A4M1CoKI6I2D6IGvfQU7CurgFEOluXIGsJgWG1bQbGiMpbfOJIWa9IJWn0VnZLY1jFhX7wnA_pjTntAjRrGW62hBUSSp8Gs" alt="SAMAHI - Sistema de Automação e Monitoramento de Ambientes Hospitalares Inteligentes" class="w-full h-auto max-h-12 object-contain"></div>
+<!-- Main Navigation Items -->
+<nav aria-label="Navegação Principal" class="flex flex-col gap-1.5">
+<!-- Visão Geral -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="text-body-md font-body-md">Visão Geral</span>
+</a>
+<!-- Iluminação -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">light</span>
+<span class="text-body-md font-body-md">Iluminação</span>
+</a>
+<!-- Telemetria & Gás -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">sensors</span>
+<span class="text-body-md font-body-md">Telemetria &amp; Gás</span>
+</a>
+<!-- Triagem Manchester -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">emergency</span>
+<span class="text-body-md font-body-md">Triagem Manchester</span>
+</a>
+<!-- Histórico & Logs -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">history</span>
+<span class="text-body-md font-body-md">Histórico &amp; Logs</span>
+</a>
+</nav>
+</div>
+<!-- Footer Navigation Items & CTA -->
+<div class="p-4 border-t border-outline-variant flex flex-col gap-2 bg-surface-container-lowest">
+<!-- Permissões (ACTIVE ITEM - Exact match with current page context) -->
+<a aria-current="page" class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold transition-colors duration-150 ease-in-out shadow-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">admin_panel_settings</span>
+<span class="text-label-md font-label-md">Permissões</span>
+</a>
+<!-- Conexão ESP32 -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">wifi</span>
+<span class="text-label-md font-label-md">Conexão ESP32</span>
+</a>
+<!-- Botão CTA Testar ESP32 -->
+<button class="mt-2 w-full py-2.5 px-4 bg-primary text-on-primary rounded-xl text-label-md font-label-md flex items-center justify-center gap-2 hover:bg-secondary transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">memory</span>
+<span class="">Testar ESP32</span>
+</button>
+</div>
+</aside>
+<!-- ========================================== -->
+<!-- Main Content Area                          -->
+<!-- ========================================== -->
+<div class="flex-1 ml-64 flex flex-col min-w-0">
+<!-- TopAppBar (Clinical Precision Header) -->
+<header class="h-16 bg-surface-container-lowest border-b border-outline-variant px-8 flex justify-between items-center sticky top-0 z-20 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">single_bed</span>
+<span class="text-headline-md font-headline-md text-on-surface">Quarto 01 - Leito Clínico</span>
+</div>
+<!-- Simulation Environment Pill Badge -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#e0f2fe] border border-[#bae6fd] text-[#0369a1] text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">science</span>
+<span class="">Modo de Demonstração (Dados Simulados)</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<!-- ESP32 Conectado Status Badge -->
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface text-label-sm font-label-sm border border-outline-variant">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary-container animate-pulse"></span>
+<span class="">ESP32 Conectado</span>
+<span class="text-on-surface-variant text-[10px] pl-1 font-mono">192.168.1.104</span>
+</div>
+<!-- Quick Trailing Actions -->
+<button class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" title="Notificações">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" title="Configurações">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+<!-- User avatar / clinical operator -->
+<div class="w-9 h-9 rounded-full bg-primary-fixed text-on-primary-fixed font-title-sm text-title-sm flex items-center justify-center ring-2 ring-outline-variant" title="Foto de perfil do operador clínico">
+            AD
+          </div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 p-8 overflow-y-auto space-y-6">
+<!-- Page Title & Operational Subtitle -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight">Usuários e Gestão de Permissões</h1>
+<p class="text-body-md font-body-md text-on-surface-variant mt-0.5">
+              Controle de acesso granular por ambiente e domínio funcional (Iluminação, Sensores, Triagem e Histórico)
+            </p>
+</div>
+<button class="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-on-primary rounded-xl text-label-md font-label-md hover:bg-secondary shadow-sm transition-all self-start md:self-auto">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+<span class="">+ Convidar Novo Usuário</span>
+</button>
+</div>
+<!-- Management Bar: Environment Selector & Search -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+<div class="flex items-center gap-3 w-full md:w-auto">
+<label class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap" for="room-select">
+<span class="material-symbols-outlined text-[16px] text-primary">meeting_room</span>
+              Ambiente Ativo:
+            </label>
+<div class="relative w-full md:w-64">
+<select class="w-full pl-3 pr-8 py-2 bg-surface-container-low text-on-surface border border-outline-variant rounded-lg text-body-md font-body-md focus:ring-2 focus:ring-primary focus:outline-none appearance-none" id="room-select">
+<option selected="">Quarto 01 - Leito Clínico</option>
+<option>Quarto 02 - Semi-intensivo</option>
+<option>Quarto 03 - Isolamento</option>
+<option>Posto Central de Enfermagem</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[20px]">arrow_drop_down</span>
+</div>
+</div>
+<div class="relative w-full md:w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+<input class="w-full pl-9 pr-4 py-2 bg-surface-container-low text-on-surface border border-outline-variant rounded-lg text-body-md font-body-md placeholder:text-on-surface-variant/60 focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Buscar colaboradores por nome ou e-mail..." type="text">
+</div>
+</div>
+<!-- Dual Column Grid: Users List (Left) vs Granular Permissions Matrix (Right) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- ==================================================== -->
+<!-- Coluna da Esquerda: Lista de Usuários (5 Cols)       -->
+<!-- ==================================================== -->
+<section aria-label="Lista de Usuários Cadastrados" class="lg:col-span-5 space-y-3">
+<div class="flex items-center justify-between px-1">
+<span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Usuários no Ambiente (4)</span>
+<span class="text-label-sm font-label-sm text-primary flex items-center gap-1 cursor-pointer hover:underline">
+<span class="material-symbols-outlined text-[14px]">tune</span> Filtrar perfis
+              </span>
+</div>
+<!-- Card 1: César (Administrador Geral) -->
+<div class="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant hover:border-primary/40 transition-all cursor-pointer shadow-sm relative group">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-full bg-primary-container text-on-primary-container font-headline-md text-headline-md flex items-center justify-center font-bold">
+                    C
+                  </div>
+<div>
+<h2 class="text-title-sm font-title-sm text-on-surface">César</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant">cesar@hospital.exemplo</p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-primary-fixed text-on-primary-fixed border border-primary/20">
+                  Acesso Total / Admin
+                </span>
+</div>
+<div class="mt-3 pt-3 border-t border-surface-container flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-tertiary-container"></span> Autenticado via SSO</span>
+<span class="text-label-sm font-label-sm text-primary">Superusuário</span>
+</div>
+</div>
+<!-- Card 2: Gabriel (Enfermeiro Assistencial) -->
+<div class="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant hover:border-primary/40 transition-all cursor-pointer shadow-sm relative group">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-full bg-surface-container-high text-primary font-headline-md text-headline-md flex items-center justify-center font-bold">
+                    G
+                  </div>
+<div>
+<h2 class="text-title-sm font-title-sm text-on-surface">Gabriel</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant">gabriel@hospital.exemplo</p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-secondary-fixed text-on-secondary-fixed border border-secondary/20">
+                  Enfermagem
+                </span>
+</div>
+<div class="mt-3 pt-3 border-t border-surface-container flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-tertiary-container"></span> Turno Diurno (8h-18h)</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">4 permissões ativas</span>
+</div>
+</div>
+<!-- Card 3: Matheus (Técnico de Automação IoT) - ACTIVE SELECTION -->
+<div class="p-4 rounded-xl bg-surface-container-lowest border-2 border-primary shadow-md relative ring-2 ring-primary/20 cursor-pointer">
+<div class="absolute -top-2.5 right-4 bg-primary text-on-primary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                Em Edição
+              </div>
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-full bg-secondary-container text-on-secondary-container font-headline-md text-headline-md flex items-center justify-center font-bold">
+                    M
+                  </div>
+<div>
+<h2 class="text-title-sm font-title-sm text-on-surface">Matheus</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant">matheus@hospital.exemplo</p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-tertiary-fixed text-on-tertiary-fixed border border-tertiary/20">
+                  Técnico / Operador
+                </span>
+</div>
+<div class="mt-3 pt-3 border-t border-surface-container flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-tertiary-container"></span> Vinculado à Automação IoT</span>
+<span class="text-label-sm font-label-sm text-primary font-semibold flex items-center gap-0.5">
+                  Visualizando Matriz <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</span>
+</div>
+</div>
+<!-- Card 4: Visitante / Paciente (Acesso Restrito) -->
+<div class="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant hover:border-primary/40 transition-all cursor-pointer shadow-sm relative group opacity-90">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-full bg-surface-container-low text-on-surface-variant font-headline-md text-headline-md flex items-center justify-center font-bold border border-outline-variant">
+<span class="material-symbols-outlined text-[22px]">visibility</span>
+</div>
+<div>
+<h2 class="text-title-sm font-title-sm text-on-surface">Visitante / Paciente</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant">tablet-leito-01@hospital.local</p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container-high text-on-surface-variant border border-outline-variant">
+                  Acesso Restrito
+                </span>
+</div>
+<div class="mt-3 pt-3 border-t border-surface-container flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<span class="">Somente visualização</span>
+<span class="text-label-sm font-label-sm text-error">Sem controle</span>
+</div>
+</div>
+</section>
+<!-- ==================================================== -->
+<!-- Coluna da Direita: Matriz Granular (7 Cols)           -->
+<!-- ==================================================== -->
+<section aria-label="Matriz de Permissões do Usuário" class="lg:col-span-7 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 space-y-6">
+<!-- User Header & Role Switcher -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-outline-variant">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-secondary-container text-on-secondary-container font-headline-md text-headline-md flex items-center justify-center font-bold shadow-sm">
+                  M
+                </div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="text-headline-md font-headline-md text-on-surface">Matheus</h2>
+<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-primary text-on-primary">IoT Dev</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">matheus@hospital.exemplo • Matrícula: #4819</p>
+</div>
+</div>
+<!-- Role Selector -->
+<div class="flex items-center gap-2">
+<label class="text-label-sm font-label-sm text-on-surface-variant whitespace-nowrap" for="role-switch">Papel:</label>
+<select class="px-3 py-1.5 bg-surface-container-low text-on-surface border border-outline-variant rounded-lg text-label-md font-label-md focus:ring-2 focus:ring-primary focus:outline-none" id="role-switch">
+<option>Técnico / Operador IoT</option>
+<option>Enfermeiro Assistencial</option>
+<option>Administrador Geral</option>
+<option>Visualizador Clínico</option>
+</select>
+</div>
+</div>
+<!-- Governance Warning Banner -->
+<div class="p-3.5 rounded-xl bg-surface-container-low border-l-4 border-primary flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">policy</span>
+<p class="text-body-sm font-body-sm text-on-surface leading-relaxed">
+<strong class="font-semibold text-primary">Aviso de Governança:</strong> As permissões são aplicadas imediatamente ao quarto selecionado. Funções restritas aparecem desabilitadas com indicador informativo de bloqueio para preservar a integridade clínica.
+              </p>
+</div>
+<!-- Granular Matrix / Domain Groups -->
+<div class="space-y-4">
+<h3 class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">
+                Controle Granular por Domínio Funcional
+              </h3>
+<!-- 1. Iluminação do Quarto -->
+<div class="p-4 rounded-xl border border-outline-variant bg-surface hover:bg-surface-container-lowest transition-colors space-y-3">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">lightbulb</span>
+</div>
+<div>
+<h4 class="text-title-sm font-title-sm text-on-surface">1. Iluminação do Quarto</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Permite ligar/desligar e regular intensidade de 0 a 100%.</p>
+</div>
+</div>
+<!-- 3-Way Segmented Control -->
+<div aria-label="Permissão de Iluminação" class="inline-flex rounded-lg border border-outline-variant bg-surface-container-low p-1 shrink-0" role="group">
+<button class="px-3 py-1.5 rounded text-label-md font-label-md text-on-surface-variant hover:text-on-surface transition-all" type="button">
+                      Sem acesso
+                    </button>
+<button class="px-3 py-1.5 rounded text-label-md font-label-md text-on-surface-variant hover:text-on-surface transition-all" type="button">
+                      Visualizar
+                    </button>
+<button class="px-3.5 py-1.5 rounded-md text-label-md font-label-md bg-primary text-on-primary font-bold shadow-sm transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">check</span>
+                      Controlar
+                    </button>
+</div>
+</div>
+</div>
+<!-- 2. Sensores Ambientais (Temp/Umidade/Gás) -->
+<div class="p-4 rounded-xl border border-outline-variant bg-surface hover:bg-surface-container-lowest transition-colors space-y-3">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">sensors</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="text-title-sm font-title-sm text-on-surface">2. Sensores Ambientais (Temp/Umidade/Gás)</h4>
+<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-surface-container-high text-on-surface-variant">Telemetria IoT</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Sensores possuem apenas permissão de consulta e telemetria contínua.</p>
+</div>
+</div>
+<!-- 3-Way Segmented Control -->
+<div aria-label="Permissão de Sensores Ambientais" class="inline-flex rounded-lg border border-outline-variant bg-surface-container-low p-1 shrink-0" role="group">
+<button class="px-3 py-1.5 rounded text-label-md font-label-md text-on-surface-variant hover:text-on-surface transition-all" type="button">
+                      Sem acesso
+                    </button>
+<button class="px-3.5 py-1.5 rounded-md text-label-md font-label-md bg-primary text-on-primary font-bold shadow-sm transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">check</span>
+                      Visualizar
+                    </button>
+<button class="px-3 py-1.5 rounded text-label-md font-label-md text-outline cursor-not-allowed bg-transparent flex items-center gap-1 opacity-60" disabled="" title="Sensores são somente leitura de hardware" type="button">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+                      Controlar
+                    </button>
+</div>
+</div>
+</div>
+<!-- 3. Triagem Manchester (Indicador Externo) -->
+<div class="p-4 rounded-xl border border-outline-variant bg-surface hover:bg-surface-container-lowest transition-colors space-y-3">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">emergency</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="text-title-sm font-title-sm text-on-surface">3. Triagem Manchester (Indicador Externo)</h4>
+<span class="w-2.5 h-2.5 rounded-full bg-error" title="Prioridade Vermelha / Manchester"></span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Permite alterar a cor do LED da porta conforme protocolo clínico.</p>
+</div>
+</div>
+<!-- 3-Way Segmented Control -->
+<div aria-label="Permissão de Triagem Manchester" class="inline-flex rounded-lg border border-outline-variant bg-surface-container-low p-1 shrink-0" role="group">
+<button class="px-3 py-1.5 rounded text-label-md font-label-md text-on-surface-variant hover:text-on-surface transition-all" type="button">
+                      Sem acesso
+                    </button>
+<button class="px-3 py-1.5 rounded text-label-md font-label-md text-on-surface-variant hover:text-on-surface transition-all" type="button">
+                      Visualizar
+                    </button>
+<button class="px-3.5 py-1.5 rounded-md text-label-md font-label-md bg-primary text-on-primary font-bold shadow-sm transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">check</span>
+                      Controlar
+                    </button>
+</div>
+</div>
+</div>
+<!-- 4. Histórico e Logs de Auditoria -->
+<div class="p-4 rounded-xl border border-outline-variant bg-surface hover:bg-surface-container-lowest transition-colors space-y-3">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">manage_history</span>
+</div>
+<div>
+<h4 class="text-title-sm font-title-sm text-on-surface">4. Histórico e Logs de Auditoria</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Permissão para consultar trilha de auditoria e exportar registros.</p>
+</div>
+</div>
+<!-- 3-Way Segmented Control -->
+<div aria-label="Permissão de Histórico e Logs" class="inline-flex rounded-lg border border-outline-variant bg-surface-container-low p-1 shrink-0" role="group">
+<button class="px-3 py-1.5 rounded text-label-md font-label-md text-on-surface-variant hover:text-on-surface transition-all" type="button">
+                      Sem acesso
+                    </button>
+<button class="px-3.5 py-1.5 rounded-md text-label-md font-label-md bg-primary text-on-primary font-bold shadow-sm transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">check</span>
+                      Visualizar
+                    </button>
+<button class="px-3 py-1.5 rounded text-label-md font-label-md text-outline cursor-not-allowed bg-transparent flex items-center gap-1 opacity-60" disabled="" title="Exclusão e controle direto de logs restritos à governança ISO/HIPAA" type="button">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+                      Controlar
+                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="pt-5 border-t border-outline-variant flex flex-col sm:flex-row items-center justify-between gap-3">
+<button class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-outline text-on-surface text-label-md font-label-md hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+                Restaurar Padrão do Cargo
+              </button>
+<div class="flex items-center gap-3 w-full sm:w-auto">
+<button class="w-full sm:w-auto px-5 py-2.5 bg-primary text-on-primary rounded-xl text-label-md font-label-md hover:bg-secondary transition-all shadow-sm flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                  Salvar Alterações de Acesso
+                </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+</div>
+<!-- ========================================== -->
+<!-- BottomNavBar (Mobile Shell - Fallback)     -->
+<!-- ========================================== -->
+<nav aria-label="Navegação Inferior Mobile" class="fixed bottom-0 left-0 w-full z-50 md:hidden flex justify-around items-center px-2 py-2 bg-surface-container-lowest border-t border-outline-variant shadow-md">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="text-label-sm font-label-sm">Painel</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1" href="#">
+<span class="material-symbols-outlined text-[20px]">light</span>
+<span class="text-label-sm font-label-sm">Luzes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1" href="#">
+<span class="material-symbols-outlined text-[20px]">sensors</span>
+<span class="text-label-sm font-label-sm">Sensores</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1" href="#">
+<span class="material-symbols-outlined text-[20px]">emergency</span>
+<span class="text-label-sm font-label-sm">Triagem</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl px-3 py-1 font-bold" href="#">
+<span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
+<span class="text-label-sm font-label-sm">Permissões</span>
+</a>
+</nav>
+
+
+</body></html>
