@@ -58,6 +58,7 @@ import {
   roomVisible,
 } from "../domain/rooms";
 import { useSimulator } from "../hooks/useSimulator";
+import { decodeTelemetry, requestNodeRed } from "../services/nodeRed";
 import { GasAlarm } from "./GasAlarm";
 import { appTheme } from "./theme";
 
@@ -525,6 +526,15 @@ function Dashboard({
       <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
         Ao religar, restaura a última intensidade positiva.
       </Text>
+      {room.endpoint !== "https://servico.exemplo" && (
+        <Button
+          disabled={!ready || !control("light")}
+          onPress={() => sim.setAutomatic()}
+          icon="brightness-auto"
+        >
+          Usar luz automática pelo LDR
+        </Button>
+      )}
     </Panel>
   ) : (
     <Note
@@ -760,7 +770,7 @@ function DemoApp({
   const [session, setSession] = useState<string | null>(null),
     [roomId, setRoomId] = useState("quarto-01");
   const room = rooms.find((value) => value.id === roomId) ?? rooms[0];
-  const sim = useSimulator(room.id);
+  const sim = useSimulator(room.id, room.endpoint);
   const [screen, setScreen] = useState<Screen>("Quartos"),
     [snack, setSnack] = useState("");
   const [editingUser, setEditingUser] = useState("matheus"),
@@ -791,7 +801,9 @@ function DemoApp({
   const status = !room.active
     ? "Desativada"
     : sim.connection === "online"
-      ? "Online simulado"
+      ? room.endpoint === "https://servico.exemplo"
+        ? "Online simulado"
+        : "Node-RED · simulado"
       : sim.connection === "stale"
         ? "Dado antigo"
         : "Sem comunicação";
@@ -871,7 +883,7 @@ function DemoApp({
     setFormError("");
     setRoomDraft((previous) => ({ ...previous, [key]: value }));
   }
-  function testConnection() {
+  async function testConnection() {
     if (!user?.admin) return;
     const error = roomError(roomDraft, rooms);
     if (error) {
@@ -881,13 +893,26 @@ function DemoApp({
     cancelTest();
     setTestStatus("testing");
     const revision = testGeneration.current;
-    const passes =
-      roomDraft.active &&
-      (roomDraft.id !== room.id || sim.connection === "online");
-    timer.current = setTimeout(() => {
-      if (testGeneration.current === revision)
-        setTestStatus(passes ? "passed" : "failed");
-    }, 700);
+    let passes = false;
+    try {
+      if (roomDraft.endpoint === "https://servico.exemplo")
+        passes =
+          roomDraft.active &&
+          (roomDraft.id !== room.id || sim.connection === "online");
+      else {
+        const result = await requestNodeRed(
+          roomDraft.endpoint,
+          roomDraft.id,
+          "telemetry",
+        );
+        decodeTelemetry(result, roomDraft.id);
+        passes = roomDraft.active && result.sampleAgeMs < 10000;
+      }
+    } catch {
+      passes = false;
+    }
+    if (testGeneration.current === revision)
+      setTestStatus(passes ? "passed" : "failed");
   }
   function saveRoom() {
     if (!user?.admin) return;
@@ -1123,7 +1148,8 @@ function DemoApp({
                   variant="bodySmall"
                   style={{ color: colors.onSurfaceVariant }}
                 >
-                  Recarregar reinicia os dados desta sessão.
+                  Recarregar reinicia o cadastro local. O estado do Node-RED
+                  permanece enquanto ele estiver rodando.
                 </Text>
               </Panel>
             </View>
@@ -1463,7 +1489,10 @@ function DemoApp({
                       style={{ color: colors.onSurfaceVariant }}
                     >
                       Última leitura há {age} s · {room.device} · dados
-                      simulados
+                      simulados{" "}
+                      {room.endpoint !== "https://servico.exemplo"
+                        ? "via Node-RED"
+                        : "no app"}
                     </Text>
                   </>
                 )}
@@ -1848,12 +1877,16 @@ function DemoApp({
                             disabled={testStatus === "testing"}
                             onPress={testConnection}
                           >
-                            Testar conexão simulada
+                            Testar conexão
                           </Button>
                           {testStatus === "passed" && (
                             <Note
-                              title="Teste simulado concluído"
-                              text="Nenhuma requisição real realizada."
+                              title="Teste concluído"
+                              text={
+                                roomDraft.endpoint === "https://servico.exemplo"
+                                  ? "Simulação interna; nenhuma requisição de rede."
+                                  : "API respondeu com dados válidos e recentes do ambiente. Equipamento ainda simulado."
+                              }
                             />
                           )}
                           {testStatus === "failed" && (

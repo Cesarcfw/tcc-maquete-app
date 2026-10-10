@@ -1,0 +1,332 @@
+[
+  {
+    "id": "samahi-local",
+    "type": "tab",
+    "label": "SAMAHI — ESP virtual e API",
+    "disabled": false,
+    "info": "Sensores virtuais. Comandos HTTP do app. Sem hardware conectado."
+  },
+  {
+    "id": "samahi-note",
+    "type": "comment",
+    "z": "samahi-local",
+    "name": "SIMULAÇÃO · sensores a cada 2 s · controle pelo app local",
+    "x": 350,
+    "y": 40,
+    "wires": []
+  },
+  {
+    "id": "samahi-tick",
+    "type": "inject",
+    "z": "samahi-local",
+    "name": "Atualizar sensores (2 s)",
+    "props": [],
+    "repeat": "2",
+    "once": true,
+    "onceDelay": "0.1",
+    "x": 180,
+    "y": 100,
+    "wires": [["samahi-sample"]],
+    "crontab": "",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date"
+  },
+  {
+    "id": "samahi-sample",
+    "type": "function",
+    "z": "samahi-local",
+    "name": "Leitura do ESP virtual",
+    "func": "const sim = global.get('samahi'); sim.sample(); msg.payload = sim.telemetry(); return msg;",
+    "outputs": 1,
+    "x": 460,
+    "y": 100,
+    "wires": [["samahi-debug"]]
+  },
+  {
+    "id": "samahi-debug",
+    "type": "debug",
+    "z": "samahi-local",
+    "name": "Telemetria simulada",
+    "active": false,
+    "tosidebar": true,
+    "complete": "payload",
+    "targetType": "msg",
+    "x": 760,
+    "y": 100,
+    "wires": []
+  },
+  {
+    "id": "samahi-telemetry-http",
+    "type": "http in",
+    "z": "samahi-local",
+    "name": "GET telemetry",
+    "url": "/api/v1/rooms/:roomId/telemetry",
+    "method": "get",
+    "upload": false,
+    "x": 170,
+    "y": 220,
+    "wires": [["samahi-telemetry-fn"]]
+  },
+  {
+    "id": "samahi-telemetry-fn",
+    "type": "function",
+    "z": "samahi-local",
+    "name": "Consultar última leitura",
+    "func": "const result = global.get('samahi').handle('telemetry', msg.req.params.roomId, msg.payload); msg.statusCode = result.status; msg.headers = {'Content-Type':'application/json', 'Cache-Control':'no-store'}; msg.payload = result.body; return msg;",
+    "outputs": 1,
+    "x": 460,
+    "y": 220,
+    "wires": [["samahi-telemetry-response"]]
+  },
+  {
+    "id": "samahi-telemetry-response",
+    "type": "http response",
+    "z": "samahi-local",
+    "name": "Resposta JSON",
+    "statusCode": "",
+    "headers": {},
+    "x": 760,
+    "y": 220,
+    "wires": []
+  },
+  {
+    "id": "samahi-commands-http",
+    "type": "http in",
+    "z": "samahi-local",
+    "name": "POST commands",
+    "url": "/api/v1/rooms/:roomId/commands",
+    "method": "post",
+    "upload": false,
+    "x": 170,
+    "y": 320,
+    "wires": [["samahi-commands-fn"]]
+  },
+  {
+    "id": "samahi-commands-fn",
+    "type": "function",
+    "z": "samahi-local",
+    "name": "Validar → aplicar → confirmar",
+    "func": "const result = global.get('samahi').handle('commands', msg.req.params.roomId, msg.payload); msg.statusCode = result.status; msg.headers = {'Content-Type':'application/json', 'Cache-Control':'no-store'}; msg.payload = result.body; return msg;",
+    "outputs": 1,
+    "x": 460,
+    "y": 320,
+    "wires": [["samahi-commands-response"]]
+  },
+  {
+    "id": "samahi-commands-response",
+    "type": "http response",
+    "z": "samahi-local",
+    "name": "Resposta JSON",
+    "statusCode": "",
+    "headers": {},
+    "x": 760,
+    "y": 320,
+    "wires": []
+  },
+  {
+    "id": "samahi-simulation-http",
+    "type": "http in",
+    "z": "samahi-local",
+    "name": "POST simulation",
+    "url": "/api/v1/rooms/:roomId/simulation",
+    "method": "post",
+    "upload": false,
+    "x": 170,
+    "y": 420,
+    "wires": [["samahi-simulation-fn"]]
+  },
+  {
+    "id": "samahi-simulation-fn",
+    "type": "function",
+    "z": "samahi-local",
+    "name": "Validar cenário/sensores",
+    "func": "const result = global.get('samahi').handle('simulation', msg.req.params.roomId, msg.payload); msg.statusCode = result.status; msg.headers = {'Content-Type':'application/json', 'Cache-Control':'no-store'}; msg.payload = result.body; return msg;",
+    "outputs": 1,
+    "x": 460,
+    "y": 420,
+    "wires": [["samahi-simulation-response"]]
+  },
+  {
+    "id": "samahi-simulation-response",
+    "type": "http response",
+    "z": "samahi-local",
+    "name": "Resposta JSON",
+    "statusCode": "",
+    "headers": {},
+    "x": 760,
+    "y": 420,
+    "wires": []
+  },
+  {
+    "id": "samahi-reset-http",
+    "type": "http in",
+    "z": "samahi-local",
+    "name": "POST reset",
+    "url": "/api/v1/rooms/:roomId/reset",
+    "method": "post",
+    "upload": false,
+    "x": 170,
+    "y": 520,
+    "wires": [["samahi-reset-fn"]]
+  },
+  {
+    "id": "samahi-reset-fn",
+    "type": "function",
+    "z": "samahi-local",
+    "name": "Reiniciar ESP virtual",
+    "func": "const result = global.get('samahi').handle('reset', msg.req.params.roomId, msg.payload); msg.statusCode = result.status; msg.headers = {'Content-Type':'application/json', 'Cache-Control':'no-store'}; msg.payload = result.body; return msg;",
+    "outputs": 1,
+    "x": 460,
+    "y": 520,
+    "wires": [["samahi-reset-response"]]
+  },
+  {
+    "id": "samahi-reset-response",
+    "type": "http response",
+    "z": "samahi-local",
+    "name": "Resposta JSON",
+    "statusCode": "",
+    "headers": {},
+    "x": 760,
+    "y": 520,
+    "wires": []
+  },
+  {
+    "id": "samahi-sensor-0",
+    "type": "inject",
+    "z": "samahi-local",
+    "name": "Normal",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "payload": "{\"scenario\":\"normal\",\"temperatureC\":24,\"humidityPercent\":40,\"gasRawAdc\":843,\"gasUnavailable\":false,\"ldrRawAdc\":1001}",
+    "payloadType": "json",
+    "x": 1030,
+    "y": 220,
+    "wires": [["samahi-sensors"]],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": ""
+  },
+  {
+    "id": "samahi-sensor-1",
+    "type": "inject",
+    "z": "samahi-local",
+    "name": "Gás detectado",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "payload": "{\"gasRawAdc\":3628,\"gasUnavailable\":false}",
+    "payloadType": "json",
+    "x": 1030,
+    "y": 290,
+    "wires": [["samahi-sensors"]],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": ""
+  },
+  {
+    "id": "samahi-sensor-2",
+    "type": "inject",
+    "z": "samahi-local",
+    "name": "Retirar detecção de gás",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "payload": "{\"gasRawAdc\":843,\"gasUnavailable\":false}",
+    "payloadType": "json",
+    "x": 1030,
+    "y": 360,
+    "wires": [["samahi-sensors"]],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": ""
+  },
+  {
+    "id": "samahi-sensor-3",
+    "type": "inject",
+    "z": "samahi-local",
+    "name": "Temperatura 30 °C / umidade 70%",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "payload": "{\"temperatureC\":30,\"humidityPercent\":70}",
+    "payloadType": "json",
+    "x": 1030,
+    "y": 430,
+    "wires": [["samahi-sensors"]],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": ""
+  },
+  {
+    "id": "samahi-sensor-4",
+    "type": "inject",
+    "z": "samahi-local",
+    "name": "Ambiente escuro",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "payload": "{\"ldrRawAdc\":4063}",
+    "payloadType": "json",
+    "x": 1030,
+    "y": 500,
+    "wires": [["samahi-sensors"]],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": ""
+  },
+  {
+    "id": "samahi-sensor-5",
+    "type": "inject",
+    "z": "samahi-local",
+    "name": "Ambiente claro",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "payload": "{\"ldrRawAdc\":1001}",
+    "payloadType": "json",
+    "x": 1030,
+    "y": 570,
+    "wires": [["samahi-sensors"]],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": ""
+  },
+  {
+    "id": "samahi-sensors",
+    "type": "function",
+    "z": "samahi-local",
+    "name": "Mudar entradas simuladas",
+    "func": "const result = global.get('samahi').handle('simulation','quarto-01',msg.payload); msg.payload=result.body; return msg;",
+    "outputs": 1,
+    "x": 1300,
+    "y": 320,
+    "wires": [["samahi-debug"]]
+  }
+]

@@ -15,7 +15,7 @@ export const initialRooms = (): RoomDefinition[] => [
     bed: "L-01",
     wing: "Maquete experimental",
     device: "ESP32-quarto-01",
-    endpoint: "https://servico.exemplo",
+    endpoint: process.env.EXPO_PUBLIC_NODE_RED_URL || "https://servico.exemplo",
     active: true,
   },
 ];

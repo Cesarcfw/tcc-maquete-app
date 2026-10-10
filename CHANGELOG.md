@@ -1,5 +1,13 @@
 # Histórico de versões
 
+## Em desenvolvimento — integração Node-RED local
+
+- Fluxo funcional com ESP virtual, sensores a cada 2 segundos, API HTTP v1 e controles de entradas para testes.
+- App web envia luz, intensidade, modo automático, Manchester virtual e reconhecimento de gás pela API; valida confirmação e consulta telemetria periodicamente.
+- Teste de conexão por HTTP para endpoints configurados; demo interna anterior preservada quando não há endpoint real.
+- Timeout, offline, leitura antiga e mensagens inválidas não geram aplicação otimista. Sem hardware, autenticação real ou publicação em produção.
+- Documentação, fluxo exportável, configuração de exemplo, testes e evidências em docs/integracao-node-red-local.md.
+
 ## 0.4.0 — SAMAHI, redesign Stitch em revisão
 
 - Nova identidade SAMAHI, temas clínicos claro/escuro, navegação adaptada, planta esquemática e painel baseado nas telas fornecidas por César.

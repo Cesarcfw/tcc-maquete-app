@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNodeRed } from "./useNodeRed";
 import {
   applyCommand,
   Command,
@@ -25,7 +26,24 @@ const initialSession = () => ({
   logs: [] as LogEntry[],
 });
 type Session = ReturnType<typeof initialSession>;
-export function useSimulator(environment = "quarto-01") {
+export function useSimulator(
+  environment = "quarto-01",
+  endpoint = "https://servico.exemplo",
+) {
+  const local = useLocalSimulator(environment);
+  const remote = useNodeRed(
+    environment,
+    endpoint === "https://servico.exemplo" ? "" : endpoint,
+  );
+  return {
+    ...(endpoint === "https://servico.exemplo" ? local : remote),
+    setAutomatic() {
+      if (endpoint !== "https://servico.exemplo")
+        void remote.send({ kind: "automatic" });
+    },
+  };
+}
+function useLocalSimulator(environment = "quarto-01") {
   const [sessions, setSessions] = useState<Record<string, Session>>(() => ({
     [environment]: initialSession(),
   }));
