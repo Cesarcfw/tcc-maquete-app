@@ -1,0 +1,771 @@
+<!DOCTYPE html><html lang="pt-BR" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title class="">SAMAHI - Gestão e Cadastro de Quartos &amp; Leitos</title>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS with Forms and Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-fixed": "#001d31",
+            "surface-container-low": "#f2f3ff",
+            "outline": "#707881",
+            "on-surface": "#131b2e",
+            "inverse-surface": "#283044",
+            "on-primary-fixed-variant": "#004b73",
+            "error": "#ba1a1a",
+            "on-background": "#131b2e",
+            "surface-container": "#eaedff",
+            "outline-variant": "#bfc7d2",
+            "on-tertiary-container": "#f4fffc",
+            "primary-container": "#007bb9",
+            "on-tertiary": "#ffffff",
+            "on-primary-container": "#fdfcff",
+            "secondary-fixed": "#cde5ff",
+            "surface": "#faf8ff",
+            "on-secondary": "#ffffff",
+            "on-surface-variant": "#3f4850",
+            "primary-fixed": "#cce5ff",
+            "surface-variant": "#dae2fd",
+            "tertiary-fixed-dim": "#6bd8cb",
+            "tertiary": "#00685f",
+            "error-container": "#ffdad6",
+            "on-error-container": "#93000a",
+            "on-error": "#ffffff",
+            "surface-dim": "#d2d9f4",
+            "on-tertiary-fixed-variant": "#005049",
+            "surface-bright": "#faf8ff",
+            "on-secondary-fixed-variant": "#004b74",
+            "primary": "#006194",
+            "inverse-on-surface": "#eef0ff",
+            "background": "#faf8ff",
+            "on-primary": "#ffffff",
+            "primary-fixed-dim": "#93ccff",
+            "tertiary-container": "#008378",
+            "secondary": "#006399",
+            "surface-container-highest": "#dae2fd",
+            "on-secondary-fixed": "#001d32",
+            "on-secondary-container": "#004f7b",
+            "inverse-primary": "#93ccff",
+            "surface-container-lowest": "#ffffff",
+            "surface-tint": "#006398",
+            "surface-container-high": "#e2e7ff",
+            "tertiary-fixed": "#89f5e7",
+            "on-tertiary-fixed": "#00201d",
+            "secondary-fixed-dim": "#94ccff",
+            "secondary-container": "#7bc2ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-md": "1rem",
+            "margin": "1rem",
+            "space-lg": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "gutter-desktop": "1.5rem",
+            "margin-desktop": "2rem",
+            "gutter": "1.25rem",
+            "space-xl": "2rem"
+          },
+          "fontFamily": {
+            "metric-display": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "headline-xl-mobile": ["Plus Jakarta Sans"],
+            "title-sm": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "metric-display": ["32px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-xl": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+            "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+            "headline-xl-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }],
+            "title-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #faf8ff;
+      color: #131b2e;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f2f3ff;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #bfc7d2;
+      border-radius: 4px;
+    }
+    .hazard-stripe {
+      background: repeating-linear-gradient(45deg, #f59e0b, #f59e0b 10px, #d97706 10px, #d97706 20px);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background flex min-h-screen antialiased">
+<!-- Persistent Sidebar Navigation -->
+<aside class="fixed top-0 left-0 h-screen w-64 flex flex-col justify-between bg-surface-container-lowest border-r border-outline-variant shadow-sm z-30">
+<div class="p-4 flex flex-col">
+<!-- Brand Header -->
+<div class="flex items-center gap-3 px-2 py-2 mb-6"><img src="https://lh3.googleusercontent.com/aida/AEtjO1XoW_mUPCDo2KZ6gJUvjz2MfcjjplgxkXaZdKcxHNZH6kqqwzR9oxLHHqdIkyNpQ11U6EQ9qqBXdqXGuReHz_TEAPUvc2eNR7DCuN9LVdkWS9-nlnxy_ia0e2lcm-zYAchN8bocFBq1TC19eBIQCoMYHKn-A4M1CoKI6I2D6IGvfQU7CurgFEOluXIGsJgWG1bQbGiMpbfOJIWa9IJWn0VnZLY1jFhX7wnA_pjTntAjRrGW62hBUSSp8Gs" alt="SAMAHI - Sistema de Automação e Monitoramento de Ambientes Hospitalares Inteligentes" class="h-10 w-auto object-cover"></div>
+<!-- Navigation Section: Seu Espaço -->
+<div class="mb-5">
+<div class="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-outline">Seu Espaço</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Painel</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 bg-secondary-container text-on-secondary-container rounded-lg font-bold shadow-sm transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="single_bed">single_bed</span>
+<span class="font-body-md text-body-md font-semibold">Quartos &amp; Leitos</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="history">history</span>
+<span class="font-body-md text-body-md">Histórico &amp; Logs</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="account_circle">account_circle</span>
+<span class="font-body-md text-body-md">Conta</span>
+</a>
+</nav>
+</div>
+<!-- Navigation Section: Administração -->
+<div>
+<div class="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-outline">Administração</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="sensors">sensors</span>
+<span class="font-body-md text-body-md">Conexões ESP32</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="group">group</span>
+<span class="font-body-md text-body-md">Usuários &amp; Permissões</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="assignment">assignment</span>
+<span class="font-body-md text-body-md">Evidências &amp; Testes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant rounded-lg font-normal hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Configurações</span>
+</a>
+</nav>
+</div>
+</div>
+<!-- User Profile & Status Footer -->
+<div class="p-4 border-t border-outline-variant bg-surface-container-low/50">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-9 h-9 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm shadow-sm">
+          C
+        </div>
+<div class="overflow-hidden">
+<div class="font-label-md text-label-md text-on-surface font-semibold truncate">César Silva</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant truncate">Administrador Clínico</div>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 py-1.5 px-2 rounded-lg text-primary hover:bg-surface-container-high text-xs font-semibold transition-colors duration-150">
+<span class="material-symbols-outlined text-[16px]" data-icon="swap_horiz">swap_horiz</span>
+        Trocar perfil
+      </button>
+<div class="mt-2 text-[10px] text-outline text-center">
+        v0.3.4 · Protótipo Interativo
+      </div>
+</div>
+</aside>
+<!-- Main Content Canvas Area -->
+<main class="ml-64 flex-1 flex flex-col min-w-0 bg-background min-h-screen">
+<!-- Top Bar with Breadcrumb and Status Badges -->
+<header class="sticky top-0 z-20 flex justify-between items-center w-full px-6 lg:px-8 py-3 bg-surface-container-lowest border-b border-outline-variant/60 shadow-sm backdrop-blur-md bg-opacity-95">
+<!-- Breadcrumb -->
+<div class="flex items-center gap-2">
+<img src="https://lh3.googleusercontent.com/aida/AEtjO1XoW_mUPCDo2KZ6gJUvjz2MfcjjplgxkXaZdKcxHNZH6kqqwzR9oxLHHqdIkyNpQ11U6EQ9qqBXdqXGuReHz_TEAPUvc2eNR7DCuN9LVdkWS9-nlnxy_ia0e2lcm-zYAchN8bocFBq1TC19eBIQCoMYHKn-A4M1CoKI6I2D6IGvfQU7CurgFEOluXIGsJgWG1bQbGiMpbfOJIWa9IJWn0VnZLY1jFhX7wnA_pjTntAjRrGW62hBUSSp8Gs" alt="SAMAHI - Sistema de Automação e Monitoramento de Ambientes Hospitalares Inteligentes" class="h-6 w-auto object-contain">
+<span class="text-outline text-xs">/</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-medium">GESTÃO DE QUARTOS &amp; LEITOS</span>
+</div>
+<!-- Quick Action Badges & Telemetry State -->
+<div class="flex items-center gap-3">
+<!-- Simulation Badge -->
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-100 border border-sky-200 text-sky-800 text-xs font-semibold">
+<span class="material-symbols-outlined text-[15px] text-sky-700" data-icon="science">science</span>
+<span class="">Ambiente de Simulação</span>
+</div>
+<!-- ESP32 Cluster Status -->
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="">Rede ESP32: 3 Ativos</span>
+</div>
+<div class="h-4 w-[1px] bg-outline-variant mx-1"></div>
+<button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors" title="Notificações do Sistema">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+</button>
+<button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors" title="Configurações de Rede">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+</button>
+</div>
+</header>
+<!-- Page Body Container -->
+<div class="p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
+<!-- Header Banner & Intro -->
+<div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Gerenciamento de Quartos &amp; Cadastro de Ambientes</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1.5 max-w-4xl">
+          Cadastre novos leitos, vincule dispositivos ESP32, configure atuadores de iluminação e parâmetros ambientais da maquete física hospitalar.
+        </p>
+</div>
+<!-- Main Layout Grid: Form (7 cols) + Live Overview (5 cols) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- Left Column: New Room Registration Form (7 cols) -->
+<div class="lg:col-span-7 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<!-- Card Header -->
+<div class="p-5 border-b border-outline-variant/70 bg-surface-container-low/40 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-container/15 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]" data-icon="add_home_work">add_home_work</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-semibold">Novo Quarto / Ambiente Clínico</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Configuração física e lógica dos nós da maquete conectada</p>
+</div>
+</div>
+<span class="px-2.5 py-1 text-xs font-semibold rounded-md bg-secondary-container/30 text-on-secondary-container border border-secondary-container/40">
+              Passo Único
+            </span>
+</div>
+<!-- Form Body -->
+<form class="p-6 space-y-6" onsubmit="event.preventDefault();">
+<!-- Section 1: Identificação do Ambiente -->
+<div class="space-y-4">
+<div class="flex items-center gap-2 pb-1.5 border-b border-outline-variant/40">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="badge">badge</span>
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-wide">1. Identificação do Ambiente</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface mb-1">Nome do Quarto / Identificador</label>
+<input class="w-full px-3.5 py-2.5 text-body-md font-body-md rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-primary bg-surface-container-lowest text-on-surface" placeholder="Ex: Quarto 05 - Leito Clínico" type="text" value="Quarto 05 - Leito Clínico Pediátrico">
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1">Código do Leito Físico</label>
+<input class="w-full px-3.5 py-2.5 text-body-md font-body-md rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-primary bg-surface-container-lowest text-on-surface" placeholder="Ex: L-05-SUL" type="text" value="L-05-SUL">
+<p class="font-body-sm text-body-sm text-outline mt-1">Identificador etiquetado na maquete real.</p>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1">Ala Hospitalar</label>
+<select class="w-full px-3.5 py-2.5 text-body-md font-body-md rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-primary bg-surface-container-lowest text-on-surface">
+<option selected="" value="ala_sul">Ala Sul (Enfermaria Pediátrica)</option>
+<option value="ala_norte">Ala Norte (Internação Adulto)</option>
+<option value="emergencia">Emergência &amp; Trauma</option>
+<option value="uti">UTI Geral (Intensivo)</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Section 2: Vínculo IoT & Hardware ESP32 -->
+<div class="space-y-4">
+<div class="flex items-center gap-2 pb-1.5 border-b border-outline-variant/40">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="memory">memory</span>
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-wide">2. Vínculo IoT &amp; Hardware ESP32</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface mb-1">Hostname / Endereço IP do ESP32</label>
+<div class="relative">
+<input class="w-full pl-9 pr-3.5 py-2.5 text-body-md font-body-md rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-primary bg-surface-container-lowest text-on-surface" placeholder="Ex: esp32-quarto-05.local ou 192.168.1.145" type="text" value="esp32-quarto-05.local">
+<span class="material-symbols-outlined absolute left-2.5 top-3 text-[18px] text-outline" data-icon="dns">dns</span>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1">Porta / Protocolo</label>
+<input class="w-full px-3.5 py-2.5 text-body-md font-body-md rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-primary bg-surface-container-lowest text-on-surface" placeholder="80 ou 8080" type="text" value="80 / WebSocket">
+</div>
+</div>
+<!-- Pin Mapping Grid -->
+<div class="bg-surface-container-low/60 p-4 rounded-xl border border-outline-variant/70 space-y-3">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Mapeamento de GPIOs da Maquete</span>
+<span class="font-body-sm text-body-sm text-primary font-medium">Pinout ESP32-WROOM-32</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<!-- PWM Light -->
+<div class="bg-surface-container-lowest p-2.5 rounded-lg border border-outline-variant/60">
+<label class="text-[11px] font-bold text-on-surface-variant uppercase block">Iluminação PWM</label>
+<div class="flex items-center gap-1.5 mt-1">
+<span class="material-symbols-outlined text-amber-500 text-[18px]" data-icon="lightbulb">lightbulb</span>
+<input class="w-full text-xs font-semibold py-1 px-1.5 border border-outline-variant rounded bg-transparent" type="text" value="GPIO 18">
+</div>
+</div>
+<!-- Gas MQ-2 -->
+<div class="bg-surface-container-lowest p-2.5 rounded-lg border border-outline-variant/60">
+<label class="text-[11px] font-bold text-on-surface-variant uppercase block">Sensor Gás MQ-2</label>
+<div class="flex items-center gap-1.5 mt-1">
+<span class="material-symbols-outlined text-orange-600 text-[18px]" data-icon="detector_smoke">detector_smoke</span>
+<input class="w-full text-xs font-semibold py-1 px-1.5 border border-outline-variant rounded bg-transparent" type="text" value="ADC1_CH4 (GPIO 32)">
+</div>
+</div>
+<!-- Manchester RGB -->
+<div class="bg-surface-container-lowest p-2.5 rounded-lg border border-outline-variant/60">
+<label class="text-[11px] font-bold text-on-surface-variant uppercase block">Triagem Manchester</label>
+<div class="flex items-center gap-1.5 mt-1">
+<span class="material-symbols-outlined text-rose-600 text-[18px]" data-icon="palette">palette</span>
+<input class="w-full text-xs font-semibold py-1 px-1.5 border border-outline-variant rounded bg-transparent" type="text" value="GPIO 21 (RGB Neo)">
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+<div class="flex items-center justify-between text-xs px-2 text-on-surface-variant">
+<span class="">Barramento DHT22 (Temp &amp; Umid):</span>
+<span class="font-mono font-semibold text-primary">GPIO 04</span>
+</div>
+<div class="flex items-center justify-between text-xs px-2 text-on-surface-variant">
+<span class="">Taxa de Amostragem Telemetria:</span>
+<span class="font-mono font-semibold text-primary">1000 ms</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 3: Configurações Iniciais & Atuadores -->
+<div class="space-y-4">
+<div class="flex items-center gap-2 pb-1.5 border-b border-outline-variant/40">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="tune">tune</span>
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-wide">3. Configurações Iniciais &amp; Limiares</span>
+</div>
+<!-- Initial Light Slider -->
+<div>
+<div class="flex justify-between items-center mb-1">
+<label class="font-label-md text-label-md text-on-surface">Intensidade Inicial da Iluminação Hospitalar</label>
+<span class="px-2 py-0.5 rounded text-xs font-bold bg-primary-container text-on-primary-container" id="lightVal">50%</span>
+</div>
+<input class="w-full h-2 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary" id="lightRange" max="100" min="0" oninput="document.getElementById('lightVal').innerText = this.value + '%'" type="range" value="50">
+<div class="flex justify-between text-[11px] text-outline mt-1 font-medium">
+<span class="">0% (Apagado)</span>
+<span class="">25% (Noturno)</span>
+<span class="">50% (Padrão)</span>
+<span class="">75% (Exame)</span>
+<span class="">100% (Cirúrgico)</span>
+</div>
+</div>
+<!-- Gas Threshold Warning & Disclaimer -->
+<div class="p-3.5 rounded-xl border-2 border-amber-500 bg-amber-50/70 text-on-surface space-y-2">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-amber-600 text-[22px] flex-shrink-0" data-icon="warning">warning</span>
+<div>
+<div class="font-label-md text-label-md font-bold text-amber-950">Aviso Regulatório de Telemetria Ambiental</div>
+<p class="text-xs text-amber-900 mt-0.5">
+                      Detecção de gás genérica via sensor analógico. Sem aferição toxicológica específica em conformidade com o protocolo da maquete de teste simulado.
+                    </p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3 pt-2">
+<div>
+<label class="block text-[11px] font-semibold text-amber-900">Limiar Alerta Gás (ADC):</label>
+<input class="w-full text-xs py-1 px-2 rounded border border-amber-300 bg-white" type="number" value="380">
+</div>
+<div>
+<label class="block text-[11px] font-semibold text-amber-900">Alerta Temp. Máx (°C):</label>
+<input class="w-full text-xs py-1 px-2 rounded border border-amber-300 bg-white" type="number" value="28">
+</div>
+</div>
+</div>
+</div>
+<!-- Section 4: Atribuição de Responsáveis & Perfil -->
+<div class="space-y-4">
+<div class="flex items-center gap-2 pb-1.5 border-b border-outline-variant/40">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="assignment_ind">assignment_ind</span>
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-wide">4. Atribuição de Responsáveis Clínicos</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1">Enfermeiro(a) / Técnico Responsável</label>
+<select class="w-full px-3.5 py-2.5 text-body-md font-body-md rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-primary bg-surface-container-lowest text-on-surface">
+<option value="matheus">Matheus Rocha (Enfermeiro Pleno - COREN 44821)</option>
+<option value="gabriel">Gabriel Santos (Engenheiro Clínico)</option>
+<option value="cesar">César Silva (Supervisor Clínico)</option>
+</select>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1">Perfil de Operação Liberado</label>
+<div class="grid grid-cols-3 rounded-lg border border-outline-variant overflow-hidden text-center text-xs">
+<button class="py-2.5 bg-surface-container-low text-on-surface-variant font-medium hover:bg-surface-container" type="button">Sem acesso</button>
+<button class="py-2.5 bg-surface-container-low text-on-surface-variant font-medium hover:bg-surface-container" type="button">Visualizar</button>
+<button class="py-2.5 bg-secondary-container text-on-secondary-container font-bold border-l border-outline-variant/60" type="button">Controlar</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Form Actions -->
+<div class="pt-4 border-t border-outline-variant/70 flex flex-col sm:flex-row items-center justify-end gap-3">
+<button class="w-full sm:w-auto px-5 py-2.5 text-body-md font-body-md font-semibold text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-xl transition-colors duration-150 text-center" type="button">
+                Cancelar
+              </button>
+<button class="w-full sm:w-auto px-6 py-2.5 text-body-md font-body-md font-bold text-white bg-[#005a9e] hover:bg-primary transition-all duration-150 rounded-xl shadow-sm flex items-center justify-center gap-2 active:scale-95" type="submit">
+<span class="material-symbols-outlined text-[20px]" data-icon="router">router</span>
+                Salvar e Inicializar Conexão ESP32
+              </button>
+</div>
+</form>
+</div>
+<!-- Right Column: Micro-Telemetry & Room Summary (5 cols) -->
+<div class="lg:col-span-5 space-y-6">
+<!-- ESP32 Hardware Diagnostics Quick Card -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/50">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container/15 text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]" data-icon="developer_board">developer_board</span>
+</div>
+<div>
+<h3 class="font-headline-md text-[16px] leading-5 text-on-surface font-bold">Diagnóstico Rápido de Bancada</h3>
+<span class="text-xs text-outline">Ponto de Teste: Maquete Física</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">
+                MQTT Online
+              </span>
+</div>
+<div class="mt-4 space-y-3">
+<div class="flex justify-between items-center text-xs p-2.5 rounded-lg bg-surface-container-low">
+<span class="text-on-surface-variant font-medium">Latência de Comunicação:</span>
+<span class="font-mono font-bold text-primary">18 ms</span>
+</div>
+<div class="flex justify-between items-center text-xs p-2.5 rounded-lg bg-surface-container-low">
+<span class="text-on-surface-variant font-medium">Banda de Rede Wi-Fi:</span>
+<span class="font-mono font-bold text-on-surface">2.4 GHz (SSID: Hosp_IoT_Sim)</span>
+</div>
+<div class="flex justify-between items-center text-xs p-2.5 rounded-lg bg-surface-container-low">
+<span class="text-on-surface-variant font-medium">Memória Heap Livre (ESP32):</span>
+<span class="font-mono font-bold text-emerald-700">194.2 KB / 320 KB</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/50 flex gap-2">
+<button class="flex-1 py-2 px-3 bg-surface-container text-primary hover:bg-surface-container-high rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="wifi_tethering">wifi_tethering</span>
+                Testar ESP32
+              </button>
+<button class="py-2 px-3 bg-surface-container text-on-surface-variant hover:bg-surface-container-high rounded-lg text-xs font-semibold flex items-center justify-center transition-colors" title="Reiniciar ESP32 de Simulação" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="restart_alt">restart_alt</span>
+</button>
+</div>
+</div>
+<!-- Protocolo Manchester Quick Reference Card -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant shadow-sm">
+<h3 class="font-headline-md text-[16px] leading-5 text-on-surface font-bold mb-1 flex items-center gap-2">
+<span class="material-symbols-outlined text-rose-600 text-[20px]" data-icon="emergency">emergency</span>
+              Padrão Manchester de Triagem Integrada
+            </h3>
+<p class="text-xs text-on-surface-variant mb-4">
+              O LED RGB da cabeceira do leito sincroniza instantaneamente com o nível de prioridade clínica selecionado no prontuário do leito.
+            </p>
+<div class="space-y-2">
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low text-xs">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-red-600"></span>
+<span class="font-semibold text-on-surface">Emergência</span>
+</div>
+<span class="text-outline font-medium">0 min (Imediato)</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low text-xs">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-orange-500"></span>
+<span class="font-semibold text-on-surface">Muito Urgente</span>
+</div>
+<span class="text-outline font-medium">10 min</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low text-xs">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-amber-400"></span>
+<span class="font-semibold text-on-surface">Urgente</span>
+</div>
+<span class="text-outline font-medium">60 min</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low text-xs">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+<span class="font-semibold text-on-surface">Pouco Urgente</span>
+</div>
+<span class="text-outline font-medium">120 min</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low text-xs">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-blue-500"></span>
+<span class="font-semibold text-on-surface">Não Urgente</span>
+</div>
+<span class="text-outline font-medium">240 min</span>
+</div>
+</div>
+</div>
+<!-- Micro Gas Hazard Safety Banner -->
+<div class="rounded-xl border border-amber-300 bg-amber-50 p-4 shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-amber-500 text-white flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]" data-icon="cloud">cloud</span>
+</div>
+<div>
+<h4 class="text-xs font-bold text-amber-950 uppercase tracking-wide">Monitor de Gases da Enfermaria</h4>
+<p class="text-xs text-amber-900 mt-0.5">Detecção contínua ativada via barramento analógico na maquete.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Lower Section: Quartos Já Cadastrados no Ecossistema -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden mt-8">
+<!-- Table Top Header -->
+<div class="p-5 border-b border-outline-variant flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-semibold">Quartos Já Cadastrados no Ecossistema</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Relação em tempo real de ambientes conectados, periféricos e telemetria</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative">
+<input class="pl-8 pr-3 py-1.5 text-xs rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface focus:ring-1 focus:ring-primary w-48 lg:w-64" placeholder="Filtrar quartos ou leitos..." type="text">
+<span class="material-symbols-outlined absolute left-2 top-2 text-[16px] text-outline" data-icon="search">search</span>
+</div>
+<button class="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg border border-outline-variant bg-surface-container-low hover:bg-surface-container text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[16px]" data-icon="filter_list">filter_list</span>
+              Filtrar
+            </button>
+</div>
+</div>
+<!-- Registered Rooms Table -->
+<div class="overflow-x-auto custom-scroll">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-[11px] font-bold text-on-surface-variant uppercase tracking-wider border-b border-outline-variant/70">
+<th class="py-3 px-5">Quarto / Leito</th>
+<th class="py-3 px-5">Ala Hospitalar</th>
+<th class="py-3 px-5">Dispositivo IoT Vinculado</th>
+<th class="py-3 px-5">Status de Conexão</th>
+<th class="py-3 px-5">Telemetria Atual</th>
+<th class="py-3 px-5 text-right">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/40 text-body-sm font-body-sm">
+<!-- Row 1: Quarto 01 (Online) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary-container/10 text-primary flex items-center justify-center font-bold text-xs">
+                      01
+                    </div>
+<div>
+<div class="font-semibold text-on-surface">Quarto 01 - Leito Clínico</div>
+<div class="text-[11px] text-outline font-mono">Código: L-01-SUL</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-5">
+<span class="px-2.5 py-1 text-xs font-medium rounded-md bg-surface-container text-on-surface">
+                    Ala Sul
+                  </span>
+</td>
+<td class="py-4 px-5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="memory">memory</span>
+<span class="font-mono text-xs font-semibold text-on-surface">ESP32-quarto-01</span>
+</div>
+<span class="text-[11px] text-outline font-mono">192.168.1.101</span>
+</td>
+<td class="py-4 px-5">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    Online
+                  </div>
+</td>
+<td class="py-4 px-5">
+<div class="text-xs space-y-0.5">
+<div class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-sky-600" data-icon="device_thermostat">device_thermostat</span>
+<span class="">23.4°C · 48% Umid</span>
+</div>
+<div class="text-[11px] text-emerald-700 font-medium">Gás: Normal (112 ADC)</div>
+</div>
+</td>
+<td class="py-4 px-5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1 text-xs font-semibold rounded bg-surface-container text-primary hover:bg-surface-container-high transition-colors" title="Editar parâmetros">
+                      Editar
+                    </button>
+<button class="px-2.5 py-1 text-xs font-semibold rounded bg-sky-50 text-sky-700 hover:bg-sky-100 transition-colors" title="Testar Ping ESP32">
+                      Ping
+                    </button>
+<button class="p-1 rounded text-outline hover:text-error hover:bg-error-container/20 transition-colors" title="Desativar conexão">
+<span class="material-symbols-outlined text-[18px]" data-icon="power_settings_new">power_settings_new</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Quarto 02 (Online) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary-container/10 text-primary flex items-center justify-center font-bold text-xs">
+                      02
+                    </div>
+<div>
+<div class="font-semibold text-on-surface">Quarto 02 - Semi-Intensivo</div>
+<div class="text-[11px] text-outline font-mono">Código: L-02-NORTE</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-5">
+<span class="px-2.5 py-1 text-xs font-medium rounded-md bg-surface-container text-on-surface">
+                    Ala Norte
+                  </span>
+</td>
+<td class="py-4 px-5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="memory">memory</span>
+<span class="font-mono text-xs font-semibold text-on-surface">ESP32-quarto-02</span>
+</div>
+<span class="text-[11px] text-outline font-mono">192.168.1.102</span>
+</td>
+<td class="py-4 px-5">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    Online
+                  </div>
+</td>
+<td class="py-4 px-5">
+<div class="text-xs space-y-0.5">
+<div class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-sky-600" data-icon="device_thermostat">device_thermostat</span>
+<span class="">22.1°C · 52% Umid</span>
+</div>
+<div class="text-[11px] text-emerald-700 font-medium">Gás: Normal (98 ADC)</div>
+</div>
+</td>
+<td class="py-4 px-5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1 text-xs font-semibold rounded bg-surface-container text-primary hover:bg-surface-container-high transition-colors">
+                      Editar
+                    </button>
+<button class="px-2.5 py-1 text-xs font-semibold rounded bg-sky-50 text-sky-700 hover:bg-sky-100 transition-colors">
+                      Ping
+                    </button>
+<button class="p-1 rounded text-outline hover:text-error hover:bg-error-container/20 transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="power_settings_new">power_settings_new</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Quarto 03 (Alerta de Gás) -->
+<tr class="bg-amber-50/40 hover:bg-amber-50/70 transition-colors border-l-4 border-l-amber-500">
+<td class="py-4 px-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-900 flex items-center justify-center font-bold text-xs">
+                      03
+                    </div>
+<div>
+<div class="font-semibold text-on-surface">Quarto 03 - Isolamento</div>
+<div class="text-[11px] text-outline font-mono">Código: L-03-EMERG</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-5">
+<span class="px-2.5 py-1 text-xs font-medium rounded-md bg-amber-100 text-amber-900">
+                    Emergência
+                  </span>
+</td>
+<td class="py-4 px-5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-amber-600" data-icon="memory">memory</span>
+<span class="font-mono text-xs font-semibold text-on-surface">ESP32-quarto-03</span>
+</div>
+<span class="text-[11px] text-outline font-mono">192.168.1.103</span>
+</td>
+<td class="py-4 px-5">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 animate-pulse">
+<span class="w-2 h-2 rounded-full bg-amber-600"></span>
+                    Alerta de Gás
+                  </div>
+</td>
+<td class="py-4 px-5">
+<div class="text-xs space-y-0.5">
+<div class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-amber-600" data-icon="device_thermostat">device_thermostat</span>
+<span class="">26.8°C · 61% Umid</span>
+</div>
+<div class="text-[11px] font-bold text-amber-700">Gás: 442 ADC (Acima do Limiar)</div>
+</div>
+</td>
+<td class="py-4 px-5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1 text-xs font-semibold rounded bg-surface-container text-primary hover:bg-surface-container-high transition-colors">
+                      Editar
+                    </button>
+<button class="px-2.5 py-1 text-xs font-semibold rounded bg-amber-200 text-amber-900 hover:bg-amber-300 transition-colors">
+                      Ver Alerta
+                    </button>
+<button class="p-1 rounded text-outline hover:text-error hover:bg-error-container/20 transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="power_settings_new">power_settings_new</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Stats Summary -->
+<div class="p-4 bg-surface-container-low/40 border-t border-outline-variant flex flex-col sm:flex-row items-center justify-between text-xs text-on-surface-variant gap-2">
+<div class="">
+            Mostrando <span class="font-bold text-on-surface">3 de 3</span> leitos monitorados na maquete hospitalar
+          </div>
+<div class="flex items-center gap-4">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              2 Normais
+            </span>
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              1 Em Atenção
+            </span>
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+              0 Desconectados
+            </span>
+</div>
+</div>
+</div>
+<!-- System Notice Disclaimer Footer -->
+<footer class="text-center py-6 text-xs text-outline space-y-1">
+<div class="">SAMAHI · Plataforma de Gestão e Telemetria para Maquetes e Simulações Hospitalares Conectadas</div>
+<div class="">Ambiente de testes clínicos com microcontroladores ESP32 e atuadores de enfermagem.</div>
+</footer>
+</div>
+</main>
+
+
+</body></html>

@@ -1,6 +1,6 @@
-# Maquete conectada
+# SAMAHI
 
-Aplicativo de César para reunir sensores e controles da maquete. **v0.3.0: protótipo interativo com React Native Paper e dados simulados**, candidata para revisão. Layout de celular, tablet e computador com identidade compartilhada. Nenhum ESP32 ou Node-RED conectado nesta versão.
+Sistema de Automação e Monitoramento de Ambientes Hospitalares Inteligentes. Aplicativo de César para sensores e controles da maquete. **v0.4.0: prévia visual baseada no material do Stitch, em revisão**, com React Native Paper e dados simulados. Celular, tablet e computador compartilham identidade. Nenhum ESP32 ou Node-RED conectado. Veja o [registro do redesign](docs/redesign-stitch-samahi.md). APK e web pública anteriores continuam na versão anterior até nova distribuição.
 
 ## O que experimentar
 
@@ -11,7 +11,8 @@ Aplicativo de César para reunir sensores e controles da maquete. **v0.3.0: prot
 - Luz do quarto: ligar/desligar, intensidade 0 a 100% e atalhos.
 - Indicador externo com as cinco cores de Manchester e opção de apagar, com seleção manual.
 - Cenários: operação normal, desconexão, dado antigo e comando sem confirmação.
-- Roteiro de prints e vídeos em Evidências.
+- Seleção, busca e cadastro local de ambientes, com histórico e simulação independentes por quarto; sem persistência.
+- Roteiros de prints e vídeos em docs, fora da interface do aplicativo.
 
 ## Executar
 

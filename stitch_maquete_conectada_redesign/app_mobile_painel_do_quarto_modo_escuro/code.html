@@ -1,0 +1,431 @@
+<!DOCTYPE html><html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Maquete Conectada - Quarto Hospitalar IoT</title>
+<!-- Material Symbols & Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-lowest": "#ffffff",
+            "inverse-surface": "#283044",
+            "inverse-primary": "#93ccff",
+            "on-tertiary": "#ffffff",
+            "primary-fixed-dim": "#93ccff",
+            "surface-container": "#eaedff",
+            "on-tertiary-fixed-variant": "#005049",
+            "outline-variant": "#bfc7d2",
+            "on-surface-variant": "#3f4850",
+            "surface-bright": "#faf8ff",
+            "on-background": "#131b2e",
+            "surface-variant": "#dae2fd",
+            "tertiary-fixed": "#89f5e7",
+            "surface-dim": "#d2d9f4",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6",
+            "tertiary": "#00685f",
+            "secondary-fixed-dim": "#94ccff",
+            "on-surface": "#131b2e",
+            "on-tertiary-container": "#f4fffc",
+            "on-primary-container": "#fdfcff",
+            "tertiary-container": "#008378",
+            "surface-container-highest": "#dae2fd",
+            "primary": "#006194",
+            "on-secondary-fixed": "#001d32",
+            "outline": "#707881",
+            "secondary-container": "#7bc2ff",
+            "on-error": "#ffffff",
+            "surface-container-low": "#f2f3ff",
+            "primary-fixed": "#cce5ff",
+            "secondary-fixed": "#cde5ff",
+            "background": "#faf8ff",
+            "on-primary-fixed-variant": "#004b73",
+            "on-primary": "#ffffff",
+            "on-primary-fixed": "#001d31",
+            "inverse-on-surface": "#eef0ff",
+            "on-tertiary-fixed": "#00201d",
+            "on-secondary-container": "#004f7b",
+            "tertiary-fixed-dim": "#6bd8cb",
+            "secondary": "#006399",
+            "on-secondary-fixed-variant": "#004b74",
+            "on-error-container": "#93000a",
+            "on-secondary": "#ffffff",
+            "surface-tint": "#006398",
+            "surface": "#faf8ff",
+            "primary-container": "#007bb9",
+            "surface-container-high": "#e2e7ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-md": "1rem",
+            "space-sm": "0.5rem",
+            "space-xl": "2rem",
+            "margin": "1rem",
+            "gutter": "1.25rem",
+            "margin-desktop": "2rem",
+            "space-xs": "0.25rem",
+            "gutter-desktop": "1.5rem",
+            "space-lg": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-xl": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "metric-display": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-xl-mobile": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "title-sm": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "headline-xl": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "metric-display": ["32px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-xl-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }],
+            "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "title-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    /* Dark Hospital Slate/Navy background tokens */
+    body {
+      background-color: #0b132b;
+      color: #eef0ff;
+    }
+    .custom-slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 9999px;
+      background: #7bc2ff;
+      border: 3px solid #001d31;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(123, 194, 255, 0.5);
+    }
+    .custom-slider::-moz-range-thumb {
+      width: 26px;
+      height: 26px;
+      border-radius: 9999px;
+      background: #7bc2ff;
+      border: 3px solid #001d31;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(123, 194, 255, 0.5);
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen pb-28 text-inverse-on-surface">
+<!-- TOP HEADER (Mobile Clinical Shell) -->
+<header class="sticky top-0 z-40 bg-[#111a30]/90 backdrop-blur-md px-4 py-3 shadow-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2"><div class="h-9 px-2 py-1 rounded-xl bg-slate-800/80 border border-outline/30 flex items-center justify-center shadow-sm"><img src="https://lh3.googleusercontent.com/aida/AEtjO1XoW_mUPCDo2KZ6gJUvjz2MfcjjplgxkXaZdKcxHNZH6kqqwzR9oxLHHqdIkyNpQ11U6EQ9qqBXdqXGuReHz_TEAPUvc2eNR7DCuN9LVdkWS9-nlnxy_ia0e2lcm-zYAchN8bocFBq1TC19eBIQCoMYHKn-A4M1CoKI6I2D6IGvfQU7CurgFEOluXIGsJgWG1bQbGiMpbfOJIWa9IJWn0VnZLY1jFhX7wnA_pjTntAjRrGW62hBUSSp8Gs" alt="SAMAHI" class="h-7 w-auto object-contain"></div><div class=""><div class="flex items-center gap-1.5"><h1 class="font-headline-md text-headline-md text-on-primary-container tracking-tight leading-none">SAMAHI</h1></div><span class="font-label-sm text-label-sm text-outline-variant">Quarto Hospitalar IoT</span></div></div>
+<div class="flex items-center gap-2"><div class="h-9 px-2 py-1 rounded-xl bg-slate-800/80 border border-outline/30 flex items-center justify-center shadow-sm"><img src="https://lh3.googleusercontent.com/aida/AEtjO1XoW_mUPCDo2KZ6gJUvjz2MfcjjplgxkXaZdKcxHNZH6kqqwzR9oxLHHqdIkyNpQ11U6EQ9qqBXdqXGuReHz_TEAPUvc2eNR7DCuN9LVdkWS9-nlnxy_ia0e2lcm-zYAchN8bocFBq1TC19eBIQCoMYHKn-A4M1CoKI6I2D6IGvfQU7CurgFEOluXIGsJgWG1bQbGiMpbfOJIWa9IJWn0VnZLY1jFhX7wnA_pjTntAjRrGW62hBUSSp8Gs" alt="SAMAHI" class="h-7 w-auto object-contain"></div><div class=""><div class="flex items-center gap-1.5"><h1 class="font-headline-md text-headline-md text-on-primary-container tracking-tight leading-none">SAMAHI</h1></div><span class="font-label-sm text-label-sm text-outline-variant">Quarto Hospitalar IoT</span></div></div>
+</div>
+<!-- Mode Badge & Synchronization Notice -->
+<div class="mt-2.5 pt-2 border-t border-outline/20 flex items-center justify-between">
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-sky-950/70 border border-sky-600/50 text-sky-200">
+<span class="material-symbols-outlined text-[14px]" data-icon="science">science</span>
+<span class="font-label-sm text-label-sm font-semibold tracking-wide">Modo de Demonstração (Dados Simulados)</span>
+</div>
+<div class="flex items-center gap-1 font-body-sm text-body-sm text-outline-variant">
+<span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span>
+<span class="">agora há pouco</span>
+</div>
+</div>
+</header>
+<!-- MAIN SCROLLABLE MOBILE CONTENT CANVAS -->
+<main class="px-4 py-4 space-y-4 max-w-md mx-auto">
+<!-- 1. QUARTO IDENTITY CARD -->
+<section class="bg-[#17223b] rounded-xl p-4 border border-outline/30 shadow-sm flex items-center justify-between">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed-dim" data-icon="single_bed">single_bed</span>
+<h2 class="font-headline-md text-headline-md text-on-primary-container">Quarto 01 - Leito Clínico</h2>
+</div>
+<p class="font-body-sm text-body-sm text-outline-variant">Simulador de Paciente &amp; Telemetria ESP32</p>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-emerald-950/80 text-emerald-300 border border-emerald-600/40">
+          Ala Sul / Ativo
+        </span>
+<span class="font-label-sm text-label-sm text-outline-variant">ESP32 Conectado</span>
+</div>
+</section>
+<!-- 2. ILUMINAÇÃO GERAL (FITA LED DIMMER) -->
+<section class="bg-[#17223b] rounded-xl p-4 border border-outline/30 shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-300">
+<span class="material-symbols-outlined" data-icon="light" style="font-variation-settings: 'FILL' 1;">light</span>
+</div>
+<div>
+<h3 class="font-title-sm text-title-sm text-on-primary-container">Iluminação Geral</h3>
+<span class="font-body-sm text-body-sm text-outline-variant">Fita LED Dimmer ESP32</span>
+</div>
+</div>
+<!-- Power Switch -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-12 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[3px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary-container"></div>
+</label>
+</div>
+<!-- Slider Display & Value -->
+<div class="bg-[#111a30] rounded-lg p-3 border border-outline/20">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-md text-label-md text-inverse-on-surface">Intensidade do Leito</span>
+<div class="flex items-baseline gap-1">
+<span class="font-metric-display text-metric-display text-secondary-container">65</span>
+<span class="font-headline-md text-headline-md text-secondary-fixed-dim">%</span>
+</div>
+</div>
+<input class="custom-slider w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-secondary-container" max="100" min="0" type="range" value="65">
+<!-- Quick Access Segmented Buttons -->
+<div class="grid grid-cols-4 gap-1.5 mt-3 pt-2 border-t border-outline/20">
+<button class="py-1.5 rounded text-center font-label-sm text-label-sm bg-slate-800/80 hover:bg-slate-700 text-outline-variant transition-colors" type="button">
+            0%
+          </button>
+<button class="py-1.5 rounded text-center font-label-sm text-label-sm bg-slate-800/80 hover:bg-slate-700 text-inverse-on-surface transition-colors" type="button">
+            25%
+          </button>
+<button class="py-1.5 rounded text-center font-label-sm text-label-sm bg-primary-container text-on-primary-container font-bold shadow-sm" type="button">
+            50%
+          </button>
+<button class="py-1.5 rounded text-center font-label-sm text-label-sm bg-slate-800/80 hover:bg-slate-700 text-inverse-on-surface transition-colors" type="button">
+            100%
+          </button>
+</div>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm text-outline-variant pt-1">
+<div class="flex items-center gap-1 text-emerald-400">
+<span class="material-symbols-outlined text-[16px]" data-icon="check_circle">check_circle</span>
+<span class="font-label-sm text-label-sm">Confirmado no quarto</span>
+</div>
+<span class="">PWM 8-bit GPIO 18</span>
+</div>
+</section>
+<!-- 3. TELEMETRIA DE SENSORES DO QUARTO -->
+<section class="bg-[#17223b] rounded-xl p-4 border border-outline/30 shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary-fixed-dim">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+</div>
+<h3 class="font-title-sm text-title-sm text-on-primary-container">Telemetria de Sensores</h3>
+</div>
+<span class="font-label-sm text-label-sm text-outline-variant">Leitura ESP32 ADC</span>
+</div>
+<!-- Temperature & Humidity Dual Grid -->
+<div class="grid grid-cols-2 gap-2.5">
+<!-- Temperatura -->
+<div class="bg-[#111a30] rounded-xl p-3 border border-outline/20 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline-variant">Temperatura</span>
+<span class="material-symbols-outlined text-sky-400 text-[20px]" data-icon="device_thermostat">device_thermostat</span>
+</div>
+<div class="my-2">
+<div class="flex items-baseline">
+<span class="font-metric-display text-metric-display text-on-primary-container tracking-tight">24,6</span>
+<span class="font-body-md text-body-md text-outline-variant ml-1">°C</span>
+</div>
+</div>
+<div class="flex items-center gap-1 text-emerald-400">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+<span class="font-label-sm text-label-sm">Faixa ideal</span>
+</div>
+</div>
+<!-- Umidade -->
+<div class="bg-[#111a30] rounded-xl p-3 border border-outline/20 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline-variant">Umidade</span>
+<span class="material-symbols-outlined text-teal-400 text-[20px]" data-icon="humidity_percentage">humidity_percentage</span>
+</div>
+<div class="my-2">
+<div class="flex items-baseline">
+<span class="font-metric-display text-metric-display text-on-primary-container tracking-tight">58</span>
+<span class="font-body-md text-body-md text-outline-variant ml-1">%</span>
+</div>
+</div>
+<div class="flex items-center gap-1 text-emerald-400">
+<span class="material-symbols-outlined text-[14px]" data-icon="verified">verified</span>
+<span class="font-label-sm text-label-sm">Confortável</span>
+</div>
+</div>
+</div>
+<!-- Sensor de Gás (Seguro & Clínico Independente) -->
+<div class="bg-[#111a30] rounded-xl p-3.5 border border-outline/20 space-y-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]" data-icon="air">air</span>
+</div>
+<div>
+<span class="font-label-md text-label-md text-inverse-on-surface block">Sensor de Gás</span>
+<span class="font-body-sm text-body-sm text-emerald-400 font-semibold">Sem detecção de gás - Seguro</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-headline-md text-headline-md text-on-primary-container">112</span>
+<span class="font-label-sm text-label-sm text-outline-variant block">ppm (Normal)</span>
+</div>
+</div>
+<!-- Technical Mandatory Footnote -->
+<div class="pt-2 border-t border-outline/20">
+<p class="font-body-sm text-body-sm text-outline-variant leading-relaxed">
+<span class="font-semibold text-inverse-on-surface">Nota Técnica:</span> Monitoramento contínuo independente da triagem clínica. Sem aferição toxicológica específica.
+          </p>
+</div>
+</div>
+</section>
+<!-- 4. TRIAGEM MANCHESTER (Indicador externo de porta) -->
+<section class="bg-[#17223b] rounded-xl p-4 border border-outline/30 shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary-fixed-dim">
+<span class="material-symbols-outlined" data-icon="emergency">emergency</span>
+</div>
+<div>
+<h3 class="font-title-sm text-title-sm text-on-primary-container">Triagem Manchester</h3>
+<span class="font-body-sm text-body-sm text-outline-variant">Indicador luminoso na porta do quarto</span>
+</div>
+</div>
+<!-- Toggle Off Button -->
+<button class="flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-outline-variant hover:text-inverse-on-surface border border-outline/30 font-label-sm text-label-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[14px]" data-icon="power_settings_new">power_settings_new</span>
+<span class="">Desligar</span>
+</button>
+</div>
+<!-- Vertical 5 Manchester Regulatory States -->
+<div class="space-y-2 pt-1">
+<!-- Vermelho: Emergente -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-[#111a30]/80 border-l-4 border-l-[#ef4444] border-t border-r border-b border-outline/20 hover:bg-slate-800/60 transition-colors">
+<div class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full bg-[#ef4444]"></span>
+<div>
+<span class="font-label-md text-label-md text-on-primary-container block">Vermelho (Emergente)</span>
+<span class="font-body-sm text-body-sm text-outline-variant">Atendimento imediato: 0 min</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-outline-variant">Prioridade 1</span>
+</div>
+<!-- Laranja: Muito urgente -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-[#111a30]/80 border-l-4 border-l-[#f97316] border-t border-r border-b border-outline/20 hover:bg-slate-800/60 transition-colors">
+<div class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full bg-[#f97316]"></span>
+<div>
+<span class="font-label-md text-label-md text-on-primary-container block">Laranja (Muito urgente)</span>
+<span class="font-body-sm text-body-sm text-outline-variant">Atendimento em até 10 min</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-outline-variant">Prioridade 2</span>
+</div>
+<!-- Amarelo: Urgente -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-[#111a30]/80 border-l-4 border-l-[#eab308] border-t border-r border-b border-outline/20 hover:bg-slate-800/60 transition-colors">
+<div class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full bg-[#eab308]"></span>
+<div>
+<span class="font-label-md text-label-md text-on-primary-container block">Amarelo (Urgente)</span>
+<span class="font-body-sm text-body-sm text-outline-variant">Atendimento em até 60 min</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-outline-variant">Prioridade 3</span>
+</div>
+<!-- Verde: Pouco urgente -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-[#111a30]/80 border-l-4 border-l-[#22c55e] border-t border-r border-b border-outline/20 hover:bg-slate-800/60 transition-colors">
+<div class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full bg-[#22c55e]"></span>
+<div>
+<span class="font-label-md text-label-md text-on-primary-container block">Verde (Pouco urgente)</span>
+<span class="font-body-sm text-body-sm text-outline-variant">Atendimento em até 120 min</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-outline-variant">Prioridade 4</span>
+</div>
+<!-- Azul: Não urgente (ATIVO / SELECIONADO) -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-sky-950/40 border-2 border-[#3b82f6] shadow-[0_0_12px_rgba(59,130,246,0.3)]">
+<div class="flex items-center gap-3">
+<span class="relative flex h-3.5 w-3.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#3b82f6]"></span>
+</span>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-secondary-fixed font-bold">Azul (Não urgente)</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] bg-blue-500/20 text-blue-300 font-bold border border-blue-400/40">ATIVO</span>
+</div>
+<span class="font-body-sm text-body-sm text-blue-200/80">Atendimento em até 240 min</span>
+</div>
+</div>
+<div class="text-right">
+<span class="material-symbols-outlined text-blue-400" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</div>
+<!-- Clinical Responsibility Footnote -->
+<div class="pt-2 border-t border-outline/20">
+<p class="font-body-sm text-body-sm text-outline-variant leading-relaxed">
+<span class="font-semibold text-inverse-on-surface">Diretriz Clínica:</span> Seleção manual por enfermagem. Não classifica automaticamente.
+        </p>
+</div>
+</section>
+</main>
+<!-- 5. BOTTOM NAVIGATION BAR (Conforme Shared Components JSON) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 md:hidden flex justify-around items-center px-2 py-2 bg-[#111a30] border-t border-outline/20 shadow-md">
+<!-- Tab 1: Painel (Ativa) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl px-3 py-1 font-bold" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="dashboard" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-sm text-label-sm">Painel</span>
+</a>
+<!-- Tab 2: Luzes -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface px-3 py-1 transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="light">light</span>
+<span class="font-label-sm text-label-sm">Luzes</span>
+</a>
+<!-- Tab 3: Sensores -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface px-3 py-1 transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="sensors">sensors</span>
+<span class="font-label-sm text-label-sm">Sensores</span>
+</a>
+<!-- Tab 4: Triagem -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface px-3 py-1 transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="emergency">emergency</span>
+<span class="font-label-sm text-label-sm">Triagem</span>
+</a>
+<!-- Tab 5: ESP32 -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface px-3 py-1 transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="wifi">wifi</span>
+<span class="font-label-sm text-label-sm">ESP32</span>
+</a>
+</nav>
+
+
+</body></html>

@@ -1,5 +1,7 @@
 # Documentação de Arquitetura de Software — Maquete conectada
 
+> Registro histórico da base v0.3.0. A candidata v0.4.0 (SAMAHI) altera a interface, introduz catálogo e estado de simulação por ambiente e remove Evidências da navegação. Consulte [arquitetura e validação do redesign](redesign-stitch-samahi.md) para essas diferenças. Este documento não deve ser usado isoladamente para descrever a nova interface.
+
 ## 1. Identificação e como usar
 
 **Sistema:** aplicativo de controle e acompanhamento da maquete, desenvolvido por César. **Versão implementada:** 0.3.0. **Base inspecionada:** commit `47398c12e51d0517f9adf4413841a81d83366818`, main após os PRs #4 e #5. A arquitetura descrita é a dessa base; alterações posteriores precisam de atualização deste documento.

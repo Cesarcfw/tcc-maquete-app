@@ -1,16 +1,12 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AccessibilityInfo,
-  Animated,
+  Image,
   ScrollView,
   StyleSheet,
   View,
   useWindowDimensions,
 } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import Slider from "@react-native-community/slider";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   Avatar,
   BottomNavigation,
@@ -20,8 +16,8 @@ import {
   Dialog,
   Divider,
   HelperText,
+  Icon,
   IconButton,
-  List,
   PaperProvider,
   Portal,
   ProgressBar,
@@ -32,12 +28,13 @@ import {
   TextInput,
   useTheme,
 } from "react-native-paper";
-import { appTheme } from "./theme";
-import { GasAlarm } from "./GasAlarm";
+import Slider from "./LightSlider";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import {
   canAccess,
   emptyGrants,
-  environmentId,
   Group,
   groupLabels,
   groups,
@@ -47,60 +44,95 @@ import {
 import {
   Command,
   colorNames,
+  GasStatus,
+  gasStatusLabels,
   IndicatorColor,
   indicatorPriorities,
   Scenario,
-  GasStatus,
-  gasStatusLabels,
   toggleLight,
 } from "../domain/maquette";
+import {
+  initialRooms,
+  RoomDefinition,
+  roomError,
+  roomVisible,
+} from "../domain/rooms";
 import { useSimulator } from "../hooks/useSimulator";
+import { GasAlarm } from "./GasAlarm";
+import { appTheme } from "./theme";
 
 type Screen =
-  "Painel" | "Histórico" | "Conta" | "Conexões" | "Usuários" | "Evidências";
+  | "Quartos"
+  | "Painel"
+  | "Iluminação"
+  | "Sensores"
+  | "Manchester"
+  | "Histórico"
+  | "Conta"
+  | "Conexões"
+  | "Usuários"
+  | "Cadastro";
 const navIcons: Record<Screen, string> = {
+  Quartos: "bed-outline",
   Painel: "view-dashboard-outline",
+  Iluminação: "lightbulb-outline",
+  Sensores: "access-point",
+  Manchester: "medical-bag",
   Histórico: "history",
   Conta: "account-circle-outline",
   Conexões: "lan-connect",
   Usuários: "account-key-outline",
-  Evidências: "notebook-outline",
+  Cadastro: "plus-box-outline",
+};
+const navLabels: Partial<Record<Screen, string>> = {
+  Painel: "Visão geral",
+  Sensores: "Sensores e gás",
+  Manchester: "Triagem Manchester",
+  Usuários: "Usuários e permissões",
 };
 const indicatorColors: Record<IndicatorColor, string> = {
-  red: "#D62D3A",
-  orange: "#D97508",
-  yellow: "#D5AA00",
-  green: "#16854B",
-  blue: "#246DDB",
-  off: "#708097",
+  red: "#EF4444",
+  orange: "#F97316",
+  yellow: "#EAB308",
+  green: "#22C55E",
+  blue: "#3B82F6",
+  off: "#64748B",
 };
 const levelLabels: Record<Level, string> = {
   none: "Sem acesso",
   read: "Visualizar",
   control: "Controlar",
 };
-const mobileRoutes = [
-  { key: "Painel", title: "Ambiente", focusedIcon: navIcons.Painel },
+const routes = [
+  { key: "Quartos", title: "Quartos", focusedIcon: navIcons.Quartos },
+  { key: "Painel", title: "Painel", focusedIcon: navIcons.Painel },
   { key: "Histórico", title: "Histórico", focusedIcon: navIcons.Histórico },
   { key: "Conta", title: "Conta", focusedIcon: navIcons.Conta },
 ];
+const scenarios: [Scenario, string][] = [
+  ["normal", "Normal"],
+  ["offline", "Sem comunicação"],
+  ["stale", "Dado antigo"],
+  ["timeout", "Sem confirmação"],
+];
+type Simulator = ReturnType<typeof useSimulator>;
 
 export default function App() {
-  const [dark, setDark] = useState(true);
-  const [reduceMotion, setReduceMotion] = useState(false);
-  const [systemReduced, setSystemReduced] = useState(false);
+  const [dark, setDark] = useState(true),
+    [reduceMotion, setReduceMotion] = useState(false),
+    [systemReduced, setSystemReduced] = useState(false);
   useEffect(() => {
     let live = true;
     AccessibilityInfo.isReduceMotionEnabled().then((value) => {
       if (live) setSystemReduced(value);
     });
-    const subscription = AccessibilityInfo.addEventListener(
+    const sub = AccessibilityInfo.addEventListener(
       "reduceMotionChanged",
       setSystemReduced,
     );
     return () => {
       live = false;
-      subscription.remove();
+      sub.remove();
     };
   }, []);
   const reduced = reduceMotion || systemReduced;
@@ -133,30 +165,53 @@ export default function App() {
   );
 }
 
+function Brand({ width = 180 }: { width?: number }) {
+  return (
+    <Image
+      source={require("../../assets/samahi-logo.png")}
+      style={[
+        s.brand,
+        {
+          width,
+          height: (width * 98) / 420,
+          backgroundColor: "#FFFFFF",
+          borderRadius: 8,
+        },
+      ]}
+      resizeMode="contain"
+      accessibilityLabel="SAMAHI - Sistema de Automação e Monitoramento de Ambientes Hospitalares Inteligentes"
+    />
+  );
+}
 function Panel({
   title,
-  children,
+  icon,
   subtitle,
+  children,
 }: {
   title: string;
-  children: React.ReactNode;
+  icon?: string;
   subtitle?: string;
+  children: React.ReactNode;
 }) {
-  const theme = useTheme();
+  const { colors } = useTheme();
   return (
     <Card
-      mode="contained"
-      style={[s.card, { backgroundColor: theme.colors.surface }]}
+      mode="outlined"
+      style={[
+        s.card,
+        { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
+      ]}
     >
       <Card.Content style={s.cardContent}>
-        <Text variant="titleMedium" style={s.bold}>
-          {title}
-        </Text>
+        <View style={s.row}>
+          {icon && <Icon source={icon} size={22} color={colors.primary} />}
+          <Text variant="titleMedium" style={[s.bold, s.flex]}>
+            {title}
+          </Text>
+        </View>
         {subtitle && (
-          <Text
-            variant="bodySmall"
-            style={{ color: theme.colors.onSurfaceVariant }}
-          >
+          <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
             {subtitle}
           </Text>
         )}
@@ -182,8 +237,8 @@ function Note({
         {
           backgroundColor: warning
             ? dark
-              ? "#382D22"
-              : "#FFF0D8"
+              ? "#332A1A"
+              : "#FFF4DA"
             : colors.primaryContainer,
         },
       ]}
@@ -193,83 +248,494 @@ function Note({
         style={{
           color: warning
             ? dark
-              ? "#FFD397"
-              : "#76500A"
+              ? "#FFE19D"
+              : "#684600"
             : colors.onPrimaryContainer,
         }}
       >
         {title}
       </Text>
       {text && (
-        <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+        <Text
+          variant="bodySmall"
+          style={{
+            color: warning
+              ? dark
+                ? "#FFE19D"
+                : "#684600"
+              : colors.onPrimaryContainer,
+          }}
+        >
           {text}
         </Text>
       )}
     </View>
   );
 }
-function Room({
+function Blueprint({
   intensity,
   indicator,
-  reduced,
 }: {
   intensity: number | null;
   indicator: IndicatorColor | null;
-  reduced: boolean;
 }) {
-  const { colors } = useTheme();
-  const [glow] = useState(() => new Animated.Value((intensity ?? 0) / 100));
-  useEffect(() => {
-    const animation = Animated.timing(glow, {
-      toValue: (intensity ?? 0) / 100,
-      duration: reduced ? 0 : 350,
-      useNativeDriver: true,
-    });
-    animation.start();
-    return () => animation.stop();
-  }, [glow, intensity, reduced]);
+  const { colors, dark } = useTheme();
   return (
     <View
       accessible
-      accessibilityLabel={
-        intensity === null
-          ? "Ilustração do quarto, iluminação restrita"
-          : `Quarto ilustrado com luz em ${intensity}%`
-      }
-      style={[s.room, { backgroundColor: colors.background }]}
+      accessibilityLabel={`Planta ilustrada: luz ${intensity === null ? "restrita" : `${intensity}%`}, indicador ${indicator === null ? "restrito" : colorNames[indicator]}`}
+      style={[
+        s.blueprint,
+        {
+          backgroundColor: dark ? "#0C1425" : "#F5F8FC",
+          borderColor: colors.outlineVariant,
+        },
+      ]}
     >
-      <View style={[s.roomWall, { borderColor: colors.outlineVariant }]} />
-      <Animated.View style={[s.lightGlow, { opacity: glow }]} />
-      <View
-        style={[
-          s.lamp,
-          { backgroundColor: intensity ? "#EACB6B" : colors.outline },
-        ]}
-      />
-      <View style={[s.bed, { backgroundColor: colors.surfaceVariant }]}>
+      {Array.from({ length: 9 }, (_, i) => (
         <View
-          style={[s.pillow, { backgroundColor: colors.onSurfaceVariant }]}
-        />
-        <View style={[s.blanket, { backgroundColor: colors.primary }]} />
-      </View>
-      <View style={[s.door, { borderColor: colors.outlineVariant }]}>
-        <View
+          key={`v${i}`}
           style={[
-            s.doorLed,
+            s.gridLine,
             {
-              backgroundColor: indicator
-                ? indicatorColors[indicator]
-                : colors.outline,
+              left: `${(i + 1) * 10}%`,
+              backgroundColor: colors.outlineVariant,
             },
           ]}
         />
+      ))}
+      {Array.from({ length: 6 }, (_, i) => (
+        <View
+          key={`h${i}`}
+          style={[
+            s.gridHorizontal,
+            { top: `${(i + 1) * 14}%`, backgroundColor: colors.outlineVariant },
+          ]}
+        />
+      ))}
+      <View style={[s.floorWall, { borderColor: colors.outline }]}>
+        <View style={[s.bathroom, { borderColor: colors.outlineVariant }]}>
+          <Icon source="door" size={20} color={colors.onSurfaceVariant} />
+          <Text variant="labelSmall">Sanitário</Text>
+        </View>
       </View>
-      <Text
-        variant="labelSmall"
-        style={[s.roomCaption, { color: colors.onSurfaceVariant }]}
+      <View style={[s.board, { backgroundColor: colors.primaryContainer }]}>
+        <Icon source="chip" size={18} color={colors.primary} />
+        <Text variant="labelSmall" style={{ color: colors.primary }}>
+          ESP32 ilustrado
+        </Text>
+      </View>
+      <View
+        style={[
+          s.lightZone,
+          {
+            backgroundColor: "#EABF58",
+            opacity: intensity === null ? 0 : intensity / 500,
+          },
+        ]}
+      />
+      <View
+        style={[
+          s.bed,
+          { borderColor: colors.primary, backgroundColor: colors.surface },
+        ]}
       >
-        Ilustração da maquete
+        <View style={[s.pillow, { backgroundColor: colors.surfaceVariant }]} />
+        <View style={[s.blanket, { backgroundColor: colors.primaryContainer }]}>
+          <Text
+            variant="labelSmall"
+            style={{ color: colors.onPrimaryContainer }}
+          >
+            Leito
+          </Text>
+        </View>
+      </View>
+      <View style={s.doorLed}>
+        <View
+          style={[
+            s.indicatorDot,
+            {
+              backgroundColor:
+                indicator === null
+                  ? colors.outline
+                  : indicatorColors[indicator],
+            },
+          ]}
+        />
+        <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
+          Indicador externo
+        </Text>
+      </View>
+      <View style={[s.planCaption, { backgroundColor: colors.surface }]}>
+        <Icon source="floor-plan" size={15} color={colors.primary} />
+        <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
+          Esquema da maquete · sem escala
+        </Text>
+      </View>
+    </View>
+  );
+}
+function Metric({
+  title,
+  value,
+  icon,
+  detail,
+}: {
+  title: string;
+  value: string;
+  icon: string;
+  detail: string;
+}) {
+  const { colors } = useTheme();
+  return (
+    <View
+      style={[
+        s.metric,
+        { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
+      ]}
+    >
+      <View style={s.spread}>
+        <Text variant="labelLarge" style={s.flex}>
+          {title}
+        </Text>
+        <Icon source={icon} size={22} color={colors.primary} />
+      </View>
+      <Text variant="headlineMedium" style={s.bold}>
+        {value}
       </Text>
+      <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+        {detail}
+      </Text>
+    </View>
+  );
+}
+function Dashboard({
+  sim,
+  room,
+  read,
+  control,
+  send,
+  screen,
+  wide,
+  onGas,
+}: {
+  sim: Simulator;
+  room: RoomDefinition;
+  read: (group: Group) => boolean;
+  control: (group: Group) => boolean;
+  send: (command: Command) => void;
+  screen: Screen;
+  wide: boolean;
+  onGas: () => void;
+}) {
+  const { colors } = useTheme();
+  const [draft, setDraft] = useState<number | null>(null);
+  const ready = sim.connection === "online" && room.active && !sim.pending;
+  const outdated = sim.connection !== "online" || !room.active;
+  const detail = outdated
+    ? "Último valor · sem leitura atual"
+    : "Leitura simulada";
+  const showAll = screen === "Painel";
+  const light = read("light") ? (
+    <Panel
+      title="Iluminação do quarto"
+      icon="lightbulb-on-outline"
+      subtitle={
+        control("light")
+          ? "Controle da luz e intensidade"
+          : "Acesso somente à leitura"
+      }
+    >
+      <View style={s.spread}>
+        <Text variant="titleSmall">
+          {sim.device.lightOn ? "Ligada" : "Desligada"}
+        </Text>
+        <Switch
+          value={sim.device.lightOn}
+          disabled={!ready || !control("light")}
+          accessibilityLabel="Luz do quarto"
+          onValueChange={() => send(toggleLight(sim.device))}
+        />
+      </View>
+      <View style={s.spread}>
+        <View style={s.flex}>
+          <Text variant="labelMedium">Intensidade confirmada</Text>
+          <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+            Na simulação
+          </Text>
+        </View>
+        <Text
+          variant="displaySmall"
+          style={[s.bold, { color: colors.primary }]}
+        >
+          {sim.device.intensity}%
+        </Text>
+      </View>
+      <Slider
+        style={s.slider}
+        accessibilityLabel="Intensidade da luz"
+        accessibilityState={{ disabled: !ready || !control("light") }}
+        accessibilityValue={{
+          min: 0,
+          max: 100,
+          now: draft ?? sim.device.intensity,
+          text: `${draft ?? sim.device.intensity}%`,
+        }}
+        minimumValue={0}
+        maximumValue={100}
+        step={1}
+        value={draft ?? sim.device.intensity}
+        disabled={!ready || !control("light")}
+        onValueChange={setDraft}
+        onSlidingComplete={(value) => {
+          setDraft(null);
+          send({ kind: "light", on: value > 0, intensity: value });
+        }}
+        minimumTrackTintColor={colors.primary}
+        maximumTrackTintColor={colors.outlineVariant}
+        thumbTintColor={colors.primary}
+      />
+      <View style={s.spread}>
+        <Text variant="labelSmall">0% · apagada</Text>
+        <Text variant="labelSmall">100% · máxima</Text>
+      </View>
+      {draft !== null && (
+        <Text variant="bodySmall">
+          Ajuste em edição: {draft}%. Solte para enviar.
+        </Text>
+      )}
+      <View style={s.chips}>
+        {[0, 25, 50, 100].map((value) => (
+          <Button
+            key={value}
+            compact
+            mode={
+              sim.device.intensity === value ? "contained-tonal" : "outlined"
+            }
+            disabled={!ready || !control("light")}
+            accessibilityLabel={`Luz em ${value}%`}
+            onPress={() =>
+              send({ kind: "light", on: value > 0, intensity: value })
+            }
+          >
+            {value ? `${value}%` : "Apagar"}
+          </Button>
+        ))}
+      </View>
+      <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+        Ao religar, restaura a última intensidade positiva.
+      </Text>
+    </Panel>
+  ) : (
+    <Note
+      title="Iluminação restrita"
+      text="Seu perfil não possui acesso a este grupo."
+    />
+  );
+  const sensors = read("sensors") ? (
+    <View style={s.column}>
+      <View style={s.row}>
+        <Icon source="access-point" size={22} color={colors.primary} />
+        <Text variant="titleMedium" style={s.bold}>
+          Telemetria de sensores
+        </Text>
+      </View>
+      <View style={[s.metrics, !wide && s.wrap]}>
+        <Metric
+          title="Temperatura"
+          value={`${sim.device.temperature.toFixed(1).replace(".", ",")} °C`}
+          icon="thermometer"
+          detail={detail}
+        />
+        <Metric
+          title="Umidade"
+          value={`${sim.device.humidity}%`}
+          icon="water-percent"
+          detail={detail}
+        />
+      </View>
+      <Panel
+        title="Sensor de gás"
+        icon="molecule"
+        subtitle="Estado demonstrativo · sem concentração em ppm"
+      >
+        <Note
+          title={
+            outdated
+              ? `Último estado: ${gasStatusLabels[sim.device.gas]}`
+              : gasStatusLabels[sim.device.gas]
+          }
+          warning={outdated || sim.device.gas !== "clear"}
+          text={
+            outdated
+              ? "Sem leitura atual. O último estado é preservado."
+              : sim.device.gas === "unavailable"
+                ? "Ausência de leitura não significa ausência de gás."
+                : sim.device.gas === "detected"
+                  ? "Possível presença de gás ou fumaça. Tipo de gás não identificado."
+                  : "Sem detecção no cenário simulado. Não representa medição física."
+          }
+        />
+        {sim.device.gas === "detected" && (
+          <Button mode="outlined" icon="alert-outline" onPress={onGas}>
+            Ver alerta de gás
+          </Button>
+        )}
+        <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+          Alerta ambiental independente da triagem do paciente.
+        </Text>
+      </Panel>
+    </View>
+  ) : (
+    <Note
+      title="Sensores restritos"
+      text="Seu perfil não possui acesso às leituras."
+    />
+  );
+  const triage = read("indicator") ? (
+    <Panel
+      title="Triagem Manchester"
+      icon="medical-bag"
+      subtitle="Indicador externo · seleção manual"
+    >
+      <View
+        style={[
+          s.triageState,
+          {
+            borderLeftColor: indicatorColors[sim.device.indicator],
+            backgroundColor: colors.surfaceVariant,
+          },
+        ]}
+      >
+        <View style={s.row}>
+          <View
+            style={[
+              s.indicatorDot,
+              { backgroundColor: indicatorColors[sim.device.indicator] },
+            ]}
+          />
+          <Text variant="titleMedium" style={[s.bold, s.flex]}>
+            {colorNames[sim.device.indicator]}
+          </Text>
+        </View>
+        <Text variant="bodySmall">
+          {indicatorPriorities[sim.device.indicator]}
+        </Text>
+      </View>
+      <View style={s.triageOptions}>
+        {(["red", "orange", "yellow", "green", "blue"] as IndicatorColor[]).map(
+          (color) => (
+            <Button
+              key={color}
+              mode={
+                sim.device.indicator === color ? "contained-tonal" : "outlined"
+              }
+              disabled={!ready || !control("indicator")}
+              style={{ borderColor: indicatorColors[color] }}
+              contentStyle={s.triageButton}
+              accessibilityLabel={`Indicador ${colorNames[color]}`}
+              icon={() => (
+                <View
+                  style={[
+                    s.priorityDot,
+                    { backgroundColor: indicatorColors[color] },
+                  ]}
+                />
+              )}
+              onPress={() => send({ kind: "indicator", color })}
+            >
+              {colorNames[color]} · {indicatorPriorities[color]}
+            </Button>
+          ),
+        )}
+      </View>
+      <Button
+        mode="outlined"
+        icon="power"
+        disabled={!ready || !control("indicator")}
+        onPress={() => send({ kind: "indicator", color: "off" })}
+      >
+        Desligar indicador
+      </Button>
+      <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+        A cor muda após confirmação simulada. O aplicativo não realiza
+        classificação clínica.
+      </Text>
+    </Panel>
+  ) : (
+    <Note
+      title="Indicador restrito"
+      text="Este grupo não foi liberado para seu perfil."
+    />
+  );
+  return (
+    <View style={s.column}>
+      {outdated && (
+        <Note
+          warning
+          title={
+            sim.connection === "stale" && room.active
+              ? "Leitura desatualizada"
+              : "Sem comunicação"
+          }
+          text="Controles bloqueados. Último estado confirmado preservado."
+        />
+      )}
+      {showAll && !wide ? (
+        <>
+          {light}
+          {sensors}
+          {triage}
+          <Panel
+            title="Planta esquemática"
+            icon="floor-plan"
+            subtitle="Visualização ilustrativa do quarto"
+          >
+            <Blueprint
+              intensity={read("light") ? sim.device.intensity : null}
+              indicator={read("indicator") ? sim.device.indicator : null}
+            />
+          </Panel>
+        </>
+      ) : showAll ? (
+        <>
+          <View style={[s.grid, !wide && s.stack]}>
+            <View style={[s.column, wide && { flex: 1.35 }]}>
+              <Panel
+                title="Planta esquemática"
+                icon="floor-plan"
+                subtitle="Visualização ilustrativa do quarto"
+              >
+                <Blueprint
+                  intensity={read("light") ? sim.device.intensity : null}
+                  indicator={read("indicator") ? sim.device.indicator : null}
+                />
+              </Panel>
+              {sensors}
+            </View>
+            <View style={s.column}>
+              {light}
+              {triage}
+            </View>
+          </View>
+        </>
+      ) : screen === "Iluminação" ? (
+        light
+      ) : screen === "Sensores" ? (
+        sensors
+      ) : (
+        triage
+      )}
+      {(read("light") || read("indicator")) && (
+        <Note
+          title={
+            sim.pending ? "Aguardando confirmação…" : "Retorno da simulação"
+          }
+          text={sim.notice}
+          warning={outdated}
+        />
+      )}
+      {sim.pending && <ProgressBar indeterminate />}
     </View>
   );
 }
@@ -281,93 +747,191 @@ function DemoApp({
   setReduceMotion,
 }: {
   dark: boolean;
-  setDark: (v: boolean) => void;
+  setDark: (value: boolean) => void;
   reduced: boolean;
-  setReduceMotion: (v: boolean) => void;
+  setReduceMotion: (value: boolean) => void;
 }) {
-  const theme = useTheme(),
-    { colors } = theme;
-  const { width, height } = useWindowDimensions();
+  const { colors } = useTheme(),
+    { width, height } = useWindowDimensions();
   const desktop = width >= 1100,
     wide = width >= 760;
-  const sim = useSimulator();
-  const [users, setUsers] = useState(initialUsers);
-  const [session, setSession] = useState<string | null>(null);
-  const [screen, setScreen] = useState<Screen>("Painel");
-  const [draft, setDraft] = useState<number | null>(null);
-  const [snack, setSnack] = useState("");
-  const [gasOverlayClosed, setGasOverlayClosed] = useState(false);
-  const [editingUser, setEditingUser] = useState("matheus");
-  const [dialog, setDialog] = useState<
-    "user" | "connection" | "disable" | null
-  >(null);
-  const [name, setName] = useState(""),
+  const [users, setUsers] = useState(initialUsers),
+    [rooms, setRooms] = useState(initialRooms);
+  const [session, setSession] = useState<string | null>(null),
+    [roomId, setRoomId] = useState("quarto-01");
+  const room = rooms.find((value) => value.id === roomId) ?? rooms[0];
+  const sim = useSimulator(room.id);
+  const [screen, setScreen] = useState<Screen>("Quartos"),
+    [snack, setSnack] = useState("");
+  const [editingUser, setEditingUser] = useState("matheus"),
+    [gasClosed, setGasClosed] = useState(false);
+  const [query, setQuery] = useState(""),
+    [roomFilter, setRoomFilter] = useState("all"),
+    [logQuery, setLogQuery] = useState(""),
+    [logFilter, setLogFilter] = useState("all");
+  const [dialog, setDialog] = useState<"user" | "disable" | null>(null),
+    [name, setName] = useState(""),
     [email, setEmail] = useState("");
-  const [formError, setFormError] = useState("");
-  const [connection, setConnection] = useState({
-    name: "Quarto da maquete",
-    device: "ESP32-quarto-01",
-    endpoint: "https://servico.exemplo",
-    active: true,
-  });
-  const [connectionDraft, setConnectionDraft] = useState(connection);
+  const [formError, setFormError] = useState(""),
+    [roomDraft, setRoomDraft] = useState(room);
   const [testStatus, setTestStatus] = useState<
     "idle" | "testing" | "passed" | "failed"
   >("idle");
-  const testTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const userSequence = useRef(0);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null),
+    testGeneration = useRef(0),
+    sequence = useRef(0);
   const scroll = useRef<ScrollView>(null);
+  const user = users.find((value) => value.id === session) ?? null;
+  const selected = users.find((value) => value.id === editingUser) ?? users[0];
+  const read = (group: Group) => canAccess(user, room.id, group, "read"),
+    control = (group: Group) => canAccess(user, room.id, group, "control");
+  const visibleRooms = rooms.filter((value) => roomVisible(user, value));
+  const age = Math.max(0, Math.floor((sim.now - sim.device.receivedAt) / 1000));
+  const connected = room.active && sim.connection === "online";
+  const status = !room.active
+    ? "Desativada"
+    : sim.connection === "online"
+      ? "Online simulado"
+      : sim.connection === "stale"
+        ? "Dado antigo"
+        : "Sem comunicação";
   useEffect(
     () => () => {
-      if (testTimer.current) clearTimeout(testTimer.current);
+      if (timer.current) clearTimeout(timer.current);
     },
     [],
   );
-  const user = users.find((u) => u.id === session) ?? null;
-  const selected = users.find((u) => u.id === editingUser) ?? users[0];
-  const read = (group: Group) => canAccess(user, environmentId, group, "read");
-  const control = (group: Group) =>
-    canAccess(user, environmentId, group, "control");
-  const ready =
-    sim.connection === "online" && connection.active && !sim.pending;
-  const age = Math.max(0, Math.floor((sim.now - sim.device.receivedAt) / 1000));
-  const title: Record<Screen, string> = {
-    Painel: connection.name,
-    Histórico: "Histórico do ambiente",
-    Conta: "Minha conta",
-    Conexões: "Conexões e ambientes",
-    Usuários: "Usuários e permissões",
-    Evidências: "Registro para o TCC",
-  };
-  function navigate(next: Screen) {
-    if ((next === "Conexões" || next === "Usuários") && !user?.admin) return;
-    setScreen(next);
-    setDraft(null);
-    scroll.current?.scrollTo({ y: 0, animated: false });
-  }
-  function closeDialog() {
-    if (testTimer.current) clearTimeout(testTimer.current);
-    setDialog(null);
-    setFormError("");
+  function cancelTest() {
+    testGeneration.current++;
+    if (timer.current) clearTimeout(timer.current);
     setTestStatus("idle");
   }
+  function navigate(next: Screen) {
+    if (
+      ["Painel", "Iluminação", "Sensores", "Manchester", "Histórico"].includes(
+        next,
+      ) &&
+      !roomVisible(user, room)
+    ) {
+      setSnack("Seu perfil ainda não tem acesso a um ambiente.");
+      setScreen("Quartos");
+      return;
+    }
+    if (["Usuários", "Conexões", "Cadastro"].includes(next) && !user?.admin)
+      return;
+    cancelTest();
+    setFormError("");
+    setScreen(next);
+    scroll.current?.scrollTo({ y: 0, animated: false });
+  }
   function changeSession(id: string | null) {
-    setGasOverlayClosed(false);
     sim.cancelPending();
-    closeDialog();
+    cancelTest();
+    setGasClosed(false);
+    setDialog(null);
     setSession(id);
-    setDraft(null);
-    setScreen("Painel");
+    setScreen("Quartos");
+    setQuery("");
+    const next = users.find((value) => value.id === id),
+      first = rooms.find((value) => roomVisible(next ?? null, value));
+    if (first) setRoomId(first.id);
+  }
+  function openRoom(id: string) {
+    const next = rooms.find((value) => value.id === id);
+    if (!next || !roomVisible(user, next)) return;
+    sim.cancelPending();
+    setRoomId(id);
+    setGasClosed(false);
+    navigate("Painel");
   }
   function send(command: Command) {
-    const group = command.kind === "light" ? "light" : "indicator";
-    if (!canAccess(user, environmentId, group, "control")) {
+    if (!control(command.kind === "light" ? "light" : "indicator")) {
       setSnack("Seu perfil não permite este comando.");
       return;
     }
-    if (!ready) return;
-    setDraft(null);
-    sim.send(command, user?.name);
+    if (connected && !sim.pending) sim.send(command, user?.name);
+  }
+  function openEditor(value?: RoomDefinition) {
+    if (!user?.admin) return;
+    setRoomDraft(
+      value ?? {
+        id: `quarto-demo-${++sequence.current}`,
+        name: "",
+        bed: "",
+        wing: "",
+        device: "",
+        endpoint: "https://servico.exemplo",
+        active: true,
+      },
+    );
+    navigate("Cadastro");
+  }
+  function editDraft(key: keyof RoomDefinition, value: string) {
+    cancelTest();
+    setFormError("");
+    setRoomDraft((previous) => ({ ...previous, [key]: value }));
+  }
+  function testConnection() {
+    if (!user?.admin) return;
+    const error = roomError(roomDraft, rooms);
+    if (error) {
+      setFormError(error);
+      return;
+    }
+    cancelTest();
+    setTestStatus("testing");
+    const revision = testGeneration.current;
+    const passes =
+      roomDraft.active &&
+      (roomDraft.id !== room.id || sim.connection === "online");
+    timer.current = setTimeout(() => {
+      if (testGeneration.current === revision)
+        setTestStatus(passes ? "passed" : "failed");
+    }, 700);
+  }
+  function saveRoom() {
+    if (!user?.admin) return;
+    const error = roomError(roomDraft, rooms);
+    if (error) {
+      setFormError(error);
+      return;
+    }
+    const saved = Object.fromEntries(
+      Object.entries(roomDraft).map(([key, value]) => [
+        key,
+        typeof value === "string" ? value.trim() : value,
+      ]),
+    ) as RoomDefinition;
+    const exists = rooms.some((value) => value.id === saved.id);
+    sim.cancelPending();
+    setRooms((previous) =>
+      exists
+        ? previous.map((value) => (value.id === saved.id ? saved : value))
+        : [...previous, saved],
+    );
+    if (!exists)
+      setUsers((previous) =>
+        previous.map((value) =>
+          value.id === user.id
+            ? {
+                ...value,
+                grants: {
+                  ...value.grants,
+                  [saved.id]: {
+                    light: "control",
+                    sensors: "read",
+                    indicator: "control",
+                    history: "read",
+                  },
+                },
+              }
+            : value,
+        ),
+      );
+    setRoomId(saved.id);
+    setGasClosed(false);
+    navigate("Quartos");
+    setSnack("Ambiente salvo nesta sessão. Nenhum equipamento foi conectado.");
   }
   function setLevel(group: Group, level: Level) {
     if (
@@ -377,19 +941,19 @@ function DemoApp({
       return;
     sim.cancelPending();
     setUsers((previous) =>
-      previous.map((u) =>
-        u.id === selected.id
+      previous.map((value) =>
+        value.id === selected.id
           ? {
-              ...u,
+              ...value,
               grants: {
-                ...u.grants,
-                [environmentId]: {
-                  ...(u.grants[environmentId] ?? emptyGrants()),
+                ...value.grants,
+                [room.id]: {
+                  ...(value.grants[room.id] ?? emptyGrants()),
                   [group]: level,
                 },
               },
             }
-          : u,
+          : value,
       ),
     );
     setSnack(
@@ -398,56 +962,29 @@ function DemoApp({
   }
   function addUser() {
     if (!user?.admin) return;
-    const normalized = email.trim().toLowerCase();
-    if (!name.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
-      setFormError("Informe nome e e-mail válido para o perfil fictício.");
+    const address = email.trim().toLowerCase();
+    if (!name.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)) {
+      setFormError("Informe nome e e-mail válido.");
       return;
     }
-    if (users.some((u) => u.email.toLowerCase() === normalized)) {
-      setFormError("Já existe um perfil de demonstração com esse e-mail.");
+    if (users.some((value) => value.email.toLowerCase() === address)) {
+      setFormError("Já existe um perfil com esse e-mail.");
       return;
     }
-    const id = `demo-${++userSequence.current}`;
+    const id = `demo-${++sequence.current}`;
     setUsers((previous) => [
       ...previous,
       {
         id,
         name: name.trim(),
-        email: normalized,
+        email: address,
         admin: false,
-        grants: { [environmentId]: emptyGrants() },
+        grants: { [room.id]: emptyGrants() },
       },
     ]);
     setEditingUser(id);
-    closeDialog();
-    setSnack(
-      "Perfil fictício criado sem acesso. Configure as permissões. Nenhum convite foi enviado.",
-    );
-  }
-  function testConnection() {
-    if (!user?.admin) return;
-    try {
-      const url = new URL(connectionDraft.endpoint.trim());
-      if (
-        !["http:", "https:"].includes(url.protocol) ||
-        url.username ||
-        url.password
-      )
-        throw new Error();
-    } catch {
-      setFormError("Use um endereço http/https sem credenciais na URL.");
-      return;
-    }
-    if (!connectionDraft.name.trim() || !connectionDraft.device.trim()) {
-      setFormError("Informe ambiente e identificador do dispositivo.");
-      return;
-    }
-    setFormError("");
-    setTestStatus("testing");
-    testTimer.current = setTimeout(
-      () => setTestStatus(sim.connection === "online" ? "passed" : "failed"),
-      700,
-    );
+    setDialog(null);
+    setSnack("Perfil fictício criado sem acesso. Nenhum convite foi enviado.");
   }
   const themeControl = (
     <IconButton
@@ -456,40 +993,67 @@ function DemoApp({
       onPress={() => setDark(!dark)}
     />
   );
-  const brand = (
-    <View style={s.row}>
-      <Avatar.Text size={40} label="M" />
-      <View>
-        <Text variant="titleMedium" style={s.bold}>
-          Maquete conectada
-        </Text>
-        <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
-          CONTROLE DO AMBIENTE
-        </Text>
-      </View>
-    </View>
-  );
   const nav = (item: Screen) => (
-    <List.Item
+    <Button
       key={item}
-      title={item}
-      left={(props) => (
-        <List.Icon
-          {...props}
-          icon={navIcons[item]}
-          color={screen === item ? colors.primary : colors.onSurfaceVariant}
-        />
-      )}
+      mode={screen === item ? "contained" : "text"}
+      icon={navIcons[item]}
       onPress={() => navigate(item)}
-      style={[
-        s.navItem,
-        screen === item && { backgroundColor: colors.primaryContainer },
-      ]}
-      titleStyle={{
-        color: screen === item ? colors.onPrimaryContainer : colors.onSurface,
-      }}
       accessibilityLabel={`Abrir ${item}`}
-    />
+      contentStyle={s.navContent}
+      style={s.navButton}
+      textColor={screen === item ? colors.onPrimary : colors.onSurfaceVariant}
+    >
+      {navLabels[item] ?? item}
+    </Button>
+  );
+  const titles: Record<Screen, string> = {
+    Quartos: "Leitos e quartos conectados",
+    Painel: room.name,
+    Iluminação: "Controle de iluminação",
+    Sensores: "Sensores e gás",
+    Manchester: "Triagem Manchester",
+    Histórico: "Histórico do ambiente",
+    Conta: "Minha conta",
+    Conexões: "Conexões e dispositivos",
+    Usuários: "Usuários e permissões",
+    Cadastro: rooms.some((value) => value.id === roomDraft.id)
+      ? "Editar ambiente"
+      : "Cadastrar ambiente",
+  };
+  const filteredRooms = visibleRooms.filter(
+    (value) =>
+      `${value.name} ${value.bed} ${value.wing} ${value.device}`
+        .toLocaleLowerCase("pt-BR")
+        .includes(query.toLocaleLowerCase("pt-BR")) &&
+      (roomFilter === "all" ||
+        (roomFilter === "active" ? value.active : !value.active)),
+  );
+  const filteredLogs = sim.logs.filter(
+    (value) =>
+      value.message
+        .toLocaleLowerCase("pt-BR")
+        .includes(logQuery.toLocaleLowerCase("pt-BR")) &&
+      (logFilter === "all" || value.type === logFilter),
+  );
+  const roomSelector = (
+    <View style={s.chips}>
+      {visibleRooms.map((value) => (
+        <Chip
+          key={value.id}
+          selected={value.id === room.id}
+          onPress={() => {
+            sim.cancelPending();
+            setRoomId(value.id);
+            setGasClosed(false);
+            cancelTest();
+          }}
+          accessibilityLabel={`Selecionar ambiente ${value.name}`}
+        >
+          {value.bed} · {value.name}
+        </Chip>
+      ))}
+    </View>
   );
 
   return (
@@ -497,32 +1061,36 @@ function DemoApp({
       <StatusBar style={dark ? "light" : "dark"} />
       {!user ? (
         <ScrollView contentContainerStyle={s.loginScroll}>
-          <View style={[s.loginPage, wide && s.loginWide]}>
-            <View style={s.loginIntro}>
+          <View style={[s.loginPage, wide && s.grid]}>
+            <View style={s.column}>
               <View style={s.spread}>
-                {brand}
+                <Brand />
                 {themeControl}
               </View>
-              <Text variant="displaySmall" style={[s.bold, s.loginTitle]}>
-                Seu ambiente. Seu controle.
+              <Text
+                variant={wide ? "displaySmall" : "headlineLarge"}
+                style={s.bold}
+              >
+                Seu ambiente, ao seu alcance.
               </Text>
               <Text
                 variant="bodyLarge"
                 style={{ color: colors.onSurfaceVariant }}
               >
-                Uma interface para acompanhar o quarto e experimentar cada
-                função da maquete.
+                Controle da iluminação, acompanhamento de sensores e indicador
+                externo em uma interface.
               </Text>
-              <Room intensity={65} indicator="blue" reduced={reduced} />
+              <Blueprint intensity={65} indicator="blue" />
               <Note
-                title="Protótipo interativo"
-                text="Dados simulados. As alterações respondem na interface, sem equipamento conectado."
+                title="Modo de demonstração"
+                text="Dados e comandos simulados. Nenhum equipamento físico conectado."
               />
             </View>
-            <View style={s.loginProfiles}>
+            <View style={s.column}>
               <Panel
-                title="Escolha um perfil para testar"
-                subtitle="Contas fictícias · sem senha ou autenticação real"
+                title="Escolha um perfil"
+                icon="account-circle-outline"
+                subtitle="Perfis fictícios · sem autenticação real"
               >
                 {users.map((profile) => (
                   <View
@@ -532,21 +1100,20 @@ function DemoApp({
                     <View style={s.row}>
                       <Avatar.Text size={38} label={profile.name.slice(0, 1)} />
                       <View style={s.flex}>
-                        <Text variant="titleMedium">{profile.name}</Text>
-                        <Text
-                          variant="bodySmall"
-                          style={{ color: colors.onSurfaceVariant }}
-                        >
+                        <Text variant="titleMedium" style={s.bold}>
+                          {profile.name}
+                        </Text>
+                        <Text variant="bodySmall">
                           {profile.admin
-                            ? "Administrador · conexões e acessos"
-                            : "Usuário · permissões específicas"}
+                            ? "Administrador"
+                            : "Usuário com permissões específicas"}
                         </Text>
                       </View>
                     </View>
                     <Button
                       mode={profile.admin ? "contained" : "outlined"}
-                      onPress={() => changeSession(profile.id)}
                       accessibilityLabel={`Entrar como ${profile.name}`}
+                      onPress={() => changeSession(profile.id)}
                     >
                       Entrar como {profile.name}
                     </Button>
@@ -556,8 +1123,7 @@ function DemoApp({
                   variant="bodySmall"
                   style={{ color: colors.onSurfaceVariant }}
                 >
-                  Perfis, preferências e configurações duram nesta sessão.
-                  Recarregar reinicia a demonstração.
+                  Recarregar reinicia os dados desta sessão.
                 </Text>
               </Panel>
             </View>
@@ -566,16 +1132,38 @@ function DemoApp({
       ) : (
         <View style={s.shell}>
           {desktop && (
-            <View style={[s.sidebar, { backgroundColor: colors.surface }]}>
-              {brand}
-              <Divider style={s.divider} />
+            <View
+              style={[
+                s.sidebar,
+                {
+                  backgroundColor: colors.surfaceVariant,
+                  borderRightColor: colors.outlineVariant,
+                },
+              ]}
+            >
+              <Brand />
               <Text
                 variant="labelSmall"
-                style={{ color: colors.onSurfaceVariant }}
+                style={[s.sectionLabel, { color: colors.onSurfaceVariant }]}
               >
-                SEU ESPAÇO
+                AMBIENTES
               </Text>
-              {(["Painel", "Histórico", "Conta"] as Screen[]).map(nav)}
+              {nav("Quartos")}
+              <Text
+                variant="labelSmall"
+                style={[s.sectionLabel, { color: colors.onSurfaceVariant }]}
+              >
+                QUARTO SELECIONADO
+              </Text>
+              {(
+                [
+                  "Painel",
+                  "Iluminação",
+                  "Sensores",
+                  "Manchester",
+                  "Histórico",
+                ] as Screen[]
+              ).map(nav)}
               {user.admin && (
                 <>
                   <Divider style={s.divider} />
@@ -589,468 +1177,369 @@ function DemoApp({
                   {nav("Usuários")}
                 </>
               )}
-              {nav("Evidências")}
               <View style={s.sidebarFooter}>
-                <Text variant="titleSmall">{user.name}</Text>
-                <Text variant="bodySmall">
-                  {user.admin ? "Administrador" : "Usuário"} de demonstração
-                </Text>
+                {nav("Conta")}
+                <View style={s.row}>
+                  <Avatar.Text size={32} label={user.name.slice(0, 1)} />
+                  <View style={s.flex}>
+                    <Text variant="titleSmall">{user.name}</Text>
+                    <Text variant="bodySmall">
+                      {user.admin ? "Administrador" : "Usuário"} · demonstração
+                    </Text>
+                  </View>
+                </View>
                 <Button
+                  icon="logout"
                   mode="text"
                   onPress={() => changeSession(null)}
-                  icon="logout"
                 >
                   Trocar perfil
                 </Button>
-                <Text variant="labelSmall">v0.3.0 · Protótipo</Text>
               </View>
             </View>
           )}
           <View style={s.flex}>
+            <View
+              style={[
+                s.topbar,
+                !wide && { paddingHorizontal: 16 },
+                {
+                  backgroundColor: colors.surfaceVariant,
+                  borderBottomColor: colors.outlineVariant,
+                },
+              ]}
+            >
+              <View style={s.flex}>
+                {desktop ? (
+                  <Text variant="titleSmall" numberOfLines={2}>
+                    {room.name}
+                  </Text>
+                ) : (
+                  <Brand width={Math.min(150, width * 0.35)} />
+                )}
+              </View>
+              <Chip
+                compact
+                icon="flask-outline"
+                style={{ backgroundColor: colors.primaryContainer }}
+                textStyle={{ fontSize: 11 }}
+              >
+                Simulação
+              </Chip>
+              {themeControl}
+            </View>
             <ScrollView
               ref={scroll}
+              keyboardShouldPersistTaps="handled"
+              contentInsetAdjustmentBehavior="automatic"
               contentContainerStyle={[s.pageScroll, !wide && s.mobileScroll]}
             >
               <View style={s.page}>
-                <View style={s.spread}>
-                  {!desktop ? (
-                    brand
-                  ) : (
-                    <Text
-                      variant="labelLarge"
-                      style={{ color: colors.primary }}
-                    >
-                      MAQUETE / {screen.toUpperCase()}
-                    </Text>
-                  )}
-                  <View style={s.row}>
-                    {themeControl}
-                    {desktop && (
-                      <Avatar.Text size={38} label={user.name.slice(0, 1)} />
-                    )}
-                  </View>
-                </View>
-                <View style={s.spread}>
+                <View style={[s.spread, !wide && s.titleStack]}>
                   <View style={s.flex}>
                     <Text
-                      variant={wide ? "headlineLarge" : "headlineMedium"}
-                      style={s.bold}
+                      variant="labelSmall"
+                      style={{ color: colors.primary }}
                     >
-                      {title[screen]}
+                      SAMAHI / {screen.toUpperCase()}
                     </Text>
                     <Text
-                      variant="bodyMedium"
+                      variant={wide ? "headlineMedium" : "headlineSmall"}
+                      style={s.bold}
+                    >
+                      {titles[screen]}
+                    </Text>
+                    <Text
+                      variant="bodySmall"
                       style={{ color: colors.onSurfaceVariant }}
                     >
-                      {screen === "Painel"
-                        ? "Sensores e controles em um único lugar."
-                        : "Organize, acompanhe e teste a maquete conectada."}
+                      {["Quartos", "Cadastro"].includes(screen)
+                        ? "Ambientes demonstrativos · dados mantidos nesta sessão"
+                        : `${room.wing} · ${room.bed}`}
                     </Text>
                   </View>
+                  {screen !== "Quartos" && (
+                    <Chip
+                      compact
+                      icon={connected ? "access-point" : "access-point-off"}
+                    >
+                      {status}
+                    </Chip>
+                  )}
                 </View>
-                <View style={s.chips}>
-                  <Chip compact icon="flask-outline">
-                    Demonstração simulada
-                  </Chip>
-                  <Chip compact icon="account-outline">
-                    {user.name} · {user.admin ? "admin" : "usuário"}
-                  </Chip>
-                </View>
+                {!desktop &&
+                  [
+                    "Iluminação",
+                    "Sensores",
+                    "Manchester",
+                    "Usuários",
+                    "Conexões",
+                    "Cadastro",
+                  ].includes(screen) && (
+                    <Button
+                      icon="arrow-left"
+                      mode="text"
+                      style={s.back}
+                      onPress={() =>
+                        navigate(
+                          ["Usuários", "Conexões"].includes(screen)
+                            ? "Conta"
+                            : screen === "Cadastro"
+                              ? "Quartos"
+                              : "Painel",
+                        )
+                      }
+                    >
+                      Voltar
+                    </Button>
+                  )}
                 {read("sensors") &&
                   sim.device.gas === "detected" &&
-                  (!sim.device.gasAcknowledged || !gasOverlayClosed) && (
+                  (!sim.device.gasAcknowledged || !gasClosed) && (
                     <GasAlarm
-                      room={connection.name}
+                      room={room.name}
                       acknowledged={sim.device.gasAcknowledged}
-                      stale={sim.connection !== "online" || !connection.active}
+                      stale={!connected}
                       reduced={reduced}
-                      onAcknowledge={() => {
-                        setGasOverlayClosed(false);
-                        if (read("sensors")) sim.acknowledgeGasAlert(user.name);
-                      }}
-                      onClose={() => setGasOverlayClosed(true)}
+                      onAcknowledge={() => sim.acknowledgeGasAlert(user.name)}
+                      onClose={() => setGasClosed(true)}
                     />
                   )}
-                {screen === "Painel" && (
+                {read("sensors") &&
+                  sim.device.gas === "detected" &&
+                  gasClosed && (
+                    <Note
+                      warning
+                      title="Alerta de gás reconhecido"
+                      text="A detecção continua ativa no quarto selecionado."
+                    />
+                  )}
+                {screen === "Quartos" && (
                   <>
+                    <View style={s.metrics}>
+                      <Metric
+                        title="Ambientes visíveis"
+                        value={String(visibleRooms.length)}
+                        icon="bed-outline"
+                        detail="Conforme seu perfil"
+                      />
+                      <Metric
+                        title="Habilitados"
+                        value={String(
+                          visibleRooms.filter((value) => value.active).length,
+                        )}
+                        icon="lan-connect"
+                        detail="Cadastro da simulação"
+                      />
+                    </View>
                     <View style={[s.grid, !wide && s.stack]}>
-                      <View style={s.column}>
-                        <Panel
-                          title="Um ambiente, várias possibilidades"
-                          subtitle="Quarto 01 · Maquete conectada"
+                      <TextInput
+                        mode="outlined"
+                        style={s.flex}
+                        label="Buscar quarto, leito ou dispositivo"
+                        accessibilityLabel="Buscar quarto, leito ou dispositivo"
+                        value={query}
+                        onChangeText={setQuery}
+                        left={<TextInput.Icon icon="magnify" />}
+                      />
+                      {user.admin && (
+                        <Button
+                          mode="contained"
+                          icon="plus"
+                          onPress={() => openEditor()}
                         >
-                          <Room
-                            intensity={
-                              read("light") ? sim.device.intensity : null
-                            }
-                            indicator={
-                              read("indicator") ? sim.device.indicator : null
-                            }
-                            reduced={reduced}
-                          />
-                        </Panel>
-                      </View>
-                      <View style={s.column}>
-                        <Panel title="Estado da conexão">
-                          <View style={s.row}>
-                            <View
-                              style={[
-                                s.statusDot,
-                                {
-                                  backgroundColor:
-                                    sim.connection === "online" &&
-                                    connection.active
-                                      ? "#278B63"
-                                      : "#D97508",
-                                },
-                              ]}
-                            />
-                            <Text variant="titleMedium">
-                              {sim.connection === "online" && connection.active
-                                ? "Online na simulação"
-                                : sim.connection === "stale"
-                                  ? "Leitura desatualizada"
-                                  : "Sem comunicação"}
-                            </Text>
-                          </View>
-                          <Text
-                            variant="bodySmall"
-                            style={{ color: colors.onSurfaceVariant }}
-                          >
-                            Última leitura há {age} s. Nenhum ESP32 real
-                            conectado.
-                          </Text>
-                          <Note
-                            title={
-                              sim.pending
-                                ? "Aguardando confirmação…"
-                                : "Retorno da simulação"
-                            }
-                            text={sim.notice}
-                            warning={sim.connection !== "online"}
-                          />
-                          {sim.pending && <ProgressBar indeterminate />}
-                          <Button
-                            mode="outlined"
-                            onPress={() => navigate("Conta")}
-                            icon="tune-variant"
-                          >
-                            Testar cenários de conexão
-                          </Button>
-                        </Panel>
-                      </View>
+                          Novo ambiente
+                        </Button>
+                      )}
                     </View>
-                    <View style={[s.grid, !wide && s.stack]}>
-                      <View style={s.column}>
-                        {read("light") ? (
-                          <Panel
-                            title="Iluminação do quarto"
-                            subtitle={
-                              control("light")
-                                ? "Ajuste o conforto do ambiente."
-                                : "Seu perfil tem acesso somente à leitura."
-                            }
+                    <View style={s.chips}>
+                      {[
+                        ["all", "Todos"],
+                        ["active", "Habilitados"],
+                        ["disabled", "Desativados"],
+                      ].map(([value, label]) => (
+                        <Chip
+                          key={value}
+                          selected={roomFilter === value}
+                          onPress={() => setRoomFilter(value)}
+                        >
+                          {label}
+                        </Chip>
+                      ))}
+                    </View>
+                    {filteredRooms.length === 0 ? (
+                      <Note
+                        title="Nenhum ambiente encontrado"
+                        text={
+                          visibleRooms.length === 0
+                            ? "O administrador precisa conceder acesso a um ambiente."
+                            : "Altere a busca ou o filtro."
+                        }
+                      />
+                    ) : (
+                      <View style={s.roomCards}>
+                        {filteredRooms.map((value) => (
+                          <View
+                            key={value.id}
+                            style={[s.roomCardWidth, wide && { width: "48%" }]}
                           >
-                            <View style={s.spread}>
-                              <View style={s.row}>
-                                <Avatar.Icon
-                                  size={44}
-                                  icon={
-                                    sim.device.lightOn
-                                      ? "lightbulb-on-outline"
-                                      : "lightbulb-outline"
-                                  }
-                                />
-                                <Text variant="titleLarge">
-                                  {sim.device.lightOn ? "Ligada" : "Desligada"}
-                                </Text>
+                            <Panel
+                              title={value.name}
+                              icon="bed-outline"
+                              subtitle={`${value.wing} · ${value.bed}`}
+                            >
+                              <View style={s.chips}>
+                                <Chip compact icon="chip">
+                                  {value.device}
+                                </Chip>
+                                <Chip compact>
+                                  {value.active ? "Habilitado" : "Desativado"}
+                                </Chip>
                               </View>
-                              <Switch
-                                value={sim.device.lightOn}
-                                disabled={!ready || !control("light")}
-                                onValueChange={() =>
-                                  send(toggleLight(sim.device))
-                                }
-                                accessibilityLabel="Luz do quarto"
-                              />
-                            </View>
-                            <Text
-                              variant="displaySmall"
-                              style={{ color: colors.primary }}
-                            >
-                              {sim.device.intensity}
-                              <Text variant="titleLarge">%</Text>
-                            </Text>
-                            <Text
-                              variant="bodySmall"
-                              style={{ color: colors.onSurfaceVariant }}
-                            >
-                              {draft !== null
-                                ? `Ajuste em edição: ${draft}%. Solte para enviar.`
-                                : "Intensidade confirmada na simulação"}
-                            </Text>
-                            <Slider
-                              accessibilityLabel="Intensidade da luz"
-                              style={s.slider}
-                              minimumValue={0}
-                              maximumValue={100}
-                              step={1}
-                              value={draft ?? sim.device.intensity}
-                              disabled={!ready || !control("light")}
-                              onValueChange={setDraft}
-                              onSlidingComplete={(value) =>
-                                send({
-                                  kind: "light",
-                                  on: value > 0,
-                                  intensity: value,
-                                })
-                              }
-                              minimumTrackTintColor={colors.primary}
-                              maximumTrackTintColor={colors.outlineVariant}
-                              thumbTintColor={colors.primary}
-                            />
-                            <View style={s.spread}>
-                              <Text variant="labelSmall">0%</Text>
-                              <Text variant="labelSmall">100%</Text>
-                            </View>
-                            <View style={s.chips}>
-                              {[0, 25, 50, 100].map((value) => (
-                                <Button
-                                  key={value}
-                                  compact
-                                  mode="outlined"
-                                  disabled={!ready || !control("light")}
-                                  onPress={() =>
-                                    send({
-                                      kind: "light",
-                                      on: value > 0,
-                                      intensity: value,
-                                    })
-                                  }
-                                  accessibilityLabel={`Luz em ${value}%`}
-                                >
-                                  {value === 0 ? "Apagar" : `${value}%`}
-                                </Button>
-                              ))}
-                            </View>
-                            <Text
-                              variant="bodySmall"
-                              style={{ color: colors.onSurfaceVariant }}
-                            >
-                              Zero desliga. Ao religar, restaura a última
-                              intensidade positiva.
-                            </Text>
-                          </Panel>
-                        ) : (
-                          <Note
-                            title="Iluminação restrita"
-                            text="Este grupo não foi liberado para seu perfil."
-                          />
-                        )}
-                        <Panel title="Possíveis expansões">
-                          <View style={s.chips}>
-                            <Chip icon="lock-outline" disabled>
-                              Fechadura
-                            </Chip>
-                          </View>
-                          <Text
-                            variant="bodyMedium"
-                            style={{ color: colors.onSurfaceVariant }}
-                          >
-                            Recursos em planejamento, sujeitos ao hardware e à
-                            validação da equipe.
-                          </Text>
-                        </Panel>
-                      </View>
-                      <View style={s.column}>
-                        {read("sensors") ? (
-                          <View style={s.grid}>
-                            <View style={s.column}>
-                              <Panel title="Temperatura">
-                                <Avatar.Icon size={36} icon="thermometer" />
-                                <Text variant="headlineMedium" style={s.bold}>
-                                  {sim.device.temperature
-                                    .toFixed(1)
-                                    .replace(".", ",")}{" "}
-                                  °C
-                                </Text>
-                                <Text variant="bodySmall">
-                                  {age > 10
-                                    ? "Última leitura · antiga"
-                                    : "Leitura simulada"}
-                                </Text>
-                              </Panel>
-                            </View>
-                            <View style={s.column}>
-                              <Panel title="Umidade">
-                                <Avatar.Icon size={36} icon="water-percent" />
-                                <Text variant="headlineMedium" style={s.bold}>
-                                  {sim.device.humidity}%
-                                </Text>
-                                <Text variant="bodySmall">
-                                  {age > 10
-                                    ? "Última leitura · antiga"
-                                    : "Leitura simulada"}
-                                </Text>
-                              </Panel>
-                            </View>
-                          </View>
-                        ) : (
-                          <Note
-                            title="Sensores restritos"
-                            text="As leituras não estão disponíveis para seu perfil."
-                          />
-                        )}
-                        {read("sensors") && (
-                          <Panel
-                            title="Sensor de gás"
-                            subtitle="Detecção simulada · sem leitura em ppm"
-                          >
-                            <Avatar.Icon size={36} icon="gas-cylinder" />
-                            {sim.device.gas === "detected" && (
-                              <Button
-                                mode="outlined"
-                                icon="alert-outline"
-                                onPress={() => setGasOverlayClosed(false)}
+                              <Text
+                                variant="bodySmall"
+                                style={{ color: colors.onSurfaceVariant }}
                               >
-                                Ver alerta de gás
+                                Ambiente de demonstração. Nenhum ESP32 físico
+                                conectado.
+                              </Text>
+                              <Button
+                                mode="contained"
+                                icon="arrow-right"
+                                contentStyle={{ flexDirection: "row-reverse" }}
+                                onPress={() => openRoom(value.id)}
+                                accessibilityLabel={`Acessar ${value.name}`}
+                              >
+                                Acessar painel
                               </Button>
-                            )}
-                            <Note
-                              title={gasStatusLabels[sim.device.gas]}
-                              warning={sim.device.gas !== "clear"}
-                              text={
-                                sim.connection !== "online" ||
-                                !connection.active
-                                  ? "Último estado recebido. Sem leitura atual para confirmar a detecção."
-                                  : sim.device.gas === "detected"
-                                    ? "Alerta demonstrativo de presença de gás. Verifique o ambiente na integração real."
-                                    : sim.device.gas === "unavailable"
-                                      ? "Sem dados do sensor de gás. Ausência de leitura não significa ausência de gás."
-                                      : "Não há detecção no cenário simulado. Não representa uma medição física."
-                              }
-                            />
-                            <Text variant="bodySmall">
-                              O sensor de gás não altera a classificação
-                              Manchester do quarto.
-                            </Text>
-                          </Panel>
-                        )}
-                        {read("indicator") ? (
-                          <Panel
-                            title="Triagem do paciente"
-                            subtitle="Indicador externo · Manchester · seleção manual"
-                          >
-                            <View style={s.row}>
-                              <View
-                                style={[
-                                  s.indicatorDot,
-                                  {
-                                    backgroundColor:
-                                      indicatorColors[sim.device.indicator],
-                                  },
-                                ]}
-                              />
-                              <View style={s.flex}>
-                                <Text variant="titleLarge">
-                                  {colorNames[sim.device.indicator]}
-                                </Text>
-                                <Text variant="bodyMedium">
-                                  {indicatorPriorities[sim.device.indicator]}
-                                </Text>
-                              </View>
-                            </View>
-                            <View style={s.priorityList}>
-                              {(
-                                [
-                                  "red",
-                                  "orange",
-                                  "yellow",
-                                  "green",
-                                  "blue",
-                                  "off",
-                                ] as IndicatorColor[]
-                              ).map((color) => (
+                              {user.admin && (
                                 <Button
-                                  key={color}
-                                  mode={
-                                    sim.device.indicator === color
-                                      ? "contained-tonal"
-                                      : "outlined"
-                                  }
-                                  disabled={!ready || !control("indicator")}
-                                  onPress={() =>
-                                    send({ kind: "indicator", color })
-                                  }
-                                  contentStyle={s.priorityButton}
-                                  style={{
-                                    borderColor: indicatorColors[color],
-                                  }}
-                                  icon={() => (
-                                    <View
-                                      style={[
-                                        s.priorityDot,
-                                        {
-                                          backgroundColor:
-                                            indicatorColors[color],
-                                        },
-                                      ]}
-                                    />
-                                  )}
-                                  accessibilityLabel={`Indicador ${colorNames[color]}`}
+                                  mode="text"
+                                  icon="pencil-outline"
+                                  onPress={() => openEditor(value)}
                                 >
-                                  {color === "off"
-                                    ? "Apagar indicador"
-                                    : `${colorNames[color]} · ${indicatorPriorities[color]}`}
+                                  Editar ambiente
                                 </Button>
-                              ))}
-                            </View>
-                            <Text
-                              variant="bodySmall"
-                              style={{ color: colors.onSurfaceVariant }}
-                            >
-                              {control("indicator")
-                                ? "A cor muda após confirmação simulada. O app não realiza classificação clínica."
-                                : "Somente leitura. Alteração não liberada para este perfil."}
-                            </Text>
-                          </Panel>
-                        ) : (
-                          <Note
-                            title="Indicador restrito"
-                            text="O administrador não liberou este grupo para seu perfil."
-                          />
-                        )}
+                              )}
+                            </Panel>
+                          </View>
+                        ))}
                       </View>
-                    </View>
+                    )}
+                  </>
+                )}
+                {["Painel", "Iluminação", "Sensores", "Manchester"].includes(
+                  screen,
+                ) && (
+                  <>
+                    {!desktop && screen === "Painel" && (
+                      <View style={s.chips}>
+                        {(
+                          ["Iluminação", "Sensores", "Manchester"] as Screen[]
+                        ).map((item) => (
+                          <Chip
+                            key={item}
+                            icon={navIcons[item]}
+                            onPress={() => navigate(item)}
+                          >
+                            {navLabels[item] ?? item}
+                          </Chip>
+                        ))}
+                      </View>
+                    )}
+                    <Dashboard
+                      key={`${room.id}-${user.id}`}
+                      sim={sim}
+                      room={room}
+                      read={read}
+                      control={control}
+                      send={send}
+                      screen={screen}
+                      wide={wide}
+                      onGas={() => setGasClosed(false)}
+                    />
+                    <Text
+                      variant="bodySmall"
+                      style={{ color: colors.onSurfaceVariant }}
+                    >
+                      Última leitura há {age} s · {room.device} · dados
+                      simulados
+                    </Text>
                   </>
                 )}
                 {screen === "Histórico" &&
                   (read("history") ? (
-                    <Panel
-                      title="Atividade deste ambiente"
-                      subtitle="Eventos desta sessão · sem persistência"
-                    >
-                      {sim.logs.length === 0 ? (
-                        <Note
-                          title="Nenhum evento ainda"
-                          text="Altere a iluminação ou o indicador para registrar uma ação."
+                    <>
+                      <View style={s.metrics}>
+                        <Metric
+                          title="Eventos na sessão"
+                          value={String(sim.logs.length)}
+                          icon="history"
+                          detail="Até 30 registros por ambiente"
                         />
-                      ) : (
-                        sim.logs.map((log) => (
-                          <View
-                            key={log.id}
-                            style={[
-                              s.event,
-                              { borderColor: colors.outlineVariant },
-                            ]}
+                        <Metric
+                          title="Falhas / alertas"
+                          value={String(
+                            sim.logs.filter((value) => value.type === "error")
+                              .length,
+                          )}
+                          icon="alert-circle-outline"
+                          detail="Eventos classificados como erro"
+                        />
+                      </View>
+                      <TextInput
+                        mode="outlined"
+                        label="Buscar ação ou usuário"
+                        accessibilityLabel="Buscar ação ou usuário"
+                        value={logQuery}
+                        onChangeText={setLogQuery}
+                        left={<TextInput.Icon icon="magnify" />}
+                      />
+                      <View style={s.chips}>
+                        {[
+                          ["all", "Todos"],
+                          ["info", "Informações"],
+                          ["success", "Confirmações"],
+                          ["error", "Falhas / alertas"],
+                        ].map(([value, label]) => (
+                          <Chip
+                            key={value}
+                            selected={logFilter === value}
+                            onPress={() => setLogFilter(value)}
                           >
-                            <View style={s.row}>
+                            {label}
+                          </Chip>
+                        ))}
+                      </View>
+                      <Panel
+                        title="Linha do tempo"
+                        icon="timeline-clock-outline"
+                        subtitle="Eventos locais deste ambiente · sem auditoria persistente"
+                      >
+                        {filteredLogs.length === 0 ? (
+                          <Note
+                            title="Nenhum evento encontrado"
+                            text={
+                              sim.logs.length
+                                ? "Altere a busca ou o filtro."
+                                : "Utilize os controles para registrar ações nesta sessão."
+                            }
+                          />
+                        ) : (
+                          filteredLogs.map((value) => (
+                            <View
+                              key={value.id}
+                              style={[
+                                s.event,
+                                { borderBottomColor: colors.outlineVariant },
+                              ]}
+                            >
                               <Avatar.Icon
-                                size={34}
+                                size={32}
                                 icon={
-                                  log.type === "error"
-                                    ? "alert-circle-outline"
-                                    : log.type === "success"
+                                  value.type === "error"
+                                    ? "alert-outline"
+                                    : value.type === "success"
                                       ? "check"
                                       : "clock-outline"
                                 }
@@ -1060,50 +1549,60 @@ function DemoApp({
                                   variant="labelSmall"
                                   style={{ color: colors.onSurfaceVariant }}
                                 >
-                                  {log.time}
+                                  {value.time} ·{" "}
+                                  {value.type === "error"
+                                    ? "Falha / alerta"
+                                    : value.type === "success"
+                                      ? "Confirmação simulada"
+                                      : "Informação"}
                                 </Text>
-                                <Text variant="bodyMedium">{log.message}</Text>
+                                <Text variant="bodyMedium">
+                                  {value.message}
+                                </Text>
                               </View>
                             </View>
-                          </View>
-                        ))
-                      )}
-                    </Panel>
+                          ))
+                        )}
+                      </Panel>
+                    </>
                   ) : (
                     <Note
                       title="Histórico restrito"
-                      text="Seu perfil não pode consultar eventos deste ambiente."
-                      warning
+                      text="Seu perfil não possui acesso a este grupo."
                     />
                   ))}
                 {screen === "Conta" && (
                   <View style={[s.grid, !wide && s.stack]}>
                     <View style={s.column}>
-                      <Panel title="Perfil de demonstração">
+                      <Panel
+                        title="Perfil de demonstração"
+                        icon="account-circle-outline"
+                      >
                         <View style={s.row}>
                           <Avatar.Text
-                            size={52}
+                            size={48}
                             label={user.name.slice(0, 1)}
                           />
                           <View style={s.flex}>
-                            <Text variant="titleLarge">{user.name}</Text>
-                            <Text variant="bodyMedium">{user.email}</Text>
-                            <Text variant="labelSmall">
+                            <Text variant="titleLarge" style={s.bold}>
+                              {user.name}
+                            </Text>
+                            <Text variant="bodySmall">{user.email}</Text>
+                            <Text variant="bodySmall">
                               {user.admin ? "Administrador" : "Usuário"} · conta
                               fictícia
                             </Text>
                           </View>
                         </View>
-                        <Divider />
                         {groups.map((group) => (
                           <View key={group} style={s.spread}>
-                            <Text variant="bodyMedium">
+                            <Text variant="bodyMedium" style={s.flex}>
                               {groupLabels[group]}
                             </Text>
                             <Chip compact>
                               {
                                 levelLabels[
-                                  user.grants[environmentId]?.[group] ?? "none"
+                                  user.grants[room.id]?.[group] ?? "none"
                                 ]
                               }
                             </Chip>
@@ -1135,7 +1634,10 @@ function DemoApp({
                           Trocar perfil
                         </Button>
                       </Panel>
-                      <Panel title="Aparência e acessibilidade">
+                      <Panel
+                        title="Aparência e acessibilidade"
+                        icon="palette-outline"
+                      >
                         <SegmentedButtons
                           value={dark ? "dark" : "light"}
                           onValueChange={(value) => setDark(value === "dark")}
@@ -1153,43 +1655,32 @@ function DemoApp({
                           ]}
                         />
                         <View style={s.spread}>
-                          <Text variant="bodyMedium" style={s.flex}>
-                            Reduzir animações
-                          </Text>
+                          <Text style={s.flex}>Reduzir animações</Text>
                           <Switch
-                            accessibilityLabel="Reduzir animações"
                             value={reduced}
                             onValueChange={setReduceMotion}
+                            accessibilityLabel="Reduzir animações"
                           />
                         </View>
-                        <Text variant="bodySmall">
-                          A preferência do sistema por movimentos reduzidos
-                          também é respeitada.
-                        </Text>
                       </Panel>
                     </View>
                     <View style={s.column}>
                       <Panel
-                        title="Laboratório da simulação"
-                        subtitle="Estas ações são locais e não alteram equipamento real."
+                        title="Laboratório de simulação"
+                        icon="flask-outline"
+                        subtitle={`${room.name} · controles de teste`}
                       >
                         <View style={s.chips}>
-                          {(
-                            [
-                              ["normal", "Normal"],
-                              ["offline", "Offline"],
-                              ["stale", "Dados antigos"],
-                              ["timeout", "Sem confirmação"],
-                            ] as [Scenario, string][]
-                          ).map(([value, label]) => (
+                          {scenarios.map(([value, label]) => (
                             <Chip
                               key={value}
                               selected={sim.scenario === value}
+                              disabled={!user.admin}
+                              accessibilityLabel={`Cenário ${label}`}
                               onPress={() => {
-                                setDraft(null);
+                                cancelTest();
                                 sim.selectScenario(value);
                               }}
-                              accessibilityLabel={`Cenário ${label}`}
                             >
                               {label}
                             </Chip>
@@ -1207,57 +1698,48 @@ function DemoApp({
                                   "detected",
                                   "unavailable",
                                 ] as GasStatus[]
-                              ).map((status) => (
+                              ).map((value) => (
                                 <Chip
-                                  key={status}
-                                  selected={sim.device.gas === status}
-                                  disabled={!ready}
-                                  accessibilityLabel={`Simular gás: ${gasStatusLabels[status]}`}
-                                  onPress={() => {
-                                    if (read("sensors") && ready)
-                                      sim.simulateGas(status);
-                                  }}
+                                  key={value}
+                                  selected={sim.device.gas === value}
+                                  disabled={!connected}
+                                  accessibilityLabel={`Simular gás: ${gasStatusLabels[value]}`}
+                                  onPress={() => sim.simulateGas(value)}
                                 >
-                                  {gasStatusLabels[status]}
+                                  {gasStatusLabels[value]}
                                 </Chip>
                               ))}
                             </View>
-                            <Text variant="bodySmall">
-                              Injeção de dados fictícios para testar o painel,
-                              sem comando enviado ao sensor.
-                            </Text>
                           </>
                         )}
-                        <Note title="Teste o retorno" text={sim.notice} />
+                        <Note
+                          title="Retorno da simulação"
+                          text={
+                            read("light") ||
+                            read("indicator") ||
+                            read("sensors")
+                              ? sim.notice
+                              : "Sem acesso às funções deste ambiente."
+                          }
+                        />
                         <Button
                           mode="outlined"
                           disabled={!user.admin}
                           onPress={() => {
+                            cancelTest();
                             sim.reset();
-                            setConnection((previous) => ({
-                              ...previous,
-                              active: true,
-                            }));
-                            setDraft(null);
-                            setSnack(
-                              "Simulação reiniciada. Perfis e tema mantidos.",
+                            setRooms((previous) =>
+                              previous.map((value) =>
+                                value.id === room.id
+                                  ? { ...value, active: true }
+                                  : value,
+                              ),
                             );
+                            setGasClosed(false);
+                            setSnack("Simulação do ambiente reiniciada.");
                           }}
                         >
                           Reiniciar simulação
-                        </Button>
-                      </Panel>
-                      <Panel title="Documentação">
-                        <Text variant="bodyMedium">
-                          Confira o roteiro de prints e gravações desta versão
-                          para a monografia.
-                        </Text>
-                        <Button
-                          mode="outlined"
-                          icon="notebook-outline"
-                          onPress={() => navigate("Evidências")}
-                        >
-                          Abrir evidências
                         </Button>
                       </Panel>
                     </View>
@@ -1265,52 +1747,45 @@ function DemoApp({
                 )}
                 {screen === "Conexões" && user.admin && (
                   <>
+                    {roomSelector}
                     <Note
-                      title="Administração de demonstração"
-                      text="Endereço e dispositivo são exemplos. O teste não faz requisição de rede."
+                      title="Configuração de demonstração"
+                      text="Endereços são configurações locais. O teste simulado não realiza requisição de rede."
                     />
-                    <Panel title={connection.name}>
-                      <View style={s.chips}>
-                        <Chip icon="chip">{connection.device}</Chip>
-                        <Chip>
-                          {connection.active
-                            ? "Habilitada na simulação"
-                            : "Desativada"}
-                        </Chip>
-                      </View>
-                      <Text variant="bodyMedium">
-                        Serviço: {connection.endpoint}
-                      </Text>
-                      <Text variant="bodySmall">
-                        Recursos: iluminação, sensores e indicador. Um ambiente
-                        demonstrativo nesta versão.
-                      </Text>
+                    <Panel
+                      title={room.name}
+                      icon="chip"
+                      subtitle={`${room.bed} · ${room.wing}`}
+                    >
+                      <Text selectable>{room.device}</Text>
+                      <Text selectable>{room.endpoint}</Text>
+                      <Chip style={s.back}>{status}</Chip>
                       <View style={s.chips}>
                         <Button
                           mode="contained"
-                          onPress={() => {
-                            setConnectionDraft(connection);
-                            setTestStatus("idle");
-                            setDialog("connection");
-                          }}
+                          icon="pencil-outline"
+                          onPress={() => openEditor(room)}
                         >
                           Editar e testar
                         </Button>
                         <Button
                           mode="outlined"
+                          icon="power"
                           onPress={() => {
-                            if (connection.active) setDialog("disable");
+                            if (room.active) setDialog("disable");
                             else {
-                              setConnection((previous) => ({
-                                ...previous,
-                                active: true,
-                              }));
+                              setRooms((previous) =>
+                                previous.map((value) =>
+                                  value.id === room.id
+                                    ? { ...value, active: true }
+                                    : value,
+                                ),
+                              );
                               sim.selectScenario("normal");
-                              setSnack("Conexão reativada na simulação.");
                             }
                           }}
                         >
-                          {connection.active
+                          {room.active
                             ? "Desativar conexão"
                             : "Reativar conexão"}
                         </Button>
@@ -1318,143 +1793,227 @@ function DemoApp({
                     </Panel>
                   </>
                 )}
-                {screen === "Usuários" && user.admin && (
+                {screen === "Cadastro" && user.admin && (
                   <>
                     <Note
-                      title="Permissões por ambiente"
-                      text="A concessão é aplicada imediatamente à simulação. Sem concessão explícita, sem acesso."
+                      title="Cadastro local de ambiente"
+                      text="Dados demonstrativos. Salvar não conecta hardware nem cria registros em um servidor."
                     />
-                    <Panel title="Selecione uma pessoa">
-                      <View style={s.chips}>
-                        {users.map((u) => (
-                          <Chip
-                            key={u.id}
-                            selected={editingUser === u.id}
-                            onPress={() => setEditingUser(u.id)}
-                          >
-                            {u.name}
-                          </Chip>
-                        ))}
-                      </View>
-                      <Text variant="bodyMedium">
-                        {selected.email} ·{" "}
-                        {selected.admin ? "Administrador" : "Usuário"}
-                      </Text>
-                      <Text variant="bodySmall">
-                        Ambiente: {connection.name}
-                      </Text>
-                    </Panel>
-                    <Panel title={`Acessos de ${selected.name}`}>
-                      <View style={s.accessHeader}>
-                        <Text variant="labelLarge" style={s.accessLabel}>
-                          Grupo de funções · Não: sem acesso / Ver: visualizar /
-                          Usar: controlar
-                        </Text>
-                        {wide && (
-                          <Text variant="labelLarge">Permissão concedida</Text>
-                        )}
-                      </View>
-                      {groups.map((group) => (
-                        <View
-                          key={group}
-                          style={[
-                            s.accessRow,
-                            !wide && s.stack,
-                            { borderColor: colors.outlineVariant },
-                          ]}
+                    <View style={[s.grid, !wide && s.stack]}>
+                      <View style={s.column}>
+                        <Panel
+                          title="Identificação do ambiente"
+                          icon="bed-outline"
                         >
-                          <View style={s.accessLabel}>
-                            <Text variant="titleSmall">
-                              {groupLabels[group]}
-                            </Text>
-                            <Text
-                              variant="bodySmall"
-                              style={{ color: colors.onSurfaceVariant }}
-                            >
-                              {group === "light"
-                                ? "Ligar, desligar e ajustar"
-                                : group === "indicator"
-                                  ? "Cor e prioridade manual"
-                                  : "Consulta de dados"}
-                            </Text>
-                          </View>
-                          <SegmentedButtons
-                            style={s.accessOptions}
-                            value={
-                              selected.grants[environmentId]?.[group] ?? "none"
-                            }
-                            onValueChange={(value) =>
-                              setLevel(group, value as Level)
-                            }
-                            buttons={(
-                              [
-                                "none",
-                                "read",
-                                ...(group === "light" || group === "indicator"
-                                  ? ["control"]
-                                  : []),
-                              ] as Level[]
-                            ).map((value) => ({
-                              value,
-                              label: wide
-                                ? levelLabels[value]
-                                : (
-                                    {
-                                      none: "Não",
-                                      read: "Ver",
-                                      control: "Usar",
-                                    } as const
-                                  )[value],
-                            }))}
+                          {(
+                            [
+                              ["name", "Nome do quarto"],
+                              ["bed", "Código do leito"],
+                              ["wing", "Ala / localização"],
+                            ] as [keyof RoomDefinition, string][]
+                          ).map(([key, label]) => (
+                            <TextInput
+                              key={key}
+                              mode="outlined"
+                              label={label}
+                              accessibilityLabel={label}
+                              value={String(roomDraft[key])}
+                              onChangeText={(value) => editDraft(key, value)}
+                            />
+                          ))}
+                        </Panel>
+                        <Panel title="Conexão do dispositivo" icon="chip">
+                          <TextInput
+                            mode="outlined"
+                            label="Identificador do dispositivo"
+                            accessibilityLabel="Identificador do dispositivo"
+                            value={roomDraft.device}
+                            autoCapitalize="none"
+                            onChangeText={(value) => editDraft("device", value)}
                           />
-                        </View>
-                      ))}
-                    </Panel>
-                    <Button
-                      mode="contained"
-                      icon="account-plus-outline"
-                      onPress={() => {
-                        setName("");
-                        setEmail("");
-                        setDialog("user");
-                      }}
-                    >
-                      Criar perfil fictício
-                    </Button>
-                    <Text variant="bodySmall">
-                      Teste as permissões trocando de perfil na Conta. Login
-                      real e validação no backend ainda não implementados.
-                    </Text>
+                          <TextInput
+                            mode="outlined"
+                            label="Endereço do serviço (http/https)"
+                            accessibilityLabel="Endereço do serviço (http/https)"
+                            value={roomDraft.endpoint}
+                            autoCapitalize="none"
+                            onChangeText={(value) =>
+                              editDraft("endpoint", value)
+                            }
+                          />
+                          <Button
+                            mode="outlined"
+                            icon="lan-connect"
+                            loading={testStatus === "testing"}
+                            disabled={testStatus === "testing"}
+                            onPress={testConnection}
+                          >
+                            Testar conexão simulada
+                          </Button>
+                          {testStatus === "passed" && (
+                            <Note
+                              title="Teste simulado concluído"
+                              text="Nenhuma requisição real realizada."
+                            />
+                          )}
+                          {testStatus === "failed" && (
+                            <Note
+                              warning
+                              title="Teste simulado falhou"
+                              text="Reative o ambiente e restaure o cenário Normal para tentar novamente."
+                            />
+                          )}
+                        </Panel>
+                      </View>
+                      <View style={s.column}>
+                        <Panel
+                          title="Funções do protótipo"
+                          icon="view-grid-outline"
+                        >
+                          <Text>
+                            Iluminação com intensidade, temperatura, umidade,
+                            estado do gás e indicador Manchester.
+                          </Text>
+                          <Text
+                            variant="bodySmall"
+                            style={{ color: colors.onSurfaceVariant }}
+                          >
+                            Novo ambiente começa com estado simulado. O criador
+                            recebe acesso; outras pessoas precisam de concessão
+                            explícita.
+                          </Text>
+                          <Text
+                            variant="bodySmall"
+                            style={{ color: colors.onSurfaceVariant }}
+                          >
+                            Limiares, modelo do sensor e protocolo físico serão
+                            definidos na integração com o hardware.
+                          </Text>
+                        </Panel>
+                        <Panel
+                          title="Salvar ambiente"
+                          icon="content-save-outline"
+                        >
+                          {!!formError && (
+                            <HelperText type="error">{formError}</HelperText>
+                          )}
+                          <Button mode="contained" onPress={saveRoom}>
+                            Salvar ambiente
+                          </Button>
+                          <Button
+                            mode="outlined"
+                            onPress={() => navigate("Quartos")}
+                          >
+                            Cancelar
+                          </Button>
+                        </Panel>
+                      </View>
+                    </View>
                   </>
                 )}
-                {screen === "Evidências" && (
+                {screen === "Usuários" && user.admin && (
                   <>
-                    <Panel title="TIRE PRINT DESTA PARTE">
-                      <Text variant="bodyMedium">
-                        Painel claro e escuro; mobile e desktop; prioridade
-                        Manchester; matriz de acesso; conta com controles
-                        bloqueados.
-                      </Text>
-                    </Panel>
-                    <Panel title="MOSTRE FUNCIONANDO EM VÍDEO OU GIF">
-                      <Text variant="bodyMedium">
-                        Altere intensidade, apague e religue a luz. Troque a cor
-                        do indicador. Edite permissões e entre com outro perfil.
-                        Simule conexão offline e falta de confirmação. Alterne
-                        os temas.
-                      </Text>
-                    </Panel>
+                    {roomSelector}
                     <Note
-                      title="Limites desta versão"
-                      text="Perfis e configuração locais, sem autenticação, persistência ou ESP32 conectado. Identifique as evidências como simulação. Histórico só desta sessão."
+                      title="Permissões por ambiente"
+                      text="Alterações são aplicadas imediatamente nesta simulação. Sem concessão explícita, sem acesso."
                     />
+                    <View style={[s.grid, !wide && s.stack]}>
+                      <View style={s.column}>
+                        <Panel
+                          title="Pessoas da demonstração"
+                          icon="account-group-outline"
+                        >
+                          {users.map((value) => (
+                            <Button
+                              key={value.id}
+                              mode={
+                                selected.id === value.id
+                                  ? "contained-tonal"
+                                  : "outlined"
+                              }
+                              icon="account-outline"
+                              onPress={() => setEditingUser(value.id)}
+                            >
+                              {value.name} ·{" "}
+                              {value.admin ? "Administrador" : "Usuário"}
+                            </Button>
+                          ))}
+                          <Button
+                            mode="contained"
+                            icon="account-plus-outline"
+                            onPress={() => {
+                              setName("");
+                              setEmail("");
+                              setFormError("");
+                              setDialog("user");
+                            }}
+                          >
+                            Criar perfil fictício
+                          </Button>
+                        </Panel>
+                      </View>
+                      <View style={[s.column, wide && { flex: 1.5 }]}>
+                        <Panel
+                          title={`Acessos de ${selected.name}`}
+                          icon="shield-account-outline"
+                          subtitle={room.name}
+                        >
+                          {groups.map((group) => (
+                            <View
+                              key={group}
+                              style={[
+                                s.accessRow,
+                                { borderBottomColor: colors.outlineVariant },
+                              ]}
+                            >
+                              <Text variant="titleSmall">
+                                {groupLabels[group]}
+                              </Text>
+                              <SegmentedButtons
+                                value={
+                                  selected.grants[room.id]?.[group] ?? "none"
+                                }
+                                onValueChange={(value) =>
+                                  setLevel(group, value as Level)
+                                }
+                                buttons={(
+                                  [
+                                    "none",
+                                    "read",
+                                    ...(group === "light" ||
+                                    group === "indicator"
+                                      ? ["control"]
+                                      : []),
+                                  ] as Level[]
+                                ).map((value) => ({
+                                  value,
+                                  label:
+                                    !wide && value === "none"
+                                      ? "Sem acesso"
+                                      : levelLabels[value],
+                                }))}
+                              />
+                            </View>
+                          ))}
+                          <Text
+                            variant="bodySmall"
+                            style={{ color: colors.onSurfaceVariant }}
+                          >
+                            Sensores e histórico são somente leitura. Perfis
+                            locais não substituem autenticação e autorização no
+                            servidor.
+                          </Text>
+                        </Panel>
+                      </View>
+                    </View>
                   </>
                 )}
                 <Text
                   variant="labelSmall"
                   style={[s.footer, { color: colors.onSurfaceVariant }]}
                 >
-                  v0.3.0 · Protótipo interativo · Dados simulados
+                  SAMAHI · Prévia visual · Dados simulados nesta sessão
                 </Text>
               </View>
             </ScrollView>
@@ -1463,15 +2022,21 @@ function DemoApp({
                 navigationState={{
                   index: Math.max(
                     0,
-                    mobileRoutes.findIndex(
-                      (r) =>
-                        r.key ===
-                        (["Conexões", "Usuários", "Evidências"].includes(screen)
-                          ? "Conta"
-                          : screen),
+                    routes.findIndex(
+                      (route) =>
+                        route.key ===
+                        (["Iluminação", "Sensores", "Manchester"].includes(
+                          screen,
+                        )
+                          ? "Painel"
+                          : ["Conexões", "Usuários"].includes(screen)
+                            ? "Conta"
+                            : screen === "Cadastro"
+                              ? "Quartos"
+                              : screen),
                     ),
                   ),
-                  routes: mobileRoutes,
+                  routes,
                 }}
                 onTabPress={({ route }) => navigate(route.key as Screen)}
                 style={{ backgroundColor: colors.surface }}
@@ -1482,143 +2047,66 @@ function DemoApp({
       )}
       <Portal>
         <Dialog
-          visible={dialog === "user" || dialog === "connection"}
-          onDismiss={closeDialog}
-          style={{ maxWidth: 600, width: "92%", alignSelf: "center" }}
+          visible={dialog === "user"}
+          onDismiss={() => setDialog(null)}
+          style={[s.dialog, { maxHeight: height * 0.85 }]}
         >
-          <Dialog.Title>
-            {dialog === "user" ? "Criar perfil fictício" : "Configurar conexão"}
-          </Dialog.Title>
-          <Dialog.ScrollArea style={{ maxHeight: Math.min(440, height * 0.5) }}>
+          <Dialog.Title>Criar perfil fictício</Dialog.Title>
+          <Dialog.ScrollArea>
             <ScrollView
-              contentContainerStyle={s.form}
               keyboardShouldPersistTaps="handled"
+              contentContainerStyle={s.form}
             >
-              {dialog === "user" ? (
-                <>
-                  <TextInput
-                    mode="outlined"
-                    label="Nome"
-                    value={name}
-                    onChangeText={setName}
-                  />
-                  <TextInput
-                    mode="outlined"
-                    label="E-mail fictício"
-                    value={email}
-                    onChangeText={setEmail}
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                  />
-                  <Text variant="bodySmall">
-                    Começa sem acesso. Nenhuma conta real será criada ou
-                    mensagem enviada.
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <TextInput
-                    mode="outlined"
-                    label="Nome do ambiente"
-                    value={connectionDraft.name}
-                    onChangeText={(name) => {
-                      setConnectionDraft((previous) => ({ ...previous, name }));
-                      setTestStatus("idle");
-                    }}
-                  />
-                  <TextInput
-                    mode="outlined"
-                    label="Identificador do dispositivo"
-                    value={connectionDraft.device}
-                    onChangeText={(device) => {
-                      setConnectionDraft((previous) => ({
-                        ...previous,
-                        device,
-                      }));
-                      setTestStatus("idle");
-                    }}
-                  />
-                  <TextInput
-                    mode="outlined"
-                    label="Endereço do serviço"
-                    value={connectionDraft.endpoint}
-                    onChangeText={(endpoint) => {
-                      setConnectionDraft((previous) => ({
-                        ...previous,
-                        endpoint,
-                      }));
-                      setTestStatus("idle");
-                    }}
-                    autoCapitalize="none"
-                  />
-                  <Button
-                    mode="outlined"
-                    loading={testStatus === "testing"}
-                    disabled={testStatus === "testing"}
-                    onPress={testConnection}
-                  >
-                    Testar conexão simulada
-                  </Button>
-                  {testStatus === "passed" && (
-                    <Note
-                      title="Teste simulado concluído"
-                      text="Recursos demonstrativos identificados. Nenhuma requisição real realizada."
-                    />
-                  )}
-                  {testStatus === "failed" && (
-                    <Note
-                      title="Teste simulado falhou"
-                      text="Restaure o cenário Normal na Conta e tente novamente."
-                      warning
-                    />
-                  )}
-                </>
-              )}
-              {formError && <HelperText type="error">{formError}</HelperText>}
+              <TextInput
+                mode="outlined"
+                label="Nome"
+                accessibilityLabel="Nome"
+                value={name}
+                onChangeText={setName}
+              />
+              <TextInput
+                mode="outlined"
+                label="E-mail"
+                accessibilityLabel="E-mail"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
+              />
+              <Text variant="bodySmall">
+                Começa sem acesso. Nenhuma conta real ou convite será criado.
+              </Text>
+              {!!formError && <HelperText type="error">{formError}</HelperText>}
             </ScrollView>
           </Dialog.ScrollArea>
           <Dialog.Actions>
-            <Button onPress={closeDialog}>Cancelar</Button>
-            <Button
-              disabled={dialog === "connection" && testStatus !== "passed"}
-              onPress={() => {
-                if (dialog === "user") addUser();
-                else if (user?.admin) {
-                  setConnection({
-                    ...connectionDraft,
-                    name: connectionDraft.name.trim(),
-                    device: connectionDraft.device.trim(),
-                    endpoint: connectionDraft.endpoint.trim(),
-                  });
-                  closeDialog();
-                  setSnack("Configuração salva nesta sessão de demonstração.");
-                }
-              }}
-            >
-              Salvar
-            </Button>
+            <Button onPress={() => setDialog(null)}>Cancelar</Button>
+            <Button onPress={addUser}>Salvar</Button>
           </Dialog.Actions>
         </Dialog>
         <Dialog
           visible={dialog === "disable"}
-          onDismiss={closeDialog}
-          style={{ maxWidth: 520, width: "92%", alignSelf: "center" }}
+          onDismiss={() => setDialog(null)}
+          style={s.dialog}
         >
           <Dialog.Title>Desativar conexão?</Dialog.Title>
           <Dialog.Content>
             <Text>
-              Os controles ficarão bloqueados. O último estado confirmado será
+              Os controles serão bloqueados e o último estado confirmado será
               preservado.
             </Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={closeDialog}>Cancelar</Button>
+            <Button onPress={() => setDialog(null)}>Cancelar</Button>
             <Button
               onPress={() => {
-                if (!user?.admin) return;
-                setConnection((previous) => ({ ...previous, active: false }));
                 sim.selectScenario("offline");
-                closeDialog();
+                setRooms((previous) =>
+                  previous.map((value) =>
+                    value.id === room.id ? { ...value, active: false } : value,
+                  ),
+                );
+                setDialog(null);
               }}
             >
               Desativar
@@ -1642,117 +2130,163 @@ const s = StyleSheet.create({
   root: { flex: 1 },
   shell: { flex: 1, flexDirection: "row" },
   flex: { flex: 1, minWidth: 0 },
-  sidebar: { width: 260, padding: 20, gap: 8 },
-  sidebarFooter: { marginTop: "auto", gap: 8, paddingTop: 20 },
-  navItem: { borderRadius: 16 },
-  divider: { marginVertical: 16 },
+  brand: { width: 180, height: 43 },
+  sidebar: { width: 248, padding: 16, gap: 6, borderRightWidth: 1 },
+  sidebarFooter: { marginTop: "auto", gap: 10, paddingTop: 16 },
+  sectionLabel: { marginTop: 20, marginBottom: 8, letterSpacing: 1 },
+  navButton: { borderRadius: 10 },
+  navContent: { justifyContent: "flex-start", minHeight: 46 },
+  divider: { marginVertical: 14 },
+  topbar: {
+    minHeight: 74,
+    paddingHorizontal: 24,
+    paddingVertical: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    borderBottomWidth: 1,
+  },
   row: { flexDirection: "row", alignItems: "center", gap: 12 },
   spread: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
     gap: 12,
   },
-  pageScroll: { padding: 32, alignItems: "center" },
+  titleStack: { alignItems: "flex-start", flexDirection: "column" },
+  pageScroll: { padding: 28, alignItems: "center", flexGrow: 1 },
   mobileScroll: { padding: 16 },
-  page: { width: "100%", maxWidth: 1220, gap: 24 },
-  grid: { flexDirection: "row", gap: 20 },
+  page: { width: "100%", maxWidth: 1440, gap: 22 },
+  grid: { flexDirection: "row", gap: 24 },
   stack: { flexDirection: "column" },
   column: { flex: 1, minWidth: 0, gap: 20 },
-  card: { borderRadius: 24 },
+  card: { borderRadius: 16 },
   cardContent: { padding: 20, gap: 16 },
   bold: { fontWeight: "700" },
-  note: { padding: 16, borderRadius: 16, gap: 8 },
+  note: { padding: 14, borderRadius: 10, gap: 6 },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  slider: { width: "100%", height: 44 },
-  statusDot: { width: 10, height: 10, borderRadius: 5 },
-  indicatorDot: { width: 24, height: 24, borderRadius: 12 },
-  priorityDot: { width: 12, height: 12, borderRadius: 6 },
-  priorityList: { gap: 8 },
-  priorityButton: { justifyContent: "flex-start", minHeight: 48 },
-  footer: { marginTop: 8, paddingBottom: 12 },
-  event: { paddingVertical: 12, borderBottomWidth: 1 },
-  profile: { padding: 16, borderWidth: 1, borderRadius: 16, gap: 16 },
-  loginScroll: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
+  metrics: { flexDirection: "row", alignItems: "stretch", gap: 16 },
+  wrap: { flexWrap: "wrap" },
+  metric: {
+    flex: 1,
+    minWidth: 130,
+    borderWidth: 1,
+    borderRadius: 14,
+    padding: 16,
+    gap: 12,
   },
-  loginPage: { width: "100%", maxWidth: 1140, gap: 40 },
-  loginWide: { flexDirection: "row", alignItems: "center" },
-  loginIntro: { flex: 1, minWidth: 0, gap: 24 },
-  loginProfiles: { flex: 1, minWidth: 0 },
-  loginTitle: { marginTop: 20, fontWeight: "700" },
-  room: { height: 164, borderRadius: 20, overflow: "hidden" },
-  roomWall: {
+  slider: { width: "100%", height: 44 },
+  back: { alignSelf: "flex-start" },
+  footer: { marginTop: 4, paddingBottom: 8 },
+  triageState: { borderLeftWidth: 4, padding: 14, borderRadius: 10, gap: 8 },
+  triageOptions: { gap: 8 },
+  triageButton: { justifyContent: "flex-start", minHeight: 46 },
+  indicatorDot: { width: 12, height: 12, borderRadius: 6 },
+  priorityDot: { width: 10, height: 10, borderRadius: 5 },
+  roomCards: { flexDirection: "row", flexWrap: "wrap", gap: 20 },
+  roomCardWidth: { width: "100%" },
+  profile: { borderWidth: 1, padding: 16, borderRadius: 12, gap: 14 },
+  loginScroll: {
+    padding: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    flexGrow: 1,
+  },
+  loginPage: { width: "100%", maxWidth: 1100, gap: 32 },
+  event: {
+    flexDirection: "row",
+    gap: 12,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+  },
+  accessRow: { gap: 10, paddingBottom: 16, borderBottomWidth: 1 },
+  form: { paddingVertical: 16, gap: 16 },
+  dialog: { maxWidth: 540, width: "92%", alignSelf: "center" },
+  blueprint: {
+    height: 280,
+    borderWidth: 1,
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  gridLine: {
     position: "absolute",
-    top: 24,
+    top: 20,
+    bottom: 40,
+    width: 1,
+    opacity: 0.2,
+  },
+  gridHorizontal: {
+    position: "absolute",
+    left: 24,
+    right: 24,
+    height: 1,
+    opacity: 0.2,
+  },
+  floorWall: {
+    position: "absolute",
     left: "10%",
     right: "10%",
-    bottom: 35,
+    top: 35,
+    bottom: 48,
     borderWidth: 2,
-    borderRadius: 12,
+    borderRadius: 4,
+  },
+  bathroom: {
+    position: "absolute",
+    width: "27%",
+    height: 72,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 4,
+  },
+  board: {
+    position: "absolute",
+    top: 20,
+    left: "46%",
+    borderRadius: 6,
+    padding: 6,
+    alignItems: "center",
+    gap: 4,
+  },
+  lightZone: {
+    position: "absolute",
+    right: "19%",
+    top: 90,
+    width: "42%",
+    height: 116,
+    borderRadius: 50,
   },
   bed: {
     position: "absolute",
-    bottom: 37,
-    left: "18%",
-    width: "45%",
-    height: 57,
+    right: "24%",
+    top: 107,
+    width: "31%",
+    height: 88,
     borderRadius: 10,
+    borderWidth: 1,
+    padding: 6,
     flexDirection: "row",
-    padding: 8,
-    gap: 6,
+    gap: 4,
   },
-  pillow: { width: "25%", borderRadius: 6 },
-  blanket: { flex: 1, borderRadius: 6 },
-  lightGlow: {
-    position: "absolute",
-    width: 100,
-    height: 110,
-    top: 22,
-    right: "19%",
-    backgroundColor: "#FFE390",
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    transform: [{ scaleX: 0.85 }],
-  },
-  lamp: {
-    position: "absolute",
-    top: 18,
-    right: "27%",
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-  },
-  door: {
-    position: "absolute",
-    width: 28,
-    height: 78,
-    right: "9%",
-    bottom: 35,
-    borderWidth: 2,
-    borderRadius: 5,
-  },
-  doorLed: {
-    position: "absolute",
-    width: 8,
-    height: 26,
-    left: 8,
-    top: 12,
+  pillow: { width: "28%", borderRadius: 4 },
+  blanket: {
+    flex: 1,
     borderRadius: 4,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  roomCaption: { position: "absolute", bottom: 10, left: 16 },
-  accessHeader: { flexDirection: "row", gap: 20 },
-  accessLabel: { flex: 1, minWidth: 0, gap: 4 },
-  accessRow: {
+  doorLed: { position: "absolute", left: "10%", bottom: 54, gap: 5 },
+  planCaption: {
+    position: "absolute",
+    left: 10,
+    right: 10,
+    bottom: 10,
+    padding: 7,
+    borderRadius: 6,
     flexDirection: "row",
-    alignItems: "stretch",
-    gap: 12,
-    paddingVertical: 16,
-    borderTopWidth: 1,
+    gap: 6,
+    alignItems: "center",
   },
-  accessOptions: { flex: 2, minWidth: 0 },
-  form: { paddingVertical: 16, gap: 16 },
 });

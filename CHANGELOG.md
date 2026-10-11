@@ -1,5 +1,17 @@
 # Histórico de versões
 
+## 0.4.0 — SAMAHI, redesign Stitch em revisão
+
+- Nova identidade SAMAHI, temas clínicos claro/escuro, navegação adaptada, planta esquemática e painel baseado nas telas fornecidas por César.
+- Seleção, busca e cadastro local de quartos/leitos; rejeição de leito/dispositivo duplicado e validação do endereço. Novos ambientes exigem concessão explícita para outros usuários.
+- Estado, cenários e até 30 eventos independentes por ambiente, com cancelamento ao trocar de ambiente/perfil.
+- Busca/filtros funcionais no histórico; administração de conexões e permissões adaptada.
+- Evidências acadêmicas removidas do produto e mantidas em docs. Valores de gás/latência/firmware/estatísticas inventados no export não incorporados.
+- Preservados Manchester manual, confirmação simulada dos comandos, gás independente, reconhecimento e animação da faixa com movimentos reduzidos.
+- Quatro PNGs inválidos e inconsistências de nomes/cabeçalhos do material original registradas em docs/redesign-stitch-samahi.md.
+- Controle de intensidade web com teclado e valor acessível correto; controle nativo preservado. Iluminação aparece primeiro no painel do celular.
+- Código candidato; sem release final, publicação de produção ou novo APK nesta etapa.
+
 ## Documentação — arquitetura da base v0.3.0
 
 - Documentação de Arquitetura de Software reconstruída a partir da main 47398c1: contexto, módulos, dados, fluxos, permissões, gás/Manchester, distribuição, decisões, limites e proposta de integração claramente separada.

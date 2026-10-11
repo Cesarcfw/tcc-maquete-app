@@ -1,0 +1,414 @@
+<!DOCTYPE html><html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Maquete Conectada - Histórico &amp; Logs</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-lowest": "#ffffff",
+            "inverse-surface": "#283044",
+            "inverse-primary": "#93ccff",
+            "on-tertiary": "#ffffff",
+            "primary-fixed-dim": "#93ccff",
+            "surface-container": "#eaedff",
+            "on-tertiary-fixed-variant": "#005049",
+            "outline-variant": "#bfc7d2",
+            "on-surface-variant": "#3f4850",
+            "surface-bright": "#faf8ff",
+            "on-background": "#131b2e",
+            "surface-variant": "#dae2fd",
+            "tertiary-fixed": "#89f5e7",
+            "surface-dim": "#d2d9f4",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6",
+            "tertiary": "#00685f",
+            "secondary-fixed-dim": "#94ccff",
+            "on-surface": "#131b2e",
+            "on-tertiary-container": "#f4fffc",
+            "on-primary-container": "#fdfcff",
+            "tertiary-container": "#008378",
+            "surface-container-highest": "#dae2fd",
+            "primary": "#006194",
+            "on-secondary-fixed": "#001d32",
+            "outline": "#707881",
+            "secondary-container": "#7bc2ff",
+            "on-error": "#ffffff",
+            "surface-container-low": "#f2f3ff",
+            "primary-fixed": "#cce5ff",
+            "secondary-fixed": "#cde5ff",
+            "background": "#faf8ff",
+            "on-primary-fixed-variant": "#004b73",
+            "on-primary": "#ffffff",
+            "on-primary-fixed": "#001d31",
+            "inverse-on-surface": "#eef0ff",
+            "on-tertiary-fixed": "#00201d",
+            "on-secondary-container": "#004f7b",
+            "tertiary-fixed-dim": "#6bd8cb",
+            "secondary": "#006399",
+            "on-secondary-fixed-variant": "#004b74",
+            "on-error-container": "#93000a",
+            "on-secondary": "#ffffff",
+            "surface-tint": "#006398",
+            "surface": "#faf8ff",
+            "primary-container": "#007bb9",
+            "surface-container-high": "#e2e7ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-md": "1rem",
+            "space-sm": "0.5rem",
+            "space-xl": "2rem",
+            "margin": "1rem",
+            "gutter": "1.25rem",
+            "margin-desktop": "2rem",
+            "space-xs": "0.25rem",
+            "gutter-desktop": "1.5rem",
+            "space-lg": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-xl": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "metric-display": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-xl-mobile": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "title-sm": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "headline-xl": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "metric-display": ["32px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-xl-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }],
+            "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "title-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-[#0b1329] text-[#eef0ff] font-body-md text-body-md antialiased min-h-screen flex justify-center selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- Mobile Viewport Container (Optimized for 390px Mobile Experience) -->
+<main class="w-full max-w-[420px] min-h-screen flex flex-col bg-[#0b1329] relative pb-28 border-x border-[#1e293b] shadow-2xl">
+<!-- Top Hospital Status Bar / Global Header -->
+<header class="sticky top-0 z-40 bg-[#0b1329]/95 backdrop-blur-md px-4 pt-3 pb-3 border-b border-[#1e293b]/70 flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<button aria-label="Voltar" class="w-9 h-9 rounded-lg bg-[#14203d] border border-[#1e293b] flex items-center justify-center text-primary-fixed hover:bg-primary/20 active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="arrow_back">arrow_back</span>
+</button>
+<div><div class="flex items-center gap-2"><img src="https://lh3.googleusercontent.com/aida/AEtjO1WrulZLadNFTl1mMmi7U8tFDCMGbnTNPvhdJxNIDZLhj4skiuXuuHwTYoCNTCVzqVTy0wARhdu4zT7cGvc0IZURKmJWy_Ah0Uo_EnbRq-BcMACumDPvnB5WopoCuV4GB_i5gZ1XQVIjMlCC0FRKuLXe8NYjSpDtCETiy2fs-CdehvA12wNNoCY_ejpQR1Ss3zsXVYnXtrBkQ_fcEWxKlyqU8tQL6rCc7a_o9SLN_PQju-viGP-iJ_0JIA" alt="NexoConecta Logo" class="w-6 h-6 rounded object-contain"><h1 class="font-headline-md text-[18px] leading-tight text-white font-bold tracking-tight">NexoConecta</h1></div><p class="font-label-sm text-label-sm text-[#93ccff]/80">Histórico &amp; Logs · Auditoria IoT</p></div>
+</div>
+<!-- Simulation Environment Badge -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0369a1]/20 border border-[#0284c7]/40 text-[#93ccff]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#38bdf8] animate-pulse"></span>
+<span class="font-label-sm text-[10px] tracking-wide font-semibold">Modo Demonstração</span>
+</div>
+</div>
+<!-- ESP32 Connection Micro Bar -->
+<div class="flex items-center justify-between px-3 py-1.5 rounded-lg bg-[#131d38] border border-[#1e293b]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#22c55e] text-[16px]" data-icon="wifi" data-weight="fill" style="font-variation-settings: 'FILL' 1;">wifi</span>
+<span class="font-label-sm text-[11px] text-gray-300 font-medium">ESP32 Conectado</span>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-[#22c55e]/15 text-[#4ade80] font-semibold">14ms</span>
+</div>
+<div class="flex items-center gap-1.5 text-gray-400">
+<span class="material-symbols-outlined text-[14px]" data-icon="sync">sync</span>
+<span class="font-label-sm text-[10px]">Tempo real</span>
+</div>
+</div>
+</header>
+<!-- Main Scrollable Body Content -->
+<div class="px-4 pt-3.5 space-y-4 flex-1">
+<!-- Compact Quick KPI Metrics Grid -->
+<section aria-label="Métricas de Eventos" class="grid grid-cols-3 gap-2">
+<!-- Metric 1: Total -->
+<div class="bg-[#14203d]/90 border border-[#1e293b] rounded-xl p-2.5 flex flex-col justify-between shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between text-gray-400 mb-1">
+<span class="font-label-sm text-[11px]">Total Hoje</span>
+<span class="material-symbols-outlined text-[15px] text-[#93ccff]" data-icon="receipt_long">receipt_long</span>
+</div>
+<div class="font-metric-display text-[22px] leading-6 text-white font-bold">142</div>
+<div class="font-body-sm text-[10px] text-[#93ccff]/80 mt-1 flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[11px]" data-icon="north_east">north_east</span>
+<span class="">+18% pico</span>
+</div>
+</div>
+<!-- Metric 2: Taxa de Entrega -->
+<div class="bg-[#14203d]/90 border border-[#1e293b] rounded-xl p-2.5 flex flex-col justify-between shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between text-gray-400 mb-1">
+<span class="font-label-sm text-[11px]">Entrega</span>
+<span class="material-symbols-outlined text-[15px] text-[#22c55e]" data-icon="check_circle">check_circle</span>
+</div>
+<div class="font-metric-display text-[22px] leading-6 text-[#4ade80] font-bold">99.3%</div>
+<div class="font-body-sm text-[10px] text-gray-400 mt-1 truncate">Ack NexoConecta</div>
+</div>
+<!-- Metric 3: Falhas -->
+<div class="bg-[#14203d]/90 border border-[#1e293b] rounded-xl p-2.5 flex flex-col justify-between shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between text-gray-400 mb-1">
+<span class="font-label-sm text-[11px]">Falhas</span>
+<span class="material-symbols-outlined text-[15px] text-[#f87171]" data-icon="error">error</span>
+</div>
+<div class="font-metric-display text-[22px] leading-6 text-[#f87171] font-bold">1</div>
+<div class="font-body-sm text-[10px] text-gray-400 mt-1 truncate">Timeout link</div>
+</div>
+</section>
+<!-- Search Bar & Tactile Category Filter Chips -->
+<section class="space-y-2.5">
+<!-- Compact Search Input -->
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-gray-400 text-[18px]" data-icon="search">search</span>
+<input class="w-full bg-[#111a33] border border-[#1e293b] rounded-xl pl-9 pr-8 py-2 text-[13px] text-white placeholder-gray-500 focus:outline-none focus:border-secondary-container transition-colors" placeholder="Buscar por operador, sensor, tag..." type="text">
+<button aria-label="Filtrar" class="absolute right-2.5 p-1 text-gray-400 hover:text-white" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="tune">tune</span>
+</button>
+</div>
+<!-- Horizontal Scrollable Tag Filters -->
+<div class="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-0.5">
+<button class="shrink-0 px-3 py-1.5 rounded-lg bg-primary text-white text-[12px] font-semibold border border-primary-container shadow-sm flex items-center gap-1" type="button">
+<span class="">Todos</span>
+<span class="text-[10px] bg-white/20 px-1 rounded-full">142</span>
+</button>
+<button class="shrink-0 px-3 py-1.5 rounded-lg bg-[#14203d] text-gray-300 hover:text-white text-[12px] font-medium border border-[#1e293b] flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[14px] text-[#ffc107]" data-icon="light">light</span>
+<span class="">Iluminação</span>
+</button>
+<button class="shrink-0 px-3 py-1.5 rounded-lg bg-[#14203d] text-gray-300 hover:text-white text-[12px] font-medium border border-[#1e293b] flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[14px] text-[#3b82f6]" data-icon="emergency">emergency</span>
+<span class="">Manchester</span>
+</button>
+<button class="shrink-0 px-3 py-1.5 rounded-lg bg-[#14203d] text-gray-300 hover:text-white text-[12px] font-medium border border-[#1e293b] flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[14px] text-[#f59e0b]" data-icon="sensors">sensors</span>
+<span class="">Alertas de Gás</span>
+</button>
+<button class="shrink-0 px-3 py-1.5 rounded-lg bg-[#14203d] text-gray-300 hover:text-white text-[12px] font-medium border border-[#1e293b] flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[14px] text-[#38bdf8]" data-icon="wifi">wifi</span>
+<span class="">ESP32</span>
+</button>
+</div>
+</section>
+<!-- Chronological Audit Timeline Section -->
+<section class="space-y-2 pt-1">
+<div class="flex items-center justify-between px-0.5">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-fixed-dim"></span>
+<span class="font-label-md text-[12px] text-gray-300 font-semibold tracking-wide">Linha do Tempo Hospitalar</span>
+</div>
+<span class="text-[11px] text-gray-400 font-label-sm">Hoje, 24 de Outubro</span>
+</div>
+<div class="relative pl-5 border-l-2 border-[#1e293b]/90 space-y-3.5 ml-2.5">
+<!-- Evento 1: Iluminação 65% -->
+<article class="relative bg-[#131d38] border border-[#1e293b] rounded-xl p-3 shadow-md hover:border-primary/40 transition-colors">
+<!-- Timeline Pin Icon -->
+<div class="absolute -left-[30px] top-3.5 w-6 h-6 rounded-full bg-[#1b2b4f] border-2 border-[#38bdf8] flex items-center justify-center text-[#ffc107] shadow">
+<span class="material-symbols-outlined text-[13px]" data-icon="light" data-weight="fill" style="font-variation-settings: 'FILL' 1;">light</span>
+</div>
+<div class="flex items-start justify-between gap-2">
+<div class="space-y-0.5">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-[11px] font-mono text-[#93ccff] font-semibold">14:32:05</span>
+<span class="text-[10px] px-1.5 py-0.2 rounded bg-[#0284c7]/20 text-[#7bc2ff] font-medium">IoT Quarto</span>
+</div>
+<h2 class="font-headline-md text-[14px] font-bold text-white leading-snug">
+                  Ajuste de Iluminação para 65%
+                </h2>
+</div>
+<span class="material-symbols-outlined text-gray-400 text-[18px]" data-icon="more_vert">more_vert</span>
+</div>
+<!-- Operator and Hardware Details -->
+<div class="mt-2 text-[12px] text-gray-300 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-gray-400" data-icon="person">person</span>
+<span class="">Operador: <strong class="text-white font-semibold">César (Admin)</strong></span>
+</div>
+<!-- Validation Badge -->
+<div class="mt-2.5 pt-2 border-t border-[#1e293b] flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#22c55e]/15 border border-[#22c55e]/30 text-[#4ade80] text-[11px] font-medium"><span class="w-1.5 h-1.5 rounded-full bg-[#22c55e]"></span><span class="">Confirmado pelo NexoConecta</span></div>
+<span class="text-[10px] font-mono text-gray-400">GPIO 18 / PWM</span>
+</div>
+</article>
+<!-- Evento 2: Triagem Manchester Azul -->
+<article class="relative bg-[#131d38] border border-[#1e293b] rounded-xl p-3 shadow-md hover:border-primary/40 transition-colors">
+<!-- Timeline Pin Icon -->
+<div class="absolute -left-[30px] top-3.5 w-6 h-6 rounded-full bg-[#1b2b4f] border-2 border-[#3b82f6] flex items-center justify-center text-[#3b82f6] shadow">
+<span class="material-symbols-outlined text-[13px]" data-icon="emergency" data-weight="fill" style="font-variation-settings: 'FILL' 1;">emergency</span>
+</div>
+<div class="flex items-start justify-between gap-2">
+<div class="space-y-0.5">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-[11px] font-mono text-[#93ccff] font-semibold">14:31:58</span>
+<span class="text-[10px] px-1.5 py-0.2 rounded bg-[#3b82f6]/20 text-[#93ccff] font-semibold">Triagem</span>
+</div>
+<h2 class="font-headline-md text-[14px] font-bold text-white leading-snug">
+                  Triagem Manchester: Azul (Não urgente)
+                </h2>
+</div>
+<span class="material-symbols-outlined text-gray-400 text-[18px]" data-icon="more_vert">more_vert</span>
+</div>
+<div class="mt-2 text-[12px] text-gray-300 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-gray-400" data-icon="medical_services">medical_services</span>
+<span class="">Operador: <strong class="text-white font-semibold">Gabriel (Enfermagem)</strong></span>
+</div>
+<!-- Validation Badge -->
+<div class="mt-2.5 pt-2 border-t border-[#1e293b] flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#22c55e]/15 border border-[#22c55e]/30 text-[#4ade80] text-[11px] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#22c55e]"></span>
+<span class="">Confirmado na porta externa</span>
+</div>
+<span class="text-[10px] font-mono text-[#3b82f6]">LED RGB Azul</span>
+</div>
+</article>
+<!-- Evento 3: Alerta Preventivo de Gás/Fumaça -->
+<article class="relative bg-[#131d38] border-2 border-[#d97706]/80 rounded-xl p-3 shadow-md">
+<!-- Subtle Hazard top bar indication -->
+<div class="absolute -top-[2px] left-0 right-0 h-1 rounded-t-xl bg-gradient-to-r from-[#d97706] via-[#f59e0b] to-[#d97706]"></div>
+<!-- Timeline Pin Icon -->
+<div class="absolute -left-[30px] top-3.5 w-6 h-6 rounded-full bg-[#2b1f0d] border-2 border-[#f59e0b] flex items-center justify-center text-[#f59e0b] shadow">
+<span class="material-symbols-outlined text-[13px]" data-icon="sensors" data-weight="fill" style="font-variation-settings: 'FILL' 1;">sensors</span>
+</div>
+<div class="flex items-start justify-between gap-2">
+<div class="space-y-0.5">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-[11px] font-mono text-[#f59e0b] font-semibold">14:15:22</span>
+<span class="text-[10px] px-1.5 py-0.2 rounded bg-[#f59e0b]/20 text-[#fbbf24] font-semibold">Telemetria</span>
+</div>
+<h2 class="font-headline-md text-[14px] font-bold text-white leading-snug">
+                  Alerta Preventivo de Gás/Fumaça
+                </h2>
+</div>
+<span class="material-symbols-outlined text-[#f59e0b] text-[18px]" data-icon="warning">warning</span>
+</div>
+<div class="mt-2 text-[12px] text-gray-300 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-gray-400" data-icon="air">air</span>
+<span class="">Dispositivo: <strong class="text-amber-200 font-semibold">Sensor MQ-2 (410 ppm)</strong></span>
+</div>
+<p class="mt-1.5 text-[10px] text-amber-300/80 italic">
+              * Detecção de gás genérica. Sem aferição toxicológica específica.
+            </p>
+<!-- Validation Badge -->
+<div class="mt-2.5 pt-2 border-t border-[#1e293b] flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#f59e0b]/20 border border-[#f59e0b]/40 text-[#fbbf24] text-[11px] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#f59e0b] animate-ping"></span>
+<span class="">Alerta Registrado no Quarto</span>
+</div>
+<span class="text-[10px] font-mono text-gray-400">Buzzer Ativo</span>
+</div>
+</article>
+<!-- Evento 4: Falha Comando Iluminação 100% -->
+<article class="relative bg-[#1a1523] border border-[#ba1a1a]/60 rounded-xl p-3 shadow-md hover:border-[#ba1a1a] transition-colors">
+<!-- Timeline Pin Icon -->
+<div class="absolute -left-[30px] top-3.5 w-6 h-6 rounded-full bg-[#351419] border-2 border-[#ef4444] flex items-center justify-center text-[#ef4444] shadow">
+<span class="material-symbols-outlined text-[13px]" data-icon="error" data-weight="fill" style="font-variation-settings: 'FILL' 1;">error</span>
+</div>
+<div class="flex items-start justify-between gap-2">
+<div class="space-y-0.5">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-[11px] font-mono text-[#fca5a5] font-semibold">13:55:04</span>
+<span class="text-[10px] px-1.5 py-0.2 rounded bg-[#ba1a1a]/25 text-[#fca5a5] font-semibold">Exceção</span>
+</div>
+<h2 class="font-headline-md text-[14px] font-bold text-white leading-snug">
+                  Comando de Iluminação 100%
+                </h2>
+</div>
+<span class="material-symbols-outlined text-gray-400 text-[18px]" data-icon="more_vert">more_vert</span>
+</div>
+<div class="mt-2 text-[12px] text-gray-300 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-gray-400" data-icon="medical_services">medical_services</span>
+<span class="">Operador: <strong class="text-white font-semibold">Gabriel (Enfermagem)</strong></span>
+</div>
+<!-- Error Validation Badge -->
+<div class="mt-2.5 pt-2 border-t border-[#1e293b] flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#ba1a1a]/20 border border-[#ba1a1a]/40 text-[#fca5a5] text-[11px] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#ef4444]"></span>
+<span class="">Falha de comunicação - Timeout</span>
+</div>
+<button class="text-[11px] font-semibold text-[#93ccff] hover:underline flex items-center gap-0.5" type="button">
+<span class="">Reenviar</span>
+<span class="material-symbols-outlined text-[12px]" data-icon="replay">replay</span>
+</button>
+</div>
+</article>
+</div>
+</section>
+<!-- Action Button: Exportar Relatório CSV & Atualizar -->
+<section class="pt-2 pb-1 space-y-2">
+<button class="w-full py-3 px-4 rounded-xl bg-primary hover:bg-[#0369a1] text-white font-headline-md text-[14px] font-semibold shadow-lg shadow-primary/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-all" type="button" style="background-color: rgb(0, 90, 158);">
+<span class="material-symbols-outlined text-[18px]" data-icon="download">download</span>
+<span class="">Exportar Relatório CSV</span>
+</button>
+<button class="w-full py-2.5 px-4 rounded-xl bg-[#14203d] hover:bg-[#1a2b53] text-[#93ccff] border border-[#1e293b] font-label-md text-[13px] flex items-center justify-center gap-2 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="refresh">refresh</span>
+<span class="">Sincronizar Últimos 50 Registros</span>
+</button>
+</section>
+</div>
+<!-- Bottom Navigation Bar (Conforme Shared Components JSON) -->
+<!-- JSON: labels: ["Painel", "Luzes", "Sensores", "Triagem", "ESP32"] / icons: ["dashboard", "light", "sensors", "emergency", "wifi"] -->
+<nav aria-label="Navegação Principal Móvel" class="fixed bottom-0 left-0 w-full z-50 md:hidden flex justify-around items-center px-2 py-2 bg-surface-container-lowest dark:bg-inverse-surface shadow-md border-t-0">
+<!-- Item 1: Painel -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-surface-container dark:hover:bg-surface-container-high active:scale-95 transition-transform duration-150" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-[11px] mt-0.5">Painel</span>
+</button>
+<!-- Item 2: Luzes -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-surface-container dark:hover:bg-surface-container-high active:scale-95 transition-transform duration-150" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="light">light</span>
+<span class="font-label-sm text-[11px] mt-0.5">Luzes</span>
+</button>
+<!-- Item 3: Sensores -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-surface-container dark:hover:bg-surface-container-high active:scale-95 transition-transform duration-150" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="sensors">sensors</span>
+<span class="font-label-sm text-[11px] mt-0.5">Sensores</span>
+</button>
+<!-- Item 4: Triagem -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-surface-container dark:hover:bg-surface-container-high active:scale-95 transition-transform duration-150" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="emergency">emergency</span>
+<span class="font-label-sm text-[11px] mt-0.5">Triagem</span>
+</button>
+<!-- Item 5: ESP32 / Histórico & Auditoria (Active Highlight for current screen context) -->
+<button class="flex flex-col items-center justify-center bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container rounded-xl px-3 py-1 active:scale-95 transition-transform duration-150 shadow" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="wifi" data-weight="fill" style="font-variation-settings: 'FILL' 1;">wifi</span>
+<span class="font-label-sm text-[11px] font-bold mt-0.5">ESP32</span>
+</button>
+</nav>
+</main>
+
+
+</body></html>

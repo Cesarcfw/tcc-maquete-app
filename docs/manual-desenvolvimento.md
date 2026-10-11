@@ -1,5 +1,7 @@
 # Manual de estudo e manutenção — Maquete conectada
 
+> Manual da base v0.3.0. Para a candidata SAMAHI v0.4.0, consulte também [o registro do redesign](redesign-stitch-samahi.md): DemoApp e useSimulator foram reorganizados; rooms.ts define o catálogo; as evidências ficam somente em docs.
+
 ## 1. Finalidade e base
 
 Material para César compreender o aplicativo, editar manualmente e explicar o funcionamento à equipe e ao orientador. A base de código é a main `47398c1`, versão 0.3.0. Leia em conjunto com a [Documentação de Arquitetura](arquitetura.md).

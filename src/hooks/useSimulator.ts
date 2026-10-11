@@ -17,59 +17,111 @@ export type LogEntry = {
   message: string;
   type: "info" | "success" | "error";
 };
-export function useSimulator() {
-  const [device, setDevice] = useState(initialState);
-  const [scenario, setScenario] = useState<Scenario>("normal");
+const initialSession = () => ({
+  device: initialState(),
+  scenario: "normal" as Scenario,
+  pending: false,
+  notice: "Simulação pronta. Nenhum equipamento físico conectado.",
+  logs: [] as LogEntry[],
+});
+type Session = ReturnType<typeof initialSession>;
+export function useSimulator(environment = "quarto-01") {
+  const [sessions, setSessions] = useState<Record<string, Session>>(() => ({
+    [environment]: initialSession(),
+  }));
+  const sessionsRef = useRef(sessions),
+    active = useRef(environment);
   const [now, setNow] = useState(() => Date.now());
-  const [pending, setPending] = useState(false);
-  const [notice, setNotice] = useState(
-    "Simulação pronta. Nenhum equipamento físico conectado.",
-  );
-  const [logs, setLogs] = useState<LogEntry[]>([]);
   const generation = useRef(0),
     sequence = useRef(0),
     busy = useRef(false);
-  const scenarioRef = useRef(scenario);
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  function log(message: string, type: LogEntry["type"] = "info") {
-    setLogs((previous) =>
-      [
+  function update(id: string, action: (current: Session) => Session) {
+    const next = {
+      ...sessionsRef.current,
+      [id]: action(sessionsRef.current[id] ?? initialSession()),
+    };
+    sessionsRef.current = next;
+    setSessions(next);
+  }
+  function log(
+    current: Session,
+    message: string,
+    type: LogEntry["type"] = "info",
+  ): Session {
+    return {
+      ...current,
+      logs: [
         {
           id: ++sequence.current,
           time: new Date().toLocaleTimeString("pt-BR"),
           message,
           type,
         },
-        ...previous,
+        ...current.logs,
       ].slice(0, 30),
-    );
+    };
   }
+  function cancelPending() {
+    generation.current++;
+    busy.current = false;
+    if (timeout.current) clearTimeout(timeout.current);
+    update(active.current, (current) => {
+      const next = {
+        ...current,
+        pending: false,
+        notice: current.pending
+          ? "Comando pendente cancelado; último estado preservado."
+          : current.notice,
+      };
+      return current.pending ? log(next, next.notice) : next;
+    });
+  }
+  useEffect(() => {
+    if (active.current !== environment) {
+      generation.current++;
+      busy.current = false;
+      if (timeout.current) clearTimeout(timeout.current);
+      update(active.current, (current) => {
+        const next = {
+          ...current,
+          pending: false,
+          notice: current.pending
+            ? "Troca de ambiente: comando pendente cancelado."
+            : current.notice,
+        };
+        return current.pending ? log(next, next.notice) : next;
+      });
+      active.current = environment;
+    }
+    if (!sessionsRef.current[environment])
+      update(environment, (current) => current);
+  }, [environment]);
   useEffect(() => {
     const interval = setInterval(() => {
       const time = Date.now();
       setNow(time);
-      if (scenarioRef.current === "normal" || scenarioRef.current === "timeout")
-        setDevice((previous) => ({ ...previous, receivedAt: time }));
+      const next = Object.fromEntries(
+        Object.entries(sessionsRef.current).map(([id, current]) => [
+          id,
+          current.scenario === "normal" || current.scenario === "timeout"
+            ? { ...current, device: { ...current.device, receivedAt: time } }
+            : current,
+        ]),
+      );
+      sessionsRef.current = next;
+      setSessions(next);
     }, 1000);
     return () => {
       clearInterval(interval);
       if (timeout.current) clearTimeout(timeout.current);
     };
   }, []);
+  const session = sessions[environment] ?? initialSession();
   function selectScenario(next: Scenario) {
-    generation.current++;
-    busy.current = false;
-    setPending(false);
-    if (timeout.current) clearTimeout(timeout.current);
-    scenarioRef.current = next;
-    setScenario(next);
+    cancelPending();
     const time = Date.now();
     setNow(time);
-    if (next !== "offline")
-      setDevice((previous) => ({
-        ...previous,
-        receivedAt: next === "stale" ? time - 18000 : time,
-      }));
     const message = {
       normal:
         "Comunicação simulada restabelecida. Comandos cancelados não serão reaplicados.",
@@ -79,95 +131,133 @@ export function useSimulator() {
         "Leitura desatualizada. Controles pausados até receber novos dados.",
       timeout: "Cenário de teste: comandos não recebem confirmação.",
     }[next];
-    setNotice(message);
-    log(message);
+    update(environment, (current) =>
+      log(
+        {
+          ...current,
+          scenario: next,
+          pending: false,
+          device:
+            next === "offline"
+              ? current.device
+              : {
+                  ...current.device,
+                  receivedAt: next === "stale" ? time - 18000 : time,
+                },
+          notice: message,
+        },
+        message,
+      ),
+    );
   }
   function send(command: Command, actor?: string) {
+    const current = sessionsRef.current[environment];
     if (
+      !current ||
+      active.current !== environment ||
       busy.current ||
-      connectionState(scenarioRef.current, device.receivedAt, Date.now()) !==
-        "online"
+      connectionState(
+        current.scenario,
+        current.device.receivedAt,
+        Date.now(),
+      ) !== "online"
     )
       return;
     busy.current = true;
-    setPending(true);
-    const revision = generation.current,
-      label = `${actor ? `${actor}: ` : ""}${describeCommand(command)}`;
-    setNotice(`${label}: aguardando confirmação simulada…`);
-    log(`${label}: solicitado.`);
-    const fails = scenarioRef.current === "timeout";
+    const revision = generation.current;
+    const label = `${actor ? `${actor}: ` : ""}${describeCommand(command)}`;
+    update(environment, (value) =>
+      log(
+        {
+          ...value,
+          pending: true,
+          notice: `${label}: aguardando confirmação simulada…`,
+        },
+        `${label}: solicitado.`,
+      ),
+    );
+    const fails = current.scenario === "timeout";
     timeout.current = setTimeout(
       () => {
-        if (generation.current !== revision) return;
-        busy.current = false;
-        setPending(false);
-        if (fails) {
-          setNotice("Não confirmado. O estado anterior foi preservado.");
-          log(`${label}: sem confirmação após 5 s.`, "error");
+        if (generation.current !== revision || active.current !== environment)
           return;
-        }
-        setDevice((previous) => applyCommand(previous, command));
-        setNotice(`${label}: confirmado na simulação.`);
-        log(`${label}: confirmado na simulação.`, "success");
+        busy.current = false;
+        update(environment, (value) =>
+          fails
+            ? log(
+                {
+                  ...value,
+                  pending: false,
+                  notice: "Não confirmado. O estado anterior foi preservado.",
+                },
+                `${label}: sem confirmação após 5 s.`,
+                "error",
+              )
+            : log(
+                {
+                  ...value,
+                  pending: false,
+                  device: applyCommand(value.device, command),
+                  notice: `${label}: confirmado na simulação.`,
+                },
+                `${label}: confirmado na simulação.`,
+                "success",
+              ),
+        );
       },
       fails ? 5000 : 650,
     );
   }
-  function reset() {
-    generation.current++;
-    if (timeout.current) clearTimeout(timeout.current);
-    busy.current = false;
-    setPending(false);
-    scenarioRef.current = "normal";
-    setScenario("normal");
-    setDevice(initialState());
-    setNow(Date.now());
-    setLogs([]);
-    setNotice("Simulação reiniciada. Luz em 65% e indicador azul.");
-  }
   return {
+    ...session,
+    now,
+    selectScenario,
+    send,
+    cancelPending,
+    connection: connectionState(
+      session.scenario,
+      session.device.receivedAt,
+      now,
+    ),
+    reset() {
+      cancelPending();
+      update(environment, () => initialSession());
+      setNow(Date.now());
+    },
     simulateGas(status: GasStatus) {
+      const current = sessionsRef.current[environment];
       if (
-        connectionState(scenarioRef.current, device.receivedAt, Date.now()) !==
-        "online"
+        !current ||
+        connectionState(
+          current.scenario,
+          current.device.receivedAt,
+          Date.now(),
+        ) !== "online"
       )
         return;
-      setDevice((previous) => ({
-        ...previous,
-        ...applyGasReading(previous, status),
-        receivedAt: Date.now(),
-      }));
-      log(
-        `Sensor de gás (simulação): ${gasStatusLabels[status]}.`,
-        status === "detected" ? "error" : "info",
+      update(environment, (value) =>
+        log(
+          {
+            ...value,
+            device: {
+              ...applyGasReading(value.device, status),
+              receivedAt: Date.now(),
+            },
+          },
+          `Sensor de gás (simulação): ${gasStatusLabels[status]}.`,
+          status === "detected" ? "error" : "info",
+        ),
       );
     },
     acknowledgeGasAlert(actor: string) {
-      if (device.gas !== "detected" || device.gasAcknowledged) return;
-      setDevice((previous) => acknowledgeGas(previous));
-      log(
-        `${actor}: alerta de gás reconhecido. Detecção e triagem preservadas.`,
-        "info",
+      update(environment, (value) =>
+        value.device.gas !== "detected" || value.device.gasAcknowledged
+          ? value
+          : log(
+              { ...value, device: acknowledgeGas(value.device) },
+              `${actor}: alerta de gás reconhecido. Detecção e triagem preservadas.`,
+            ),
       );
     },
-    cancelPending() {
-      generation.current++;
-      if (timeout.current) clearTimeout(timeout.current);
-      busy.current = false;
-      setPending(false);
-      setNotice(
-        "Sessão alterada. Comandos pendentes cancelados; último estado preservado.",
-      );
-    },
-    device,
-    scenario,
-    now,
-    pending,
-    notice,
-    logs,
-    selectScenario,
-    send,
-    reset,
-    connection: connectionState(scenario, device.receivedAt, now),
   };
 }

@@ -3,15 +3,15 @@ export function appTheme(dark: boolean, reducedMotion: boolean) {
   const base = dark ? MD3DarkTheme : MD3LightTheme;
   const palette = dark
     ? {
-        primary: "#79CDEE",
+        primary: "#8CCBFF",
         onPrimary: "#092432",
         primaryContainer: "#19374A",
         onPrimaryContainer: "#BFE9FC",
-        background: "#090F1E",
+        background: "#0B1329",
         onBackground: "#EDF3FD",
-        surface: "#151F33",
+        surface: "#141E31",
         onSurface: "#EDF3FD",
-        surfaceVariant: "#202E45",
+        surfaceVariant: "#253044",
         onSurfaceVariant: "#ACBCD4",
         outline: "#41516A",
         outlineVariant: "#2D3D55",
@@ -19,15 +19,15 @@ export function appTheme(dark: boolean, reducedMotion: boolean) {
         onSecondaryContainer: "#BFE9FC",
       }
     : {
-        primary: "#086C94",
+        primary: "#006398",
         onPrimary: "#FFFFFF",
         primaryContainer: "#D8EEF9",
         onPrimaryContainer: "#06334A",
-        background: "#F1F5FA",
+        background: "#F8FAFC",
         onBackground: "#17283E",
         surface: "#FFFFFF",
         onSurface: "#17283E",
-        surfaceVariant: "#E6EDF5",
+        surfaceVariant: "#EFF4FA",
         onSurfaceVariant: "#52647A",
         outline: "#73849A",
         outlineVariant: "#D6E0EC",
@@ -36,7 +36,7 @@ export function appTheme(dark: boolean, reducedMotion: boolean) {
       };
   return {
     ...base,
-    roundness: 5,
+    roundness: 3,
     colors: { ...base.colors, ...palette },
     animation: { scale: reducedMotion ? 0 : 1 },
   };
