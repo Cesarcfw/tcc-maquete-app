@@ -1,5 +1,12 @@
 # Histórico de versões
 
+## 0.4.1 — APK de teste com integração Node-RED
+
+- Preparação de APK interno Android com redesign SAMAHI e cliente HTTP Node-RED; versão Android 3.
+- HTTP sem TLS permitido apenas no perfil EAS preview para ensaio na rede local; demais perfis o desativam.
+- Build começa em demonstração interna, sem embutir IP do computador; endereço editável em Conexões.
+- Arquivos .env locais excluídos do envio ao EAS. Equipamento real, teste físico Android e acesso LAN do Node-RED permanecem pendentes.
+
 ## Em desenvolvimento — integração Node-RED local
 
 - Fluxo funcional com ESP virtual, sensores a cada 2 segundos, API HTTP v1 e controles de entradas para testes.

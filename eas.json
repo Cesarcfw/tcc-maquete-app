@@ -6,6 +6,9 @@
     "preview": {
       "distribution": "internal",
       "developmentClient": false,
+      "env": {
+        "EXPO_PUBLIC_NODE_RED_URL": "https://servico.exemplo"
+      },
       "android": {
         "buildType": "apk"
       }

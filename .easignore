@@ -21,6 +21,7 @@ yarn-error.*
 *.pem
 .env*.local
 .env
+.env.*
 coverage/
 test-results/
 playwright-report/
