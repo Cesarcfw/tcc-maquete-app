@@ -6,6 +6,7 @@
 - HTTP sem TLS permitido apenas no perfil EAS preview para ensaio na rede local; demais perfis o desativam.
 - Build começa em demonstração interna, sem embutir IP do computador; endereço editável em Conexões.
 - Arquivos .env locais excluídos do envio ao EAS. Equipamento real, teste físico Android e acesso LAN do Node-RED permanecem pendentes.
+- Compilação EAS concluída FINISHED; APK disponível e integridade/estrutura básica verificadas. Link, hash e roteiro em docs/apk-v0.4.1.md, PR #9.
 
 ## Em desenvolvimento — integração Node-RED local
 

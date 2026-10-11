@@ -23,7 +23,11 @@ MOSTRE FUNCIONANDO EM VÍDEO OU GIF: abrir sem Metro, mudar intensidade, apagar/
 
 ## Limites e resultados
 
-Login/permissões demonstrativos e estado em memória. Hardware real e transporte ESP continuam pendentes. Compilação não comprova instalação, funcionamento Android nem acesso LAN. Resultados do build serão registrados após retorno do EAS.
+Login/permissões demonstrativos e estado em memória. Hardware real e transporte ESP continuam pendentes. Compilação não comprova instalação, funcionamento Android nem acesso LAN.
+
+Build concluído FINISHED em 11/10/2026, sem erro reportado. [Baixar APK](https://expo.dev/artifacts/eas/EkMraGltSpVyTyo1QGc1Avy66191HN-pcPTiUQBBS0I.apk). Cópia local entregas/SAMAHI-v0.4.1-android.apk, 73.574.382 bytes. SHA-256 D4AA4BFC1ADBB5F1362FEBB233BBDF91FF3D4DD9229281F28C224ED0C537FE7A. Contêiner APK aberto e entradas AndroidManifest.xml e classes.dex conferidas; instalação e execução Android permanecem pendentes.
+
+O build foi enviado com a configuração v0.4.1 antes do commit de preparação; a referência Git exibida no EAS é fb17eb2 (main anterior), embora o arquivo enviado contenha as alterações de build. Configuração versionada em c3fc7f8. [PR #9](https://github.com/Cesarcfw/tcc-maquete-app/pull/9), em rascunho para revisão e teste Android.
 
 ## Compilar
 
