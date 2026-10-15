@@ -88,7 +88,11 @@ export async function backendRequest<T>(
     if (!response.ok)
       throw new BackendError(
         data.error ||
-          data.message ||
+          (path.startsWith("/api/auth/")
+            ? response.status === 429
+              ? "Muitas tentativas. Aguarde um minuto antes de tentar novamente."
+              : "Não foi possível autenticar ou alterar a senha. Confira os dados e o estado da conta."
+            : data.message) ||
           "Não foi possível concluir a solicitação.",
         response.status,
       );
