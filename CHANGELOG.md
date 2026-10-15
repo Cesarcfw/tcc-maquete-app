@@ -1,5 +1,15 @@
 # Histórico de versões
 
+## Em desenvolvimento — autenticação e persistência locais
+
+- Backend Express/Better Auth com SQLite local: contas, sessões, quartos, dispositivos, concessões e auditoria persistentes.
+- Entrada por email/senha, cadastro pelo administrador, troca/redefinição de senha, desativação/reativação e revogação de sessões.
+- Autorizações por quarto/grupo verificadas no servidor e campos da telemetria filtrados; administrador não ignora concessões de operação.
+- Comandos mediados pelo backend com confirmação e deduplicação; Node-RED continua sendo simulador, sem hardware real.
+- Nova entrada autenticada no app; demonstração antiga disponível isolada de chamadas de rede. Sessão do cliente somente em memória.
+- Inicialização do administrador por terminal com senha oculta; backup consistente e roteiro de transferência para notebook.
+- Documentação/evidências em docs/autenticacao-persistencia-local.md. Teste Android/LAN/HTTPS, novo APK e revisão da equipe pendentes.
+
 ## 0.4.1 — APK de teste com integração Node-RED
 
 - Preparação de APK interno Android com redesign SAMAHI e cliente HTTP Node-RED; versão Android 3.

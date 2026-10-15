@@ -118,7 +118,7 @@ const scenarios: [Scenario, string][] = [
 ];
 type Simulator = ReturnType<typeof useSimulator>;
 
-export default function App() {
+export default function App({ isolated = false }: { isolated?: boolean }) {
   const [dark, setDark] = useState(true),
     [reduceMotion, setReduceMotion] = useState(false),
     [systemReduced, setSystemReduced] = useState(false);
@@ -156,6 +156,7 @@ export default function App() {
         }}
       >
         <DemoApp
+          isolated={isolated}
           dark={dark}
           setDark={setDark}
           reduced={reduced}
@@ -751,11 +752,13 @@ function Dashboard({
 }
 
 function DemoApp({
+  isolated,
   dark,
   setDark,
   reduced,
   setReduceMotion,
 }: {
+  isolated: boolean;
   dark: boolean;
   setDark: (value: boolean) => void;
   reduced: boolean;
@@ -766,11 +769,18 @@ function DemoApp({
   const desktop = width >= 1100,
     wide = width >= 760;
   const [users, setUsers] = useState(initialUsers),
-    [rooms, setRooms] = useState(initialRooms);
+    [rooms, setRooms] = useState(() =>
+      initialRooms().map((value) =>
+        isolated ? { ...value, endpoint: "https://servico.exemplo" } : value,
+      ),
+    );
   const [session, setSession] = useState<string | null>(null),
     [roomId, setRoomId] = useState("quarto-01");
   const room = rooms.find((value) => value.id === roomId) ?? rooms[0];
-  const sim = useSimulator(room.id, room.endpoint);
+  const sim = useSimulator(
+    room.id,
+    isolated ? "https://servico.exemplo" : room.endpoint,
+  );
   const [screen, setScreen] = useState<Screen>("Quartos"),
     [snack, setSnack] = useState("");
   const [editingUser, setEditingUser] = useState("matheus"),
@@ -895,7 +905,7 @@ function DemoApp({
     const revision = testGeneration.current;
     let passes = false;
     try {
-      if (roomDraft.endpoint === "https://servico.exemplo")
+      if (isolated || roomDraft.endpoint === "https://servico.exemplo")
         passes =
           roomDraft.active &&
           (roomDraft.id !== room.id || sim.connection === "online");
@@ -927,6 +937,7 @@ function DemoApp({
         typeof value === "string" ? value.trim() : value,
       ]),
     ) as RoomDefinition;
+    if (isolated) saved.endpoint = "https://servico.exemplo";
     const exists = rooms.some((value) => value.id === saved.id);
     sim.cancelPending();
     setRooms((previous) =>

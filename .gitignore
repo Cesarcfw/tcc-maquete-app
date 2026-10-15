@@ -48,3 +48,5 @@ playwright-report/
 
 .vercel
 .env*
+backend/data/
+backend/backups/
