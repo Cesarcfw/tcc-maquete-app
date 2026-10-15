@@ -24,7 +24,7 @@ import {
 } from "../services/backend";
 import { appTheme } from "./theme";
 import { groupLabels, groups } from "../domain/access";
-import DemoApp from "./DemoApp";
+import DemoApp, { LoginPresentation } from "./DemoApp";
 import { GasAlarm } from "./GasAlarm";
 
 const emptyGrants: Grants = {
@@ -59,7 +59,8 @@ const eventLabels: Record<string, string> = {
 };
 export default function ConnectedApp() {
   const [demo, setDemo] = useState(false);
-  const [dark, setDark] = useState(false);
+  const [manage, setManage] = useState(false);
+  const [dark, setDark] = useState(true);
   const theme = appTheme(dark, false);
   const [address, setAddress] = useState(
     process.env.EXPO_PUBLIC_BACKEND_URL || "http://127.0.0.1:3001",
@@ -98,6 +99,7 @@ export default function ConnectedApp() {
     backendRequest<T>(base, path, token, body, method);
   const forget = () => {
     generation.current++;
+    setManage(false);
     setToken(null);
     setAccount(null);
     setRooms([]);
@@ -247,6 +249,25 @@ export default function ConnectedApp() {
         <DemoApp isolated />
       </View>
     );
+  if (account && token && !manage)
+    return (
+      <DemoApp
+        workspace={{
+          base,
+          token,
+          account,
+          rooms,
+          onExpired: forget,
+          onLogout: () => {
+            void act(async () => {
+              await request("/api/auth/sign-out", {});
+              forget();
+            });
+          },
+          onManage: () => setManage(true),
+        }}
+      />
+    );
   const field = (
     label: string,
     value: string,
@@ -289,6 +310,21 @@ export default function ConnectedApp() {
               </Button>
             </View>
             <Text>Sistema local · contas e cadastros persistentes</Text>
+            {account && (
+              <Button
+                mode="contained"
+                onPress={() =>
+                  act(async () => {
+                    const me = (await request<Account>("/api/me")).data;
+                    await refresh();
+                    setAccount(me);
+                    setManage(false);
+                  })
+                }
+              >
+                Voltar ao painel SAMAHI
+              </Button>
+            )}
             <View style={styles.row}>
               <Text>Reduzir animações</Text>
               <Switch value={reducedMotion} onValueChange={setReducedMotion} />
@@ -303,79 +339,81 @@ export default function ConnectedApp() {
               </Text>
             )}
             {!account ? (
-              box(
-                "Entrar na sua conta",
-                <>
-                  {field("Endereço do backend", address, setAddress)}
-                  <Text>
-                    No telefone, use o IP do notebook e a porta 3001. O Node-RED
-                    não é o servidor de login.
-                  </Text>
-                  {field("Email", email, setEmail)}
-                  {field("Senha", password, setPassword, true)}
-                  <Button
-                    mode="contained"
-                    loading={busy}
-                    disabled={busy}
-                    onPress={() =>
-                      act(async () => {
-                        const url = backendAddress(address);
-                        const login = await backendRequest<{ user: Account }>(
-                          url,
-                          "/api/auth/sign-in/email",
-                          null,
-                          { email: email.trim(), password },
-                        );
-                        if (!login.token)
-                          throw new Error(
-                            "Servidor não retornou a sessão do aplicativo.",
+              <LoginPresentation>
+                {box(
+                  "Entrar na sua conta",
+                  <>
+                    {field("Endereço do backend", address, setAddress)}
+                    <Text>
+                      No telefone, use o IP do notebook e a porta 3001. O
+                      Node-RED não é o servidor de login.
+                    </Text>
+                    {field("Email", email, setEmail)}
+                    {field("Senha", password, setPassword, true)}
+                    <Button
+                      mode="contained"
+                      loading={busy}
+                      disabled={busy}
+                      onPress={() =>
+                        act(async () => {
+                          const url = backendAddress(address);
+                          const login = await backendRequest<{ user: Account }>(
+                            url,
+                            "/api/auth/sign-in/email",
+                            null,
+                            { email: email.trim(), password },
                           );
-                        const me = (
-                          await backendRequest<Account>(
-                            url,
-                            "/api/me",
-                            login.token,
-                          )
-                        ).data;
-                        const list = (
-                          await backendRequest<SavedRoom[]>(
-                            url,
-                            "/api/rooms",
-                            login.token,
-                          )
-                        ).data;
-                        const people =
-                          me.role === "admin"
-                            ? (
-                                await backendRequest<Account[]>(
-                                  url,
-                                  "/api/users",
-                                  login.token,
-                                )
-                              ).data
-                            : [];
-                        setBase(url);
-                        setToken(login.token);
-                        setAccount(me);
-                        setRooms(list);
-                        setUsers(people);
-                        setPassword("");
-                        setMessage("");
-                      })
-                    }
-                  >
-                    Entrar
-                  </Button>
-                  <Text>
-                    A conta inicial é criada no computador com
-                    Configurar-Administrador.cmd. Não existe cadastro público.
-                    Esqueceu a senha? Solicite redefinição ao administrador.
-                  </Text>
-                  <Button disabled={busy} onPress={() => setDemo(true)}>
-                    Abrir demonstração sem conta real
-                  </Button>
-                </>,
-              )
+                          if (!login.token)
+                            throw new Error(
+                              "Servidor não retornou a sessão do aplicativo.",
+                            );
+                          const me = (
+                            await backendRequest<Account>(
+                              url,
+                              "/api/me",
+                              login.token,
+                            )
+                          ).data;
+                          const list = (
+                            await backendRequest<SavedRoom[]>(
+                              url,
+                              "/api/rooms",
+                              login.token,
+                            )
+                          ).data;
+                          const people =
+                            me.role === "admin"
+                              ? (
+                                  await backendRequest<Account[]>(
+                                    url,
+                                    "/api/users",
+                                    login.token,
+                                  )
+                                ).data
+                              : [];
+                          setBase(url);
+                          setToken(login.token);
+                          setAccount(me);
+                          setRooms(list);
+                          setUsers(people);
+                          setPassword("");
+                          setMessage("");
+                        })
+                      }
+                    >
+                      Entrar
+                    </Button>
+                    <Text>
+                      A conta inicial é criada no computador com
+                      Configurar-Administrador.cmd. Não existe cadastro público.
+                      Esqueceu a senha? Solicite redefinição ao administrador.
+                    </Text>
+                    <Button disabled={busy} onPress={() => setDemo(true)}>
+                      Abrir demonstração sem conta real
+                    </Button>
+                  </>,
+                )}
+              </LoginPresentation>
             ) : (
               <>
                 {box(

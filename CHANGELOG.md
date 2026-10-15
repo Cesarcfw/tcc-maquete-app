@@ -2,6 +2,7 @@
 
 ## Em desenvolvimento — autenticação e persistência locais
 
+- Correção da regressão visual: painel Stitch restaurado com login real, quartos persistidos e telemetria/comandos autenticados; formulários administrativos acessíveis pelo menu. Entrada reutiliza logo e planta do projeto.
 - Backend Express/Better Auth com SQLite local: contas, sessões, quartos, dispositivos, concessões e auditoria persistentes.
 - Entrada por email/senha, cadastro pelo administrador, troca/redefinição de senha, desativação/reativação e revogação de sessões.
 - Autorizações por quarto/grupo verificadas no servidor e campos da telemetria filtrados; administrador não ignora concessões de operação.

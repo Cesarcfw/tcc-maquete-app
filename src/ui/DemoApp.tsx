@@ -61,6 +61,17 @@ import { useSimulator } from "../hooks/useSimulator";
 import { decodeTelemetry, requestNodeRed } from "../services/nodeRed";
 import { GasAlarm } from "./GasAlarm";
 import { appTheme } from "./theme";
+import {
+  useAuthenticatedDevice,
+  AuthenticatedWorkspace,
+} from "../hooks/useAuthenticatedDevice";
+import {
+  Account,
+  SavedRoom,
+  backendRequest,
+  BackendError,
+} from "../services/backend";
+import type { DemoUser } from "../domain/access";
 
 type Screen =
   | "Quartos"
@@ -118,7 +129,31 @@ const scenarios: [Scenario, string][] = [
 ];
 type Simulator = ReturnType<typeof useSimulator>;
 
-export default function App({ isolated = false }: { isolated?: boolean }) {
+export type Workspace = AuthenticatedWorkspace & {
+  account: Account;
+  rooms: SavedRoom[];
+};
+const makeIdentity = (account: Account): DemoUser => ({
+  id: account.id,
+  name: account.name,
+  email: account.email,
+  admin: account.role === "admin",
+  grants: Object.fromEntries(
+    Object.entries(account.grants || {}).map(([id, grants]) => [
+      id,
+      { ...emptyGrants(), ...grants },
+    ]),
+  ),
+});
+const makeRooms = (values: SavedRoom[], base: string): RoomDefinition[] =>
+  values.map((value) => ({ ...value, active: !!value.active, endpoint: base }));
+export default function App({
+  isolated = false,
+  workspace,
+}: {
+  isolated?: boolean;
+  workspace?: Workspace;
+}) {
   const [dark, setDark] = useState(true),
     [reduceMotion, setReduceMotion] = useState(false),
     [systemReduced, setSystemReduced] = useState(false);
@@ -156,6 +191,7 @@ export default function App({ isolated = false }: { isolated?: boolean }) {
         }}
       >
         <DemoApp
+          workspace={workspace}
           isolated={isolated}
           dark={dark}
           setDark={setDark}
@@ -164,6 +200,31 @@ export default function App({ isolated = false }: { isolated?: boolean }) {
         />
       </PaperProvider>
     </SafeAreaProvider>
+  );
+}
+
+export function LoginPresentation({ children }: { children: React.ReactNode }) {
+  const { width } = useWindowDimensions();
+  const { colors } = useTheme();
+  return (
+    <View style={[s.loginPage, width >= 1000 && s.grid]}>
+      <View style={s.column}>
+        <Brand />
+        <Text variant="headlineLarge" style={s.bold}>
+          Seu ambiente, ao seu alcance.
+        </Text>
+        <Text variant="bodyLarge" style={{ color: colors.onSurfaceVariant }}>
+          Controle da iluminação, acompanhamento de sensores e indicador externo
+          em uma interface.
+        </Text>
+        <Blueprint intensity={65} indicator="blue" />
+        <Note
+          title="SAMAHI"
+          text="Automação e monitoramento de ambientes hospitalares. Ilustração do ambiente; entre para consultar os dados disponíveis."
+        />
+      </View>
+      <View style={s.column}>{children}</View>
+    </View>
   );
 }
 
@@ -752,12 +813,14 @@ function Dashboard({
 }
 
 function DemoApp({
+  workspace,
   isolated,
   dark,
   setDark,
   reduced,
   setReduceMotion,
 }: {
+  workspace?: Workspace;
   isolated: boolean;
   dark: boolean;
   setDark: (value: boolean) => void;
@@ -768,19 +831,61 @@ function DemoApp({
     { width, height } = useWindowDimensions();
   const desktop = width >= 1100,
     wide = width >= 760;
-  const [users, setUsers] = useState(initialUsers),
+  const [users, setUsers] = useState(() =>
+      workspace ? [makeIdentity(workspace.account)] : initialUsers(),
+    ),
     [rooms, setRooms] = useState(() =>
-      initialRooms().map((value) =>
-        isolated ? { ...value, endpoint: "https://servico.exemplo" } : value,
-      ),
+      workspace
+        ? makeRooms(workspace.rooms, workspace.base)
+        : initialRooms().map((value) =>
+            isolated
+              ? { ...value, endpoint: "https://servico.exemplo" }
+              : value,
+          ),
     );
-  const [session, setSession] = useState<string | null>(null),
+  const [session, setSession] = useState<string | null>(
+      workspace?.account.id || null,
+    ),
     [roomId, setRoomId] = useState("quarto-01");
-  const room = rooms.find((value) => value.id === roomId) ?? rooms[0];
-  const sim = useSimulator(
+  const room = rooms.find((value) => value.id === roomId) ??
+    rooms[0] ?? { ...initialRooms()[0], active: false };
+  const demoSim = useSimulator(
     room.id,
-    isolated ? "https://servico.exemplo" : room.endpoint,
+    isolated || workspace ? "https://servico.exemplo" : room.endpoint,
   );
+  const authenticatedSim = useAuthenticatedDevice(room.id, workspace);
+  const sim = workspace ? authenticatedSim : demoSim;
+  const authBase = workspace?.base,
+    authToken = workspace?.token;
+  const expired = useRef(workspace?.onExpired);
+  useEffect(() => {
+    expired.current = workspace?.onExpired;
+  }, [workspace?.onExpired]);
+  useEffect(() => {
+    if (!authBase || !authToken) return;
+    let live = true;
+    const refresh = async () => {
+      try {
+        const [identity, list] = await Promise.all([
+          backendRequest<Account>(authBase, "/api/me", authToken),
+          backendRequest<SavedRoom[]>(authBase, "/api/rooms", authToken),
+        ]);
+        if (live) {
+          setUsers([makeIdentity(identity.data)]);
+          setRooms(makeRooms(list.data, authBase));
+        }
+      } catch (error) {
+        if (live && error instanceof BackendError && error.status === 401)
+          expired.current?.();
+      }
+    };
+    const timer = setInterval(refresh, 3000);
+    return () => {
+      live = false;
+      clearInterval(timer);
+    };
+    // A identidade e as concessões são revalidadas no servidor.
+  }, [authBase, authToken]);
   const [screen, setScreen] = useState<Screen>("Quartos"),
     [snack, setSnack] = useState("");
   const [editingUser, setEditingUser] = useState("matheus"),
@@ -829,6 +934,10 @@ function DemoApp({
     setTestStatus("idle");
   }
   function navigate(next: Screen) {
+    if (workspace && ["Usuários", "Conexões", "Cadastro"].includes(next)) {
+      workspace.onManage();
+      return;
+    }
     if (
       ["Painel", "Iluminação", "Sensores", "Manchester", "Histórico"].includes(
         next,
@@ -847,6 +956,10 @@ function DemoApp({
     scroll.current?.scrollTo({ y: 0, animated: false });
   }
   function changeSession(id: string | null) {
+    if (workspace) {
+      if (id === null) workspace.onLogout();
+      return;
+    }
     sim.cancelPending();
     cancelTest();
     setGasClosed(false);
@@ -874,6 +987,10 @@ function DemoApp({
     if (connected && !sim.pending) sim.send(command, user?.name);
   }
   function openEditor(value?: RoomDefinition) {
+    if (workspace) {
+      workspace.onManage();
+      return;
+    }
     if (!user?.admin) return;
     setRoomDraft(
       value ?? {
@@ -1221,7 +1338,8 @@ function DemoApp({
                   <View style={s.flex}>
                     <Text variant="titleSmall">{user.name}</Text>
                     <Text variant="bodySmall">
-                      {user.admin ? "Administrador" : "Usuário"} · demonstração
+                      {user.admin ? "Administrador" : "Usuário"} ·{" "}
+                      {workspace ? "conta autenticada" : "demonstração"}
                     </Text>
                   </View>
                 </View>
@@ -1230,7 +1348,7 @@ function DemoApp({
                   mode="text"
                   onPress={() => changeSession(null)}
                 >
-                  Trocar perfil
+                  {workspace ? "Sair da conta" : "Trocar perfil"}
                 </Button>
               </View>
             </View>
@@ -1291,7 +1409,9 @@ function DemoApp({
                       style={{ color: colors.onSurfaceVariant }}
                     >
                       {["Quartos", "Cadastro"].includes(screen)
-                        ? "Ambientes demonstrativos · dados mantidos nesta sessão"
+                        ? workspace
+                          ? "Ambientes cadastrados · dados persistentes"
+                          : "Ambientes demonstrativos · dados mantidos nesta sessão"
                         : `${room.wing} · ${room.bed}`}
                     </Text>
                   </View>
@@ -1512,7 +1632,11 @@ function DemoApp({
                     <>
                       <View style={s.metrics}>
                         <Metric
-                          title="Eventos na sessão"
+                          title={
+                            workspace
+                              ? "Eventos registrados"
+                              : "Eventos na sessão"
+                          }
                           value={String(sim.logs.length)}
                           icon="history"
                           detail="Até 30 registros por ambiente"
@@ -1615,7 +1739,9 @@ function DemoApp({
                   <View style={[s.grid, !wide && s.stack]}>
                     <View style={s.column}>
                       <Panel
-                        title="Perfil de demonstração"
+                        title={
+                          workspace ? "Minha conta" : "Perfil de demonstração"
+                        }
                         icon="account-circle-outline"
                       >
                         <View style={s.row}>
@@ -1630,7 +1756,7 @@ function DemoApp({
                             <Text variant="bodySmall">{user.email}</Text>
                             <Text variant="bodySmall">
                               {user.admin ? "Administrador" : "Usuário"} · conta
-                              fictícia
+                              {workspace ? "autenticada" : "fictícia"}
                             </Text>
                           </View>
                         </View>
@@ -1671,7 +1797,7 @@ function DemoApp({
                           icon="logout"
                           onPress={() => changeSession(null)}
                         >
-                          Trocar perfil
+                          {workspace ? "Sair da conta" : "Trocar perfil"}
                         </Button>
                       </Panel>
                       <Panel
@@ -1705,8 +1831,17 @@ function DemoApp({
                       </Panel>
                     </View>
                     <View style={s.column}>
+                      {workspace && (
+                        <Button mode="outlined" onPress={workspace.onManage}>
+                          Gerenciar minha conta
+                        </Button>
+                      )}
                       <Panel
-                        title="Laboratório de simulação"
+                        title={
+                          workspace
+                            ? "Integração com Node-RED"
+                            : "Laboratório de simulação"
+                        }
                         icon="flask-outline"
                         subtitle={`${room.name} · controles de teste`}
                       >
@@ -1715,7 +1850,7 @@ function DemoApp({
                             <Chip
                               key={value}
                               selected={sim.scenario === value}
-                              disabled={!user.admin}
+                              disabled={!!workspace || !user.admin}
                               accessibilityLabel={`Cenário ${label}`}
                               onPress={() => {
                                 cancelTest();
@@ -1742,7 +1877,7 @@ function DemoApp({
                                 <Chip
                                   key={value}
                                   selected={sim.device.gas === value}
-                                  disabled={!connected}
+                                  disabled={!!workspace || !connected}
                                   accessibilityLabel={`Simular gás: ${gasStatusLabels[value]}`}
                                   onPress={() => sim.simulateGas(value)}
                                 >
@@ -1764,7 +1899,7 @@ function DemoApp({
                         />
                         <Button
                           mode="outlined"
-                          disabled={!user.admin}
+                          disabled={!!workspace || !user.admin}
                           onPress={() => {
                             cancelTest();
                             sim.reset();
@@ -2057,7 +2192,9 @@ function DemoApp({
                   variant="labelSmall"
                   style={[s.footer, { color: colors.onSurfaceVariant }]}
                 >
-                  SAMAHI · Prévia visual · Dados simulados nesta sessão
+                  {workspace
+                    ? "SAMAHI · Conta autenticada · Banco local · Equipamento simulado"
+                    : "SAMAHI · Prévia visual · Dados simulados nesta sessão"}
                 </Text>
               </View>
             </ScrollView>

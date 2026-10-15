@@ -98,6 +98,18 @@ Para LAN será necessário escolher a interface/IP do notebook, configurar URL/o
 
 ## Evidências e verificação
 
+### Correção da regressão visual
+
+A primeira implementação do login havia colocado os formulários administrativos no lugar do painel Stitch. A correção mantém o painel anterior em `src/ui/DemoApp.tsx`, alimentado pelo adaptador `src/hooks/useAuthenticatedDevice.ts`: consulta telemetria e histórico pelas rotas protegidas, envia comandos com sessão e aguarda confirmação. O modo autenticado não usa o simulador interno nem o acesso direto ao Node-RED. Conta e quartos vêm do backend, com permissões atualizadas periodicamente.
+
+A entrada reutiliza a identidade e a planta ilustrativa existentes. Administração de usuários, permissões e quartos abre pelo menu; esses formulários ainda têm apresentação simples. A demonstração sem conta continua separada. Nenhuma alteração de banco foi necessária nesta correção.
+
+Verificado no navegador com conta e banco descartáveis: login, painel Stitch, comando de luz em 25% confirmado pelo simulador, abertura da administração, retorno ao painel e saída. Captura: [painel autenticado](evidencias/auth-local/painel-stitch-autenticado.png). As capturas anteriores mostram a implementação inicial e não o painel atual. Teste em telefone físico permanece pendente.
+
+TIRE PRINT DESTA PARTE: painel Stitch autenticado com identificação de dados simulados e confirmação do comando, sem senhas ou tokens.
+
+MOSTRE FUNCIONANDO EM VÍDEO OU GIF: entrar, abrir quarto, alterar intensidade, conferir confirmação, acessar administração e voltar ao painel.
+
 Em 15/10/2026: suíte integrada HTTP com banco temporário comprovou login válido/inválido, bloqueio de cadastro público, acesso negado, filtragem por grupo, controle negado para leitor, deduplicação de comandos, colisão de ID, unicidade de leito, persistência após reinício, histórico, redefinição de senha com revogação, desativação, logout e backup SQL consistente. Os 14 testes anteriores continuam separados. Testes não criam as contas reais.
 
 Na interface web: conta temporária entrou, selecionou quarto-01, recebeu leituras do simulador isolado, enviou 25% e recebeu confirmação com evento persistente. O upstream de teste usa o mesmo módulo de simulação do Node-RED; não é um teste novo de ESP físico. Capturas em docs/evidencias/auth-local. Servidores temporários são encerrados depois da verificação.
