@@ -205,6 +205,8 @@ function LoginForm({
   const { colors } = useTheme();
   const [showConnection, setShowConnection] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [connectionMessage, setConnectionMessage] = useState("");
   return (
     <Panel
       title="Bem-vindo ao SAMAHI"
@@ -285,6 +287,45 @@ function LoginForm({
             No celular, use o endereço do computador que executa o servidor
             SAMAHI.
           </HelperText>
+          <Button
+            icon="connection"
+            loading={checking}
+            disabled={busy || checking}
+            onPress={async () => {
+              setChecking(true);
+              setConnectionMessage("");
+              try {
+                const url = backendAddress(address);
+                const reply = await backendRequest<{
+                  service: string;
+                  status: string;
+                }>(url, "/health", null);
+                if (
+                  reply.data.service !== "samahi-backend" ||
+                  reply.data.status !== "ok"
+                )
+                  throw new Error(
+                    "O endereco nao corresponde ao servidor SAMAHI.",
+                  );
+                setConnectionMessage(
+                  "Servidor SAMAHI acessivel. Entre na sua conta para verificar quartos e dispositivos.",
+                );
+              } catch {
+                setConnectionMessage(
+                  "Nao foi possivel acessar o servidor SAMAHI. Confira IP, porta, Wi-Fi e firewall. No telefone, localhost nao aponta para o PC.",
+                );
+              } finally {
+                setChecking(false);
+              }
+            }}
+          >
+            Testar servidor
+          </Button>
+          {!!connectionMessage && (
+            <Text accessibilityRole="alert" variant="bodySmall">
+              {connectionMessage}
+            </Text>
+          )}
         </View>
       )}
       <Button

@@ -1,3 +1,5 @@
+import { Platform } from "react-native";
+
 export type Account = {
   id: string;
   name: string;
@@ -76,7 +78,8 @@ export async function backendRequest<T>(
   try {
     const response = await fetch(`${base}${path}`, {
       method: method || (body === undefined ? "GET" : "POST"),
-      credentials: "include",
+      // No nativo, a sessao usa somente Bearer, sem cookies do navegador.
+      credentials: Platform.OS === "web" ? "include" : "omit",
       headers: {
         ...(body === undefined ? {} : { "Content-Type": "application/json" }),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),

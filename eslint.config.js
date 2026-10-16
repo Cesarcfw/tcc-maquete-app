@@ -11,7 +11,7 @@ module.exports = defineConfig([
     ],
   },
   {
-    files: ["backend/**/*.mjs"],
+    files: ["backend/**/*.mjs", "scripts/**/*.mjs"],
     languageOptions: {
       globals: {
         process: "readonly",
@@ -21,6 +21,7 @@ module.exports = defineConfig([
         Headers: "readonly",
         Buffer: "readonly",
         URL: "readonly",
+        setTimeout: "readonly",
       },
     },
   },

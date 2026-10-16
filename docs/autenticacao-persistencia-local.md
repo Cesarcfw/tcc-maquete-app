@@ -86,6 +86,8 @@ Administração nativa do plugin Better Auth não é exposta diretamente: as rot
 
 ### Testar no Expo Go antes de gerar APK
 
+**Atualização:** o iniciador **Iniciar-App-Integrado.cmd** prepara agora o ensaio completo na rede local, sem alterar o servidor padrão em 3001. Consulte [teste integrado no telefone](teste-app-integrado.md) para portas, firewall, contas e validação. As etapas abaixo permanecem como execução manual do Expo e contexto de compatibilidade.
+
 Não é necessário fazer merge, publicar no Vercel ou solicitar build EAS para abrir o código local no Expo Go. O projeto usa Expo SDK 57; o Expo Go instalado deve ser compatível com essa versão. Em Android, a versão apropriada pode ser obtida em https://expo.dev/go. As dependências nativas atuais de slider e área segura correspondem ao mapa de módulos do Expo instalado. O plugin que configura HTTP no APK não é aplicado ao aplicativo Expo Go já instalado.
 
 1. Conectar computador e telefone à mesma rede Wi-Fi.

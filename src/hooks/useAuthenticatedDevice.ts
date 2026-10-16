@@ -96,7 +96,12 @@ export function useAuthenticatedDevice(
               id: e.id,
               time: new Date(e.at).toLocaleTimeString("pt-BR"),
               message: eventNames[e.action] || "Registro do ambiente",
-              type: e.action === "command_unconfirmed" ? "error" : "info",
+              type:
+                e.action === "command_unconfirmed"
+                  ? "error"
+                  : e.action === "command_confirmed_simulator"
+                    ? "success"
+                    : "info",
             })),
           );
       } catch {

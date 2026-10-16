@@ -1587,7 +1587,11 @@ function DemoApp({
                           }
                           value={String(sim.logs.length)}
                           icon="history"
-                          detail="Até 30 registros por ambiente"
+                          detail={
+                            workspace
+                              ? "Até 100 registros persistidos por ambiente"
+                              : "Até 30 registros por ambiente"
+                          }
                         />
                         <Metric
                           title="Falhas / alertas"

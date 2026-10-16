@@ -2,6 +2,8 @@
 
 ## Em desenvolvimento — autenticação e persistência locais
 
+- Iniciador de teste integrado no telefone: seleciona rede, reutiliza Node-RED, abre backend em 3002 e Expo Go em 8082 com endereço do servidor e IP do QR configurados. Instâncias existentes preservadas; regras de firewall específicas e removíveis para a sub-rede local.
+- Cliente nativo usa Bearer sem cookies; botão Testar servidor na entrada. Nova suíte de integração reproduz requisições nativas e verifica login, controles, sensores, gás, histórico e logout com banco descartável. Roteiro e limites em docs/teste-app-integrado.md.
 - Entrada centralizada horizontal e verticalmente como a demonstração, com rolagem em telas menores. Campos web recebem esquema de cor e estilos de preenchimento automático compatíveis com o tema, incluindo foco; implementação nativa separada sem CSS.
 - Administração integrada ao layout Stitch: usuários com busca e cadastro em diálogo, permissões por ambiente com salvamento explícito, cartões de conexões, cadastro/edição de quartos e segurança da conta. Temas compartilhados com a entrada; versões mobile empilham os cartões sem sobreposição.
 - Componentes Panel/Note compartilhados entre painel, entrada e administração; removida a página administrativa que duplicava os controles de operação. Configuração do servidor fica recolhida na entrada; o celular prioriza o formulário.
