@@ -39,7 +39,15 @@ Banco SQLite e segredos do backend não são enviados ao EAS nem embutidos no AP
 
 Perfil `preview`, `distribution: internal`, `developmentClient: false`, `android.buildType: apk`. Comando: `npx --yes eas-cli@latest build --platform android --profile preview --non-interactive`.
 
-Estado inicial deste registro: compilação ainda não enviada. ID, link, hash e resultado serão acrescentados após confirmação pelo EAS. Conclusão da build e inspeção do APK não comprovam instalação/rede/funcionamento no aparelho.
+Build enviada ao EAS: `2e0c80eb-c956-4203-9cbd-8dfca872bdbe`, código `94f0ea1167ef74cf653ac13118bf0f0e8f6fd186`. [Acompanhar compilação](https://expo.dev/accounts/cesarcfw/projects/tcc-maquete-app/builds/2e0c80eb-c956-4203-9cbd-8dfca872bdbe). Upload de aproximadamente 12,2 MB aceito; keystore remota existente reutilizada. `.easignore` exclui arquivos .env, backend/banco/segredos, entregas e documentação. O ambiente preview não informou variáveis Plain text/Sensitive; o perfil carregou apenas o marcador EXPO_PUBLIC_NODE_RED_URL existente, sem IP local embutido para o backend.
+
+Lint, TypeScript, 24 testes e exportação web aprovados antes do envio. EAS concluiu a build com status **FINISHED** em 16/10/2026 às 20:41:51, horário de Brasília.
+
+**[Baixar APK SAMAHI 0.6.0](https://expo.dev/artifacts/eas/vynnqHF10jovO-4yS0iiKo6ThQPvbXE5RQsRiSutVhI.apk)**
+
+Cópia local: `entregas/SAMAHI-v0.6.0-android.apk`, 73.677.441 bytes. SHA-256: `BF7EF2F30F70510E764BFDC2B20D48233D1CAA4C7B0E10EF7EEAAABE5CF86773`.
+
+Arquivo ZIP/APK conferido sem entradas corrompidas (1.172 entradas). Manifesto binário confirma pacote `com.cesarcfw.tccmaqueteapp`, versionName 0.6.0, versionCode 5, Android mínimo API 24, alvo API 36 e `usesCleartextTraffic=true` no perfil interno. `classes.dex` presente com 9.610.652 bytes. Não houve instalação em aparelho durante esta execução: conclusão da build e inspeção estrutural não comprovam instalação, ícone no launcher, rede ou controles físicos.
 
 Manuais relacionados: [preferências](preferencias-locais.md), [modos Dia/Noite](modos-dia-noite.md), [histórico de alertas](historico-alertas.md), [identidade](identidade-visual/README.md) e [integração móvel](teste-app-integrado.md).
 
