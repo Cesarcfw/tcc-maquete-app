@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## 0.6.0 — preparação do APK interno Android
+
+- Base na main após integração das mudanças até o PR #17: interface de produto, histórico de falhas, modos Dia/Noite, identidade e preferências persistentes.
+- Versão 0.6.0 / Android versionCode 5; pacote e assinatura existentes. Perfil preview produz APK instalável com acesso HTTP local.
+- Registro, download e roteiro de validação em docs/apk-v0.6.0.md. Compilação e instalação são verificações separadas; não é publicação em loja ou release final.
+
 ## Em revisão — preferências locais
 
 - Endereço válido em Configurar conexão salvo automaticamente e restaurado ao reabrir, inclusive sem login ou servidor disponível.

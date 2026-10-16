@@ -2,7 +2,7 @@
   "expo": {
     "name": "SAMAHI",
     "slug": "tcc-maquete-app",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "orientation": "portrait",
     "icon": "./assets/brand/app-icon.png",
     "userInterfaceStyle": "automatic",
@@ -11,7 +11,7 @@
     },
     "android": {
       "package": "com.cesarcfw.tccmaqueteapp",
-      "versionCode": 4,
+      "versionCode": 5,
       "adaptiveIcon": {
         "backgroundColor": "#0B1329",
         "foregroundImage": "./assets/brand/adaptive-foreground.png",
