@@ -1,5 +1,46 @@
 # Histórico de versões
 
+## Em revisão — preferências locais
+
+- Endereço válido em Configurar conexão salvo automaticamente e restaurado ao reabrir, inclusive sem login ou servidor disponível.
+- Tema claro/escuro e opção Reduzir animações preservados no aparelho/navegador; preferência de acessibilidade do sistema continua respeitada.
+- Leitura inicial antes da interação; validação de endereço, gravações ordenadas e aviso de falha. Senha/token não entram nas preferências.
+- AsyncStorage 2.2.0 compatível com Expo; documentação e evidências em docs/preferencias-locais.md. APK anterior exige nova build para receber a mudança.
+
+## Em revisão — identidade visual SAMAHI
+
+- Símbolo e nome separados; assinaturas para fundos claros/escuros e versão completa para documentos.
+- Componente Brand sem placa branca ou descrição minúscula, compartilhado pelo login e pelos cabeçalhos web/mobile.
+- Ícone 1024 px, camadas Android adaptativa/monocromática e favicon configurados em app.json; originais preservados.
+- Padrão, arquivos, origem das artes e evidências em docs/identidade-visual/README.md. Ícone instalado exige novo APK; nenhuma build nativa gerada nesta mudança.
+
+## Em revisão — modos Dia e Noite
+
+- Automático por LDR substituído por programação diária de horários e intensidades no fuso de Brasília.
+- Comando autorizado e confirmado pelo serviço; controle manual pausa os horários até reativação. LDR não altera a luz.
+- Node-RED executa a regra sem o app aberto e preserva a configuração em backend/data/node-red-lighting.json. Backup inclui o arquivo quando disponível.
+- Roteiro, limitações e fontes em docs/modos-dia-noite.md. Requer reiniciar backend/Node-RED e atualizar o cliente; nenhum APK recompilado nesta entrega.
+
+## Em revisão — histórico de falhas e alertas
+
+- Gás detectado e leitura de gás indisponível passam a aparecer em Falhas / alertas, inclusive registros antigos com estado armazenado.
+- Backend persiste perda de comunicação, leitura antiga e recuperação por quarto, sem repetir o mesmo estado a cada consulta ou reinício.
+- Amostras antigas não geram nova detecção de gás nem substituem a última leitura válida. Documentação e limites em docs/historico-alertas.md.
+
+## Em revisão — interface do produto
+
+- Entrada exclusivamente por conta; removido o acesso à demonstração.
+- Textos operacionais sem rótulos de simulação no painel, catálogo, sensores, gás, histórico e administração. Conexão e confirmação referem-se ao serviço.
+- Node-RED e contrato de origem/ACK virtuais preservados. Decisão e evidências em docs/interface-produto.md.
+- Mudança no código para revisão; o APK 0.5.0 anterior ainda não contém esta interface.
+
+## 0.5.0 — APK interno gerado para revisão
+
+- Aplicativo atual com login real, permissões, SQLite no backend, painel Stitch e integração local autenticada com o ESP virtual do Node-RED.
+- Android versionCode 4, mesmo pacote/assinatura do projeto. Perfil preview produz APK instalável com HTTP local para ensaios; não é publicação em loja ou release final.
+- Túnel HTTPS não incluído. O endereço do backend permanece editável em Configurar conexão. Banco, credenciais e arquivos .env locais ficam fora do envio EAS.
+- Build EAS concluída FINISHED, APK baixado e estrutura básica/hash conferidos. Link e instalação em docs/apk-v0.5.0.md. Instalação e execução do APK no aparelho continuam pendentes; o teste anterior no Expo Go não substitui essa validação.
+
 ## Em desenvolvimento — autenticação e persistência locais
 
 - Iniciador de teste integrado no telefone: seleciona rede, reutiliza Node-RED, abre backend em 3002 e Expo Go em 8082 com endereço do servidor e IP do QR configurados. Instâncias existentes preservadas; regras de firewall específicas e removíveis para a sub-rede local.

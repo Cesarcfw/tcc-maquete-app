@@ -3,6 +3,7 @@ import cors from "cors";
 import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
 import { pathToFileURL } from "node:url";
 import { createCore, fail, text, roomInput, groups, levels } from "./core.mjs";
+import lightingSchedule from "../shared/lighting-schedule.cjs";
 
 export async function createApp(options = {}) {
   const core = await createCore(options);
@@ -297,6 +298,8 @@ export async function createApp(options = {}) {
         "lightIntensityPercent",
         "lastPositiveIntensity",
         "lightMode",
+        "lightingSchedule",
+        "lightingPeriod",
       ],
       indicator: ["indicatorColor"],
     };
@@ -305,6 +308,38 @@ export async function createApp(options = {}) {
         for (const key of keys) result[key] = t[key];
     return result;
   };
+  // Estado compartilhado/persistido por quarto: múltiplos clientes não duplicam eventos.
+  function observationTransaction(work) {
+    db.exec("BEGIN IMMEDIATE");
+    try {
+      work();
+      db.exec("COMMIT");
+    } catch (error) {
+      db.exec("ROLLBACK");
+      throw error;
+    }
+  }
+  function observeConnection(actor, roomId, state) {
+    const previous = db
+      .prepare("SELECT state FROM room_connection_state WHERE room_id=?")
+      .get(roomId)?.state;
+    if (previous === state) return;
+    if (state !== "online" || previous)
+      record(
+        actor,
+        roomId,
+        state === "offline"
+          ? "communication_lost"
+          : state === "stale"
+            ? "telemetry_stale"
+            : "communication_restored",
+        { previous: previous || "unknown", current: state },
+      );
+    db.prepare("INSERT OR REPLACE INTO room_connection_state VALUES(?,?)").run(
+      roomId,
+      state,
+    );
+  }
   app.get("/api/rooms/:roomId/telemetry", async (req, res) => {
     if (!req.room.active) throw fail(409, "Quarto inativo.");
     if (
@@ -313,24 +348,41 @@ export async function createApp(options = {}) {
       )
     )
       throw fail(403, "Sem acesso à telemetria.");
-    const t = await upstream(req.room.id, "telemetry");
-    const previous = db
-      .prepare("SELECT payload FROM latest_readings WHERE room_id=?")
-      .get(req.room.id);
-    const previousGas = previous
-      ? JSON.parse(previous.payload).gasStatus
-      : undefined;
-    if (typeof t.gasStatus === "string" && previousGas !== t.gasStatus)
-      record(req.actor.id, req.room.id, "gas_status_changed", {
-        previous: previousGas || "unknown",
-        current: t.gasStatus,
-        source: t.source,
-      });
-    db.prepare("INSERT OR REPLACE INTO latest_readings VALUES(?,?,?)").run(
-      req.room.id,
-      new Date().toISOString(),
-      JSON.stringify(t),
-    );
+    let t;
+    try {
+      t = await upstream(req.room.id, "telemetry");
+      if (!Number.isFinite(t.sampleAgeMs) || t.sampleAgeMs < 0)
+        throw fail(502, "Idade da leitura inválida.");
+    } catch (error) {
+      observationTransaction(() =>
+        observeConnection(req.actor.id, req.room.id, "offline"),
+      );
+      throw error;
+    }
+    const stale = t.sampleAgeMs >= 10000;
+    observationTransaction(() => {
+      observeConnection(req.actor.id, req.room.id, stale ? "stale" : "online");
+      // Uma amostra antiga não cria uma nova detecção nem substitui a última válida.
+      if (!stale) {
+        const previous = db
+          .prepare("SELECT payload FROM latest_readings WHERE room_id=?")
+          .get(req.room.id);
+        const previousGas = previous
+          ? JSON.parse(previous.payload).gasStatus
+          : undefined;
+        if (typeof t.gasStatus === "string" && previousGas !== t.gasStatus)
+          record(req.actor.id, req.room.id, "gas_status_changed", {
+            previous: previousGas || "unknown",
+            current: t.gasStatus,
+            source: t.source,
+          });
+        db.prepare("INSERT OR REPLACE INTO latest_readings VALUES(?,?,?)").run(
+          req.room.id,
+          new Date().toISOString(),
+          JSON.stringify(t),
+        );
+      }
+    });
     res.json(redact(req, t));
   });
   app.post("/api/rooms/:roomId/commands", async (req, res) => {
@@ -341,10 +393,20 @@ export async function createApp(options = {}) {
     )
       throw fail(400, "Identificador de comando inválido.");
     const kind = command?.kind;
-    if (["light", "automatic"].includes(kind)) requireRoom(req, "light", true);
+    if (["light", "lightingSchedule"].includes(kind))
+      requireRoom(req, "light", true);
     else if (kind === "indicator") requireRoom(req, "indicator", true);
     else if (kind === "acknowledgeGas") requireRoom(req, "sensors");
     else throw fail(400, "Comando inválido.");
+    if (
+      kind === "lightingSchedule" &&
+      (typeof command.enabled !== "boolean" ||
+        !lightingSchedule.validLightingSchedule(command.schedule))
+    )
+      throw fail(
+        400,
+        "Informe horários diferentes em HH:mm, intensidades de 0 a 100% e fuso de Brasília.",
+      );
     if (
       kind === "light" &&
       (typeof command.on !== "boolean" ||
@@ -393,6 +455,25 @@ export async function createApp(options = {}) {
         reply.status !== "applied_in_simulator"
       )
         throw fail(502, "Confirmação incompatível.");
+      if (
+        kind === "lightingSchedule" &&
+        (!lightingSchedule.validLightingSchedule(
+          reply.telemetry.lightingSchedule,
+        ) ||
+          reply.telemetry.lightMode !==
+            (command.enabled ? "scheduled" : "manual") ||
+          [
+            "timeZone",
+            "dayStart",
+            "nightStart",
+            "dayIntensity",
+            "nightIntensity",
+          ].some(
+            (key) =>
+              reply.telemetry.lightingSchedule[key] !== command.schedule[key],
+          ))
+      )
+        throw fail(502, "O serviço não confirmou a programação enviada.");
       db.prepare(
         "UPDATE commands SET status=?,response=? WHERE actor=? AND room_id=? AND command_id=?",
       ).run(

@@ -12,6 +12,7 @@ import {
   sendNodeRedCommand,
 } from "../services/nodeRed";
 import type { LogEntry } from "./useSimulator";
+import type { LightingSchedule } from "../../shared/lighting-schedule.cjs";
 
 export function useNodeRed(environment: string, endpoint: string) {
   const [device, setDevice] = useState(() => initialState(0));
@@ -92,7 +93,14 @@ export function useNodeRed(environment: string, endpoint: string) {
     };
   }, [environment, endpoint]);
   async function send(
-    command: Command | { kind: "acknowledgeGas" } | { kind: "automatic" },
+    command:
+      | Command
+      | { kind: "acknowledgeGas" }
+      | {
+          kind: "lightingSchedule";
+          enabled: boolean;
+          schedule: LightingSchedule;
+        },
     actor?: string,
   ) {
     if (

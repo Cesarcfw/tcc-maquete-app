@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import {
   Button,
+  ActivityIndicator,
   HelperText,
   IconButton,
   PaperProvider,
@@ -23,13 +24,31 @@ import { appTheme } from "./theme";
 import DemoApp, { LoginPresentation } from "./DemoApp";
 import { Panel, Note } from "./SharedPanels";
 import WebInputTheme from "./WebInputTheme";
+import { usePreferences } from "../hooks/usePreferences";
+import type { Preferences } from "../services/preferences";
+
+const defaultPreferences: Preferences = {
+  version: 1,
+  backendUrl: process.env.EXPO_PUBLIC_BACKEND_URL || "http://127.0.0.1:3001",
+  dark: true,
+  reduceMotion: false,
+};
 
 export default function ConnectedApp() {
-  const [demo, setDemo] = useState(false);
-  const [dark, setDark] = useState(true);
-  const [address, setAddress] = useState(
-    process.env.EXPO_PUBLIC_BACKEND_URL || "http://127.0.0.1:3001",
-  );
+  const { preferences, ready, status, warning, update } =
+    usePreferences(defaultPreferences);
+  const { dark, reduceMotion } = preferences;
+  const setDark = (value: boolean) => update({ dark: value });
+  const [draftAddress, setDraftAddress] = useState<string | null>(null);
+  const address = draftAddress ?? preferences.backendUrl;
+  const setAddress = (value: string) => {
+    setDraftAddress(value);
+    try {
+      update({ backendUrl: backendAddress(value) });
+    } catch {
+      /* Rascunho incompleto não apaga endereço salvo. */
+    }
+  };
   const [base, setBase] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -66,7 +85,7 @@ export default function ConnectedApp() {
       setBusy(false);
     }
   };
-  const theme = appTheme(dark, false);
+  const theme = appTheme(dark, reduceMotion);
   return (
     <SafeAreaProvider>
       <PaperProvider
@@ -85,12 +104,29 @@ export default function ConnectedApp() {
         }}
       >
         <StatusBar style={dark ? "light" : "dark"} />
-        {demo ? (
-          <View style={styles.flex}>
-            <Button icon="arrow-left" onPress={() => setDemo(false)}>
-              Voltar à entrada
-            </Button>
-            <DemoApp isolated />
+        {!!warning && (
+          <View
+            accessibilityRole="alert"
+            style={{
+              padding: 12,
+              backgroundColor: theme.colors.errorContainer,
+            }}
+          >
+            <Text style={{ color: theme.colors.onErrorContainer }}>
+              {warning}
+            </Text>
+          </View>
+        )}
+        {!ready ? (
+          <View
+            style={[
+              styles.flex,
+              styles.loading,
+              { backgroundColor: theme.colors.background },
+            ]}
+          >
+            <ActivityIndicator />
+            <Text>Carregando preferências…</Text>
           </View>
         ) : account && token ? (
           <DemoApp
@@ -101,6 +137,8 @@ export default function ConnectedApp() {
               rooms,
               dark,
               onTheme: setDark,
+              reduceMotion,
+              onReduceMotion: (value) => update({ reduceMotion: value }),
               message,
               onExpired: forget,
               onLogout: () => {
@@ -126,20 +164,20 @@ export default function ConnectedApp() {
                   accessibilityLabel={
                     dark ? "Ativar tema claro" : "Ativar tema escuro"
                   }
-                  onPress={() => setDark((v) => !v)}
+                  onPress={() => setDark(!dark)}
                 />
               </View>
               <LoginPresentation>
                 <LoginForm
                   address={address}
                   setAddress={setAddress}
+                  preferenceStatus={status}
                   email={email}
                   setEmail={setEmail}
                   password={password}
                   setPassword={setPassword}
                   message={message}
                   busy={busy}
-                  onDemo={() => setDemo(true)}
                   onSubmit={() =>
                     act(async () => {
                       const url = backendAddress(address);
@@ -182,6 +220,7 @@ export default function ConnectedApp() {
 function LoginForm({
   address,
   setAddress,
+  preferenceStatus,
   email,
   setEmail,
   password,
@@ -189,10 +228,10 @@ function LoginForm({
   message,
   busy,
   onSubmit,
-  onDemo,
 }: {
   address: string;
   setAddress: (v: string) => void;
+  preferenceStatus: "idle" | "saving" | "saved" | "error";
   email: string;
   setEmail: (v: string) => void;
   password: string;
@@ -200,13 +239,18 @@ function LoginForm({
   message: string;
   busy: boolean;
   onSubmit: () => void;
-  onDemo: () => void;
 }) {
   const { colors } = useTheme();
   const [showConnection, setShowConnection] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [checking, setChecking] = useState(false);
   const [connectionMessage, setConnectionMessage] = useState("");
+  let validAddress = true;
+  try {
+    backendAddress(address);
+  } catch {
+    validAddress = false;
+  }
   return (
     <Panel
       title="Bem-vindo ao SAMAHI"
@@ -282,7 +326,19 @@ function LoginForm({
             value={address}
             onChangeText={setAddress}
             disabled={busy}
+            error={!validAddress}
           />
+          <HelperText type={validAddress ? "info" : "error"}>
+            {!validAddress
+              ? "Endereço incompleto ou inválido. O último endereço salvo será mantido."
+              : preferenceStatus === "saving"
+                ? "Salvando endereço neste aparelho…"
+                : preferenceStatus === "saved"
+                  ? "Endereço salvo neste aparelho."
+                  : preferenceStatus === "error"
+                    ? "Falha ao salvar. Edite o endereço novamente para tentar."
+                    : "Endereços válidos são salvos automaticamente neste aparelho."}
+          </HelperText>
           <HelperText type="info">
             No celular, use o endereço do computador que executa o servidor
             SAMAHI.
@@ -319,7 +375,7 @@ function LoginForm({
               }
             }}
           >
-            Testar servidor
+            Verificar conexão
           </Button>
           {!!connectionMessage && (
             <Text accessibilityRole="alert" variant="bodySmall">
@@ -328,25 +384,12 @@ function LoginForm({
           )}
         </View>
       )}
-      <Button
-        mode="outlined"
-        icon="play-circle-outline"
-        disabled={busy}
-        onPress={onDemo}
-      >
-        Explorar demonstração
-      </Button>
-      <Text
-        variant="labelSmall"
-        style={{ color: colors.onSurfaceVariant, textAlign: "center" }}
-      >
-        Demonstração isolada · nenhum equipamento físico conectado
-      </Text>
     </Panel>
   );
 }
 const styles = StyleSheet.create({
   flex: { flex: 1 },
+  loading: { alignItems: "center", justifyContent: "center", gap: 16 },
   login: {
     flexGrow: 1,
     padding: 24,

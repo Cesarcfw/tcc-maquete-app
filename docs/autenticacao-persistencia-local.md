@@ -1,5 +1,7 @@
 # Autenticação e persistência locais — SAMAHI
 
+Atualização: a iluminação por LDR foi substituída por [modos Dia/Noite por horário de Brasília](modos-dia-noite.md). Horários/intensidades exigem concessão de controle de iluminação e confirmação do serviço; este manual preserva registros históricos das versões anteriores.
+
 ## Escopo entregue
 
 Base local de autenticação, cadastro e autorização. Não é uma migração para nuvem. O APK v0.4.1 já distribuído não inclui esta mudança: esta etapa está na branch feat/auth-local e exige revisão e novo APK antes do teste Android.
@@ -43,7 +45,7 @@ Toda rota de dados exige sessão. O papel admin permite administrar cadastros; n
 
 | Grupo | Níveis | Efeito |
 | --- | --- | --- |
-| Iluminação | nenhum, leitura, controle | Ligar/desligar, 0–100% e automático exigem controle |
+| Iluminação | nenhum, leitura, controle | Ligar/desligar, 0–100% e configurar/ativar/pausar Dia e Noite exigem controle |
 | Sensores | nenhum, leitura | Ler sensores e reconhecer gás exigem leitura; reconhecimento não muda detecção nem Manchester |
 | Manchester | nenhum, leitura, controle | Selecionar cor exige controle |
 | Histórico | nenhum, leitura | Consultar os últimos 100 eventos daquele quarto |

@@ -6,6 +6,7 @@ import { join, resolve, sep, basename } from "node:path";
 import { createServer, request as httpRequest } from "node:http";
 import { createRequire } from "node:module";
 import { createApp } from "../server.mjs";
+import lighting from "../../shared/lighting-schedule.cjs";
 const require = createRequire(import.meta.url);
 const { createSimulator } = require("../../integration/node-red/simulator.cjs");
 
@@ -115,11 +116,30 @@ test("Cliente nativo Bearer: login, sensores, controles, gas, historico e logout
       true,
     );
     await command({ kind: "indicator", color: "red" });
-    simulator.handle("simulation", "quarto-01", { ldrRawAdc: 2500 });
-    assert.equal((await command({ kind: "automatic" })).lightOn, true);
+    const schedule = {
+      ...lighting.defaultLightingSchedule(),
+      dayIntensity: 35,
+      nightIntensity: 35,
+    };
+    assert.equal(
+      (await command({ kind: "lightingSchedule", enabled: true, schedule }))
+        .lightIntensityPercent,
+      35,
+    );
+    assert.equal(
+      (await request(route + "telemetry")).data.lightMode,
+      "scheduled",
+    );
     simulator.handle("simulation", "quarto-01", { ldrRawAdc: 500 });
     simulator.sample();
-    assert.equal((await request(route + "telemetry")).data.lightOn, false);
+    assert.equal(
+      (await request(route + "telemetry")).data.lightIntensityPercent,
+      35,
+    );
+    assert.equal(
+      (await command({ kind: "light", on: false, intensity: 0 })).lightMode,
+      "manual",
+    );
     simulator.handle("simulation", "quarto-01", { gasRawAdc: 3000 });
     const alarm = (await request(route + "telemetry")).data;
     assert.equal(alarm.gasStatus, "detected");

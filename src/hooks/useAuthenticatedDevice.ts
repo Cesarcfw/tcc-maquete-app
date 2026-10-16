@@ -9,20 +9,17 @@ import {
   initialState,
 } from "../domain/maquette";
 import type { LogEntry } from "./useSimulator";
+import { describeAuditEvent } from "../domain/history";
+import {
+  validLightingSchedule,
+  type LightingSchedule,
+} from "../../shared/lighting-schedule.cjs";
 
 export type AuthenticatedWorkspace = {
   base: string;
   token: string;
   onLogout: () => void;
   onExpired: () => void;
-};
-const eventNames: Record<string, string> = {
-  command_confirmed_simulator: "Comando confirmado pelo simulador Node-RED",
-  command_unconfirmed: "Comando sem confirmação",
-  gas_status_changed: "Estado do sensor de gás atualizado",
-  room_created: "Ambiente cadastrado",
-  room_updated: "Ambiente atualizado",
-  grants_updated: "Permissões atualizadas",
 };
 export function useAuthenticatedDevice(
   roomId: string,
@@ -31,9 +28,7 @@ export function useAuthenticatedDevice(
   const [device, setDevice] = useState(() => initialState(0));
   const [online, setOnline] = useState(false),
     [pending, setPending] = useState(false);
-  const [notice, setNotice] = useState(
-    "Aguardando leitura autenticada do backend.",
-  );
+  const [notice, setNotice] = useState("Aguardando atualização do ambiente.");
   const [logs, setLogs] = useState<LogEntry[]>([]),
     [now, setNow] = useState(Date.now);
   const generation = useRef(0),
@@ -42,6 +37,11 @@ export function useAuthenticatedDevice(
   const base = workspace?.base,
     token = workspace?.token;
   const decode = (t: Reading) => ({
+    lightMode: t.lightMode,
+    lightingSchedule: validLightingSchedule(t.lightingSchedule)
+      ? t.lightingSchedule
+      : undefined,
+    lightingPeriod: t.lightingPeriod,
     temperature: t.temperatureC ?? 0,
     humidity: t.humidityPercent ?? 0,
     gas: (t.gasStatus || "unavailable") as GasStatus,
@@ -95,13 +95,7 @@ export function useAuthenticatedDevice(
             events.map((e) => ({
               id: e.id,
               time: new Date(e.at).toLocaleTimeString("pt-BR"),
-              message: eventNames[e.action] || "Registro do ambiente",
-              type:
-                e.action === "command_unconfirmed"
-                  ? "error"
-                  : e.action === "command_confirmed_simulator"
-                    ? "success"
-                    : "info",
+              ...describeAuditEvent(e.action, e.detail),
             })),
           );
       } catch {
@@ -134,7 +128,14 @@ export function useAuthenticatedDevice(
     setPending(false);
   }
   async function send(
-    command: Command | { kind: "automatic" } | { kind: "acknowledgeGas" },
+    command:
+      | Command
+      | {
+          kind: "lightingSchedule";
+          enabled: boolean;
+          schedule: LightingSchedule;
+        }
+      | { kind: "acknowledgeGas" },
   ) {
     if (
       !base ||
@@ -166,9 +167,7 @@ export function useAuthenticatedDevice(
       if (current === generation.current) {
         setDevice(decode(reply.telemetry));
         setOnline(true);
-        setNotice(
-          "Comando confirmado pelo simulador Node-RED, via backend autenticado.",
-        );
+        setNotice("Comando confirmado pelo serviço.");
       }
     } catch (error) {
       if (current === generation.current)
@@ -199,8 +198,8 @@ export function useAuthenticatedDevice(
     connection: online
       ? connectionState("normal", device.receivedAt, now)
       : ("offline" as const),
-    setAutomatic() {
-      void send({ kind: "automatic" });
+    configureLighting(schedule: LightingSchedule, enabled: boolean) {
+      void send({ kind: "lightingSchedule", schedule, enabled });
     },
     acknowledgeGasAlert(_actor: string) {
       void send({ kind: "acknowledgeGas" });

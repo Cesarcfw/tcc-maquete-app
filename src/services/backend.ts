@@ -1,4 +1,5 @@
 import { Platform } from "react-native";
+import type { LightingSchedule } from "../../shared/lighting-schedule.cjs";
 
 export type Account = {
   id: string;
@@ -23,6 +24,9 @@ export type SavedRoom = {
   grants: Partial<Grants>;
 };
 export type Reading = {
+  lightMode?: "manual" | "scheduled";
+  lightingSchedule?: LightingSchedule;
+  lightingPeriod?: "day" | "night" | null;
   source: string;
   sampleAgeMs: number;
   deviceId: string;
@@ -51,21 +55,7 @@ export class BackendError extends Error {
     super(message);
   }
 }
-export function backendAddress(value: string) {
-  const url = new URL(value.trim());
-  if (
-    !["http:", "https:"].includes(url.protocol) ||
-    url.username ||
-    url.password ||
-    url.search ||
-    url.hash ||
-    url.pathname !== "/"
-  )
-    throw new Error(
-      "Use somente http(s)://endereço:porta, sem caminho ou credenciais.",
-    );
-  return url.origin;
-}
+export { backendAddress } from "../domain/backendAddress";
 export async function backendRequest<T>(
   base: string,
   path: string,
@@ -88,9 +78,19 @@ export async function backendRequest<T>(
       signal: controller.signal,
     });
     const data = await response.json();
-    if (!response.ok)
+    if (!response.ok) {
+      // Tradução de mensagens do serviço legado; status e contrato preservados.
+      const serviceMessages: Record<string, string> = {
+        "Ambiente nao cadastrado no simulador.":
+          "Ambiente não cadastrado no serviço.",
+        "Dispositivo virtual sem comunicacao.":
+          "Sem comunicação com o serviço do ambiente.",
+        "Comando nao confirmado no cenario de teste.":
+          "O serviço não confirmou o comando.",
+      };
       throw new BackendError(
-        data.error ||
+        serviceMessages[data.error] ||
+          data.error ||
           (path.startsWith("/api/auth/")
             ? response.status === 429
               ? "Muitas tentativas. Aguarde um minuto antes de tentar novamente."
@@ -99,6 +99,7 @@ export async function backendRequest<T>(
           "Não foi possível concluir a solicitação.",
         response.status,
       );
+    }
     return { data, token: response.headers.get("set-auth-token") };
   } finally {
     clearTimeout(timeout);

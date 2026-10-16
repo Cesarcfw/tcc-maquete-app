@@ -4,7 +4,14 @@ import {
   GasStatus,
   IndicatorColor,
 } from "../domain/maquette";
+import {
+  validLightingSchedule,
+  type LightingSchedule,
+} from "../../shared/lighting-schedule.cjs";
 export type Telemetry = {
+  lightMode?: "manual" | "scheduled";
+  lightingSchedule?: LightingSchedule;
+  lightingPeriod?: "day" | "night" | null;
   source: "node-red-simulator";
   roomId: string;
   temperatureC: number;
@@ -43,6 +50,11 @@ export function decodeTelemetry(value: unknown, roomId: string): DeviceState {
   )
     throw new Error("Telemetria incompatível com este ambiente.");
   return {
+    lightMode: t.lightMode,
+    lightingSchedule: validLightingSchedule(t.lightingSchedule)
+      ? t.lightingSchedule
+      : undefined,
+    lightingPeriod: t.lightingPeriod,
     temperature: t.temperatureC,
     humidity: t.humidityPercent,
     gas: t.gasStatus,
@@ -84,7 +96,14 @@ export async function requestNodeRed(
 export async function sendNodeRedCommand(
   endpoint: string,
   roomId: string,
-  command: Command | { kind: "acknowledgeGas" } | { kind: "automatic" },
+  command:
+    | Command
+    | { kind: "acknowledgeGas" }
+    | {
+        kind: "lightingSchedule";
+        enabled: boolean;
+        schedule: LightingSchedule;
+      },
   commandId: string,
 ) {
   const result = await requestNodeRed(endpoint, roomId, "commands", {

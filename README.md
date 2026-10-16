@@ -1,17 +1,18 @@
 # SAMAHI
 
-Sistema de Automação e Monitoramento de Ambientes Hospitalares Inteligentes. Aplicativo de César para sensores e controles da maquete. **v0.4.0: prévia visual baseada no material do Stitch, em revisão**, com React Native Paper e dados simulados. Celular, tablet e computador compartilham identidade. Nenhum ESP32 ou Node-RED conectado. Veja o [registro do redesign](docs/redesign-stitch-samahi.md). APK e web pública anteriores continuam na versão anterior até nova distribuição.
+Sistema de Automação e Monitoramento de Ambientes Hospitalares Inteligentes. Aplicativo web/Android de César para sensores e controles da maquete, com visual Stitch, contas reais, permissões, backend local e SQLite. O Node-RED atende o ESP virtual do Quarto 01; integração física pendente. Alterações desta branch exigem revisão e nova distribuição para chegar ao APK instalado.
 
 ## O que experimentar
 
-- Temas claro e escuro, perfis fictícios e permissões por grupo de funções.
-- César administra conexões e acessos; todas as alterações são locais nesta sessão.
+- Temas claro/escuro, contas e permissões por ambiente/grupo verificadas no servidor.
+- Administrador gerencia ambientes e usuários; dados persistidos localmente.
 
 - Painel com temperatura, umidade e indicação de atualização.
 - Luz do quarto: ligar/desligar, intensidade 0 a 100% e atalhos.
+- Modos Dia/Noite: horários de Brasília e intensidade por período. Manual pausa a programação; LDR permanece apenas como sensor.
 - Indicador externo com as cinco cores de Manchester e opção de apagar, com seleção manual.
-- Cenários: operação normal, desconexão, dado antigo e comando sem confirmação.
-- Seleção, busca e cadastro local de ambientes, com histórico e simulação independentes por quarto; sem persistência.
+- Histórico de ações, gás, falhas de comunicação e recuperação. Cenários de ensaio ficam no Node-RED.
+- Seleção, busca e cadastro persistente de ambientes. Cadastrar um quarto não cria um dispositivo; o serviço virtual atual atende apenas quarto-01.
 - Roteiros de prints e vídeos em docs, fora da interface do aplicativo.
 
 ## Executar
@@ -32,9 +33,13 @@ npm test
 npm run export:web
 ```
 
-A exportação fica em dist, sem publicação automática. O estado da sessão é perdido ao recarregar.
+A exportação fica em dist, sem publicação automática. Recarregar pede novo login; contas, concessões e histórico permanecem no banco. Inicie também backend e Node-RED conforme [integração local](docs/teste-app-integrado.md). Após atualizar a programação, reinicie ambos para carregar o código novo.
 
 ## Documentação
+
+- [Modos Dia e Noite — horários, contrato, persistência e evidências](docs/modos-dia-noite.md)
+- [Autenticação e banco locais](docs/autenticacao-persistencia-local.md)
+- [Histórico de falhas e alertas](docs/historico-alertas.md)
 
 - [Publicação web no Vercel](docs/publicacao-vercel.md)
 - [Preparação e geração do APK de teste](docs/gerar-apk.md)

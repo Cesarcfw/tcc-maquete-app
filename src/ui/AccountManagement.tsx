@@ -245,7 +245,7 @@ export function AccountManagement(props: ManagementProps) {
                                 `/api/rooms/${room.id}/telemetry`,
                               );
                               setMessage(
-                                `${room.name}: leitura ${reading.sampleAgeMs < 10000 ? "atual" : "antiga"}, recebida há ${Math.round(reading.sampleAgeMs / 1000)} s. Fonte: ${reading.source}.`,
+                                `${room.name}: leitura ${reading.sampleAgeMs < 10000 ? "atual" : "antiga"}, recebida há ${Math.round(reading.sampleAgeMs / 1000)} s.`,
                               );
                             })
                           }

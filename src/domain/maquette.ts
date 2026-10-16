@@ -1,3 +1,4 @@
+import type { LightingSchedule } from "../../shared/lighting-schedule.cjs";
 export type IndicatorColor =
   "red" | "orange" | "yellow" | "green" | "blue" | "off";
 export type Scenario = "normal" | "offline" | "stale" | "timeout";
@@ -11,6 +12,9 @@ export type Command =
   | { kind: "light"; on: boolean; intensity: number }
   | { kind: "indicator"; color: IndicatorColor };
 export type DeviceState = {
+  lightMode?: "manual" | "scheduled";
+  lightingSchedule?: LightingSchedule;
+  lightingPeriod?: "day" | "night" | null;
   temperature: number;
   humidity: number;
   gas: GasStatus;
