@@ -25,7 +25,6 @@ import { Panel, Note } from "./SharedPanels";
 import WebInputTheme from "./WebInputTheme";
 
 export default function ConnectedApp() {
-  const [demo, setDemo] = useState(false);
   const [dark, setDark] = useState(true);
   const [address, setAddress] = useState(
     process.env.EXPO_PUBLIC_BACKEND_URL || "http://127.0.0.1:3001",
@@ -85,14 +84,7 @@ export default function ConnectedApp() {
         }}
       >
         <StatusBar style={dark ? "light" : "dark"} />
-        {demo ? (
-          <View style={styles.flex}>
-            <Button icon="arrow-left" onPress={() => setDemo(false)}>
-              Voltar à entrada
-            </Button>
-            <DemoApp isolated />
-          </View>
-        ) : account && token ? (
+        {account && token ? (
           <DemoApp
             workspace={{
               base,
@@ -139,7 +131,6 @@ export default function ConnectedApp() {
                   setPassword={setPassword}
                   message={message}
                   busy={busy}
-                  onDemo={() => setDemo(true)}
                   onSubmit={() =>
                     act(async () => {
                       const url = backendAddress(address);
@@ -189,7 +180,6 @@ function LoginForm({
   message,
   busy,
   onSubmit,
-  onDemo,
 }: {
   address: string;
   setAddress: (v: string) => void;
@@ -200,7 +190,6 @@ function LoginForm({
   message: string;
   busy: boolean;
   onSubmit: () => void;
-  onDemo: () => void;
 }) {
   const { colors } = useTheme();
   const [showConnection, setShowConnection] = useState(false);
@@ -319,7 +308,7 @@ function LoginForm({
               }
             }}
           >
-            Testar servidor
+            Verificar conexão
           </Button>
           {!!connectionMessage && (
             <Text accessibilityRole="alert" variant="bodySmall">
@@ -328,20 +317,6 @@ function LoginForm({
           )}
         </View>
       )}
-      <Button
-        mode="outlined"
-        icon="play-circle-outline"
-        disabled={busy}
-        onPress={onDemo}
-      >
-        Explorar demonstração
-      </Button>
-      <Text
-        variant="labelSmall"
-        style={{ color: colors.onSurfaceVariant, textAlign: "center" }}
-      >
-        Demonstração isolada · nenhum equipamento físico conectado
-      </Text>
     </Panel>
   );
 }

@@ -1,5 +1,12 @@
 # Histórico de versões
 
+## Em revisão — interface do produto
+
+- Entrada exclusivamente por conta; removido o acesso à demonstração.
+- Textos operacionais sem rótulos de simulação no painel, catálogo, sensores, gás, histórico e administração. Conexão e confirmação referem-se ao serviço.
+- Node-RED e contrato de origem/ACK virtuais preservados. Decisão e evidências em docs/interface-produto.md.
+- Mudança no código para revisão; o APK 0.5.0 anterior ainda não contém esta interface.
+
 ## 0.5.0 — APK interno gerado para revisão
 
 - Aplicativo atual com login real, permissões, SQLite no backend, painel Stitch e integração local autenticada com o ESP virtual do Node-RED.

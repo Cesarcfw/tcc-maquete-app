@@ -152,18 +152,11 @@ const makeIdentity = (account: Account): DemoUser => ({
 });
 const makeRooms = (values: SavedRoom[], base: string): RoomDefinition[] =>
   values.map((value) => ({ ...value, active: !!value.active, endpoint: base }));
-export default function App({
-  isolated = false,
-  workspace,
-}: {
-  isolated?: boolean;
-  workspace?: Workspace;
-}) {
-  const [localDark, setLocalDark] = useState(true),
-    [reduceMotion, setReduceMotion] = useState(false),
+export default function App({ workspace }: { workspace: Workspace }) {
+  const [reduceMotion, setReduceMotion] = useState(false),
     [systemReduced, setSystemReduced] = useState(false);
-  const dark = workspace?.dark ?? localDark;
-  const setDark = workspace?.onTheme ?? setLocalDark;
+  const dark = workspace.dark;
+  const setDark = workspace.onTheme;
   useEffect(() => {
     let live = true;
     AccessibilityInfo.isReduceMotionEnabled().then((value) => {
@@ -200,7 +193,7 @@ export default function App({
         <WebInputTheme />
         <DemoApp
           workspace={workspace}
-          isolated={isolated}
+          isolated
           dark={dark}
           setDark={setDark}
           reduced={reduced}
@@ -355,7 +348,7 @@ function Blueprint({
       <View style={[s.planCaption, { backgroundColor: colors.surface }]}>
         <Icon source="floor-plan" size={15} color={colors.primary} />
         <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
-          Esquema da maquete · sem escala
+          Esquema do ambiente · sem escala
         </Text>
       </View>
     </View>
@@ -420,7 +413,7 @@ function Dashboard({
   const outdated = sim.connection !== "online" || !room.active;
   const detail = outdated
     ? "Último valor · sem leitura atual"
-    : "Leitura simulada";
+    : "Leitura atualizada";
   const showAll = screen === "Painel";
   const light = read("light") ? (
     <Panel
@@ -447,7 +440,7 @@ function Dashboard({
         <View style={s.flex}>
           <Text variant="labelMedium">Intensidade confirmada</Text>
           <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-            Na simulação
+            Estado informado pelo serviço
           </Text>
         </View>
         <Text
@@ -552,7 +545,7 @@ function Dashboard({
       <Panel
         title="Sensor de gás"
         icon="molecule"
-        subtitle="Estado demonstrativo · sem concentração em ppm"
+        subtitle="Monitoramento ambiental"
       >
         <Note
           title={
@@ -568,7 +561,7 @@ function Dashboard({
                 ? "Ausência de leitura não significa ausência de gás."
                 : sim.device.gas === "detected"
                   ? "Possível presença de gás ou fumaça. Tipo de gás não identificado."
-                  : "Sem detecção no cenário simulado. Não representa medição física."
+                  : "Nenhuma detecção informada na última leitura."
           }
         />
         {sim.device.gas === "detected" && (
@@ -653,7 +646,7 @@ function Dashboard({
         Desligar indicador
       </Button>
       <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-        A cor muda após confirmação simulada. O aplicativo não realiza
+        A cor muda após confirmação do serviço. O aplicativo não realiza
         classificação clínica.
       </Text>
     </Panel>
@@ -723,9 +716,7 @@ function Dashboard({
       )}
       {(read("light") || read("indicator")) && (
         <Note
-          title={
-            sim.pending ? "Aguardando confirmação…" : "Retorno da simulação"
-          }
+          title={sim.pending ? "Aguardando confirmação…" : "Estado da operação"}
           text={sim.notice}
           warning={outdated}
         />
@@ -840,9 +831,7 @@ function DemoApp({
   const status = !room.active
     ? "Desativada"
     : sim.connection === "online"
-      ? room.endpoint === "https://servico.exemplo"
-        ? "Online simulado"
-        : "Node-RED · simulado"
+      ? "Conectado"
       : sim.connection === "stale"
         ? "Dado antigo"
         : "Sem comunicação";
@@ -1297,11 +1286,11 @@ function DemoApp({
               </View>
               <Chip
                 compact
-                icon="flask-outline"
+                icon="shield-account-outline"
                 style={{ backgroundColor: colors.primaryContainer }}
                 textStyle={{ fontSize: 11 }}
               >
-                Simulação
+                Conta autenticada
               </Chip>
               {themeControl}
             </View>
@@ -1434,7 +1423,7 @@ function DemoApp({
                           visibleRooms.filter((value) => value.active).length,
                         )}
                         icon="lan-connect"
-                        detail="Cadastro da simulação"
+                        detail="Ambientes habilitados"
                       />
                     </View>
                     <View style={[s.grid, !wide && s.stack]}>
@@ -1505,8 +1494,7 @@ function DemoApp({
                                 variant="bodySmall"
                                 style={{ color: colors.onSurfaceVariant }}
                               >
-                                Ambiente de demonstração. Nenhum ESP32 físico
-                                conectado.
+                                Ambiente gerenciado pelo SAMAHI.
                               </Text>
                               <Button
                                 mode="contained"
@@ -1567,11 +1555,7 @@ function DemoApp({
                       variant="bodySmall"
                       style={{ color: colors.onSurfaceVariant }}
                     >
-                      Última leitura há {age} s · {room.device} · dados
-                      simulados{" "}
-                      {room.endpoint !== "https://servico.exemplo"
-                        ? "via Node-RED"
-                        : "no app"}
+                      Última leitura há {age} s · {room.device}
                     </Text>
                   </>
                 )}
@@ -1669,7 +1653,7 @@ function DemoApp({
                                   {value.type === "error"
                                     ? "Falha / alerta"
                                     : value.type === "success"
-                                      ? "Confirmação simulada"
+                                      ? "Comando confirmado"
                                       : "Informação"}
                                 </Text>
                                 <Text variant="bodyMedium">
@@ -2182,7 +2166,7 @@ function DemoApp({
                   style={[s.footer, { color: colors.onSurfaceVariant }]}
                 >
                   {workspace
-                    ? "SAMAHI · Conta autenticada · Banco local · Equipamento simulado"
+                    ? "SAMAHI · Automação e monitoramento de ambientes"
                     : "SAMAHI · Prévia visual · Dados simulados nesta sessão"}
                 </Text>
               </View>

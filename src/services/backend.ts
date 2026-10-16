@@ -88,9 +88,19 @@ export async function backendRequest<T>(
       signal: controller.signal,
     });
     const data = await response.json();
-    if (!response.ok)
+    if (!response.ok) {
+      // Tradução de mensagens do serviço legado; status e contrato preservados.
+      const serviceMessages: Record<string, string> = {
+        "Ambiente nao cadastrado no simulador.":
+          "Ambiente não cadastrado no serviço.",
+        "Dispositivo virtual sem comunicacao.":
+          "Sem comunicação com o serviço do ambiente.",
+        "Comando nao confirmado no cenario de teste.":
+          "O serviço não confirmou o comando.",
+      };
       throw new BackendError(
-        data.error ||
+        serviceMessages[data.error] ||
+          data.error ||
           (path.startsWith("/api/auth/")
             ? response.status === 429
               ? "Muitas tentativas. Aguarde um minuto antes de tentar novamente."
@@ -99,6 +109,7 @@ export async function backendRequest<T>(
           "Não foi possível concluir a solicitação.",
         response.status,
       );
+    }
     return { data, token: response.headers.get("set-auth-token") };
   } finally {
     clearTimeout(timeout);

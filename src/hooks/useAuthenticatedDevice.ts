@@ -17,7 +17,7 @@ export type AuthenticatedWorkspace = {
   onExpired: () => void;
 };
 const eventNames: Record<string, string> = {
-  command_confirmed_simulator: "Comando confirmado pelo simulador Node-RED",
+  command_confirmed_simulator: "Comando confirmado pelo serviço",
   command_unconfirmed: "Comando sem confirmação",
   gas_status_changed: "Estado do sensor de gás atualizado",
   room_created: "Ambiente cadastrado",
@@ -31,9 +31,7 @@ export function useAuthenticatedDevice(
   const [device, setDevice] = useState(() => initialState(0));
   const [online, setOnline] = useState(false),
     [pending, setPending] = useState(false);
-  const [notice, setNotice] = useState(
-    "Aguardando leitura autenticada do backend.",
-  );
+  const [notice, setNotice] = useState("Aguardando atualização do ambiente.");
   const [logs, setLogs] = useState<LogEntry[]>([]),
     [now, setNow] = useState(Date.now);
   const generation = useRef(0),
@@ -166,9 +164,7 @@ export function useAuthenticatedDevice(
       if (current === generation.current) {
         setDevice(decode(reply.telemetry));
         setOnline(true);
-        setNotice(
-          "Comando confirmado pelo simulador Node-RED, via backend autenticado.",
-        );
+        setNotice("Comando confirmado pelo serviço.");
       }
     } catch (error) {
       if (current === generation.current)

@@ -138,7 +138,7 @@ export function GasAlarm({
                 style={s.title}
                 accessibilityLiveRegion="polite"
               >
-                ⚠ ALERTA DE GÁS · SIMULAÇÃO
+                ⚠ ALERTA DE GÁS
               </Text>
               <Text variant="bodyMedium" style={s.text}>
                 Possível presença de gás ou fumaça em {room}.
