@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AccessibilityInfo,
-  Image,
   ScrollView,
   StyleSheet,
   View,
@@ -75,6 +74,7 @@ import { AccountManagement } from "./AccountManagement";
 import WebInputTheme from "./WebInputTheme";
 import { Panel, Note } from "./SharedPanels";
 import { LightingScheduleControls } from "./LightingScheduleControls";
+import { Brand } from "./Brand";
 
 type Screen =
   | "Quartos"
@@ -234,24 +234,6 @@ export function LoginPresentation({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Brand({ width = 180 }: { width?: number }) {
-  return (
-    <Image
-      source={require("../../assets/samahi-logo.png")}
-      style={[
-        s.brand,
-        {
-          width,
-          height: (width * 98) / 420,
-          backgroundColor: "#FFFFFF",
-          borderRadius: 8,
-        },
-      ]}
-      resizeMode="contain"
-      accessibilityLabel="SAMAHI - Sistema de Automação e Monitoramento de Ambientes Hospitalares Inteligentes"
-    />
-  );
-}
 function Blueprint({
   intensity,
   indicator,
@@ -2286,7 +2268,6 @@ const s = StyleSheet.create({
   root: { flex: 1 },
   shell: { flex: 1, flexDirection: "row" },
   flex: { flex: 1, minWidth: 0 },
-  brand: { width: 180, height: 43 },
   sidebar: { width: 248, padding: 16, gap: 6, borderRightWidth: 1 },
   sidebarFooter: { marginTop: "auto", gap: 10, paddingTop: 16 },
   sectionLabel: { marginTop: 20, marginBottom: 8, letterSpacing: 1 },

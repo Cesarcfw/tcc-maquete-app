@@ -1,5 +1,12 @@
 # Histórico de versões
 
+## Em revisão — identidade visual SAMAHI
+
+- Símbolo e nome separados; assinaturas para fundos claros/escuros e versão completa para documentos.
+- Componente Brand sem placa branca ou descrição minúscula, compartilhado pelo login e pelos cabeçalhos web/mobile.
+- Ícone 1024 px, camadas Android adaptativa/monocromática e favicon configurados em app.json; originais preservados.
+- Padrão, arquivos, origem das artes e evidências em docs/identidade-visual/README.md. Ícone instalado exige novo APK; nenhuma build nativa gerada nesta mudança.
+
 ## Em revisão — modos Dia e Noite
 
 - Automático por LDR substituído por programação diária de horários e intensidades no fuso de Brasília.
