@@ -1,11 +1,11 @@
 # Histórico de versões
 
-## 0.5.0 — preparação do APK interno para revisão
+## 0.5.0 — APK interno gerado para revisão
 
 - Aplicativo atual com login real, permissões, SQLite no backend, painel Stitch e integração local autenticada com o ESP virtual do Node-RED.
 - Android versionCode 4, mesmo pacote/assinatura do projeto. Perfil preview produz APK instalável com HTTP local para ensaios; não é publicação em loja ou release final.
 - Túnel HTTPS não incluído. O endereço do backend permanece editável em Configurar conexão. Banco, credenciais e arquivos .env locais ficam fora do envio EAS.
-- Compilação e instalação serão registradas em docs/apk-v0.5.0.md; preparo de versão não comprova build concluído ou funcionamento no aparelho.
+- Build EAS concluída FINISHED, APK baixado e estrutura básica/hash conferidos. Link e instalação em docs/apk-v0.5.0.md. Instalação e execução do APK no aparelho continuam pendentes; o teste anterior no Expo Go não substitui essa validação.
 
 ## Em desenvolvimento — autenticação e persistência locais
 

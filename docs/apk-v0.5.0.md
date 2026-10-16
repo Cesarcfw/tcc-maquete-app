@@ -24,6 +24,16 @@ MOSTRE FUNCIONANDO EM VÍDEO OU GIF: abrir pelo ícone com Metro desligado, logi
 
 ## Build
 
-Perfil preview, Android APK, distribution internal, developmentClient false. Build ainda não concluída no momento deste registro; atualizar com ID, commit, link, tamanho e SHA-256 após conclusão. Instalação e controles no APK permanecem pendentes de teste no telefone.
+Perfil preview, Android APK, distribution internal, developmentClient false. Build enviada em 16/10/2026: `6851f9d1-ca11-496a-9c29-8ccb68880160`, código do commit `48da039`, branch feat/auth-local. Conta/projeto: @cesarcfw/tcc-maquete-app. Keystore remota existente reutilizada; sem nova chave ou publicação em loja.
+
+[Acompanhar build](https://expo.dev/accounts/cesarcfw/projects/tcc-maquete-app/builds/6851f9d1-ca11-496a-9c29-8ccb68880160).
+
+Envio de aproximadamente 6 MB aceito pelo EAS; não havia variáveis Plain text/Sensitive configuradas no ambiente preview. Perfil carregou apenas EXPO_PUBLIC_NODE_RED_URL com o marcador de demonstração. Banco, segredo e .env locais excluídos pelo .easignore.
+
+Build concluída com status **FINISHED**. [Baixar APK 0.5.0](https://expo.dev/artifacts/eas/HDOHizpcVc3dFH2AUxe68TaEyjDg2cFyN4J9PR4dJkE.apk).
+
+Cópia local: entregas/SAMAHI-v0.5.0-android.apk. Tamanho: 73.623.630 bytes. SHA-256: `A5A7BA243AF6A49923E1CA04D00517CCEA461976F262DC864955A712A0B0D1B5`.
+
+Contêiner APK aberto e entradas AndroidManifest.xml (9.700 bytes) e classes.dex (9.610.480 bytes) conferidas. Lint, tipos, 14 testes e exportação web passaram antes do processamento. A conclusão da compilação e a inspeção estrutural não comprovam instalação, rede ou controles no aparelho. Instalação e controles no APK permanecem pendentes de teste no telefone.
 
 Referência primária: [Expo — gerar APK instalável](https://docs.expo.dev/build-reference/apk/).
