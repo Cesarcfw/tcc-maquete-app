@@ -1,5 +1,9 @@
 # APK de teste — Maquete conectada
 
+## Versão atual
+
+APK v0.4.1 (Android 3), SAMAHI com redesign e cliente Node-RED. Build 1a20d872-02fb-4c41-9f89-74a1abec83c6 concluído FINISHED no EAS. [Baixar APK atual](https://expo.dev/artifacts/eas/EkMraGltSpVyTyo1QGc1Avy66191HN-pcPTiUQBBS0I.apk). Consultar docs/apk-v0.4.1.md para integridade e roteiro de teste. Instalação e acesso LAN ainda pendentes. As informações v0.3.0 abaixo são histórico.
+
 ## Estado da preparação
 
 Projeto Expo SDK 57. Perfil `preview` em `eas.json` gera APK Android para instalação direta, com JavaScript incluído e sem cliente de desenvolvimento. Identificador Android: `com.cesarcfw.tccmaqueteapp`; versão do app 0.3.0 e código Android inicial 1. Sem publicação em loja nesta etapa.

@@ -1,5 +1,29 @@
 # Histórico de versões
 
+## Em desenvolvimento — autenticação e persistência locais
+
+- Iniciador de teste integrado no telefone: seleciona rede, reutiliza Node-RED, abre backend em 3002 e Expo Go em 8082 com endereço do servidor e IP do QR configurados. Instâncias existentes preservadas; regras de firewall específicas e removíveis para a sub-rede local.
+- Cliente nativo usa Bearer sem cookies; botão Testar servidor na entrada. Nova suíte de integração reproduz requisições nativas e verifica login, controles, sensores, gás, histórico e logout com banco descartável. Roteiro e limites em docs/teste-app-integrado.md.
+- Entrada centralizada horizontal e verticalmente como a demonstração, com rolagem em telas menores. Campos web recebem esquema de cor e estilos de preenchimento automático compatíveis com o tema, incluindo foco; implementação nativa separada sem CSS.
+- Administração integrada ao layout Stitch: usuários com busca e cadastro em diálogo, permissões por ambiente com salvamento explícito, cartões de conexões, cadastro/edição de quartos e segurança da conta. Temas compartilhados com a entrada; versões mobile empilham os cartões sem sobreposição.
+- Componentes Panel/Note compartilhados entre painel, entrada e administração; removida a página administrativa que duplicava os controles de operação. Configuração do servidor fica recolhida na entrada; o celular prioriza o formulário.
+- Correção da regressão visual: painel Stitch restaurado com login real, quartos persistidos e telemetria/comandos autenticados; formulários administrativos acessíveis pelo menu. Entrada reutiliza logo e planta do projeto.
+- Backend Express/Better Auth com SQLite local: contas, sessões, quartos, dispositivos, concessões e auditoria persistentes.
+- Entrada por email/senha, cadastro pelo administrador, troca/redefinição de senha, desativação/reativação e revogação de sessões.
+- Autorizações por quarto/grupo verificadas no servidor e campos da telemetria filtrados; administrador não ignora concessões de operação.
+- Comandos mediados pelo backend com confirmação e deduplicação; Node-RED continua sendo simulador, sem hardware real.
+- Nova entrada autenticada no app; demonstração antiga disponível isolada de chamadas de rede. Sessão do cliente somente em memória.
+- Inicialização do administrador por terminal com senha oculta; backup consistente e roteiro de transferência para notebook.
+- Documentação/evidências em docs/autenticacao-persistencia-local.md. Teste Android/LAN/HTTPS, novo APK e revisão da equipe pendentes.
+
+## 0.4.1 — APK de teste com integração Node-RED
+
+- Preparação de APK interno Android com redesign SAMAHI e cliente HTTP Node-RED; versão Android 3.
+- HTTP sem TLS permitido apenas no perfil EAS preview para ensaio na rede local; demais perfis o desativam.
+- Build começa em demonstração interna, sem embutir IP do computador; endereço editável em Conexões.
+- Arquivos .env locais excluídos do envio ao EAS. Equipamento real, teste físico Android e acesso LAN do Node-RED permanecem pendentes.
+- Compilação EAS concluída FINISHED; APK disponível e integridade/estrutura básica verificadas. Link, hash e roteiro em docs/apk-v0.4.1.md, PR #9.
+
 ## Em desenvolvimento — integração Node-RED local
 
 - Fluxo funcional com ESP virtual, sensores a cada 2 segundos, API HTTP v1 e controles de entradas para testes.

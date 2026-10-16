@@ -21,12 +21,14 @@ yarn-error.*
 *.pem
 .env*.local
 .env
+.env.*
 coverage/
 test-results/
 playwright-report/
 *.tsbuildinfo
 /ios
 /android
+backend/
 # Documentação e evidências não são necessárias para compilar o aplicativo.
 docs/
 .github/

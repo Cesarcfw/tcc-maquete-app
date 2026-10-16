@@ -16,7 +16,11 @@ jobs:
           node-version: "24"
           cache: npm
       - run: npm ci
+      - run: npm ci --ignore-scripts
+        working-directory: backend
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
       - run: npm run export:web
+      - run: npm test
+        working-directory: backend
