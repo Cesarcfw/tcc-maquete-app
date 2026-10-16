@@ -102,7 +102,28 @@ Para LAN será necessário escolher a interface/IP do notebook, configurar URL/o
 
 A primeira implementação do login havia colocado os formulários administrativos no lugar do painel Stitch. A correção mantém o painel anterior em `src/ui/DemoApp.tsx`, alimentado pelo adaptador `src/hooks/useAuthenticatedDevice.ts`: consulta telemetria e histórico pelas rotas protegidas, envia comandos com sessão e aguarda confirmação. O modo autenticado não usa o simulador interno nem o acesso direto ao Node-RED. Conta e quartos vêm do backend, com permissões atualizadas periodicamente.
 
-A entrada reutiliza a identidade e a planta ilustrativa existentes. Administração de usuários, permissões e quartos abre pelo menu; esses formulários ainda têm apresentação simples. A demonstração sem conta continua separada. Nenhuma alteração de banco foi necessária nesta correção.
+A entrada reutiliza a identidade e a planta ilustrativa existentes. Na correção inicial, a administração ainda usava formulários simples. A evolução descrita abaixo integra essas telas ao mesmo layout. A demonstração sem conta continua separada. Nenhuma alteração de banco foi necessária nesta correção.
+
+### Continuidade do design Stitch nas telas autenticadas
+
+As telas de administração agora usam o mesmo menu, cabeçalho, temas, cartões e espaçamento do painel. Desktop usa lista de pessoas e permissões lado a lado; celular empilha as seções e mantém a navegação inferior. Foi corrigida uma sobreposição de cartões na conta em tela estreita. A preferência de tema permanece ao navegar entre entrada, painel e administração durante a sessão.
+
+- Entrada: email, senha com mostrar/ocultar, retorno de erro no cartão, configuração do servidor recolhida e demonstração explicitamente isolada. A planta ilustrativa fica no desktop; no celular o formulário aparece antes, sem a planta.
+- Usuários: busca por nome/email, lista com situação, criação em diálogo com erros visíveis e seleção da pessoa.
+- Permissões: seleção do ambiente, matriz dos quatro grupos, indicação de alterações não salvas e confirmação somente após resposta da API. Desativação/reativação e redefinição de senha ficam no cartão da conta comum selecionada. Administrador usa sua própria seção de segurança.
+- Conexões: cartões dos quartos com ala, leito, dispositivo e habilitação. Consultar leitura faz uma requisição real à API protegida; cadastrar não é apresentado como conexão confirmada.
+- Cadastro/edição: formulário específico, identificador imutável ao editar e retorno à lista após salvar. Novos quartos continuam exigindo concessões e configuração do dispositivo no servidor.
+- Conta: identidade, concessões do quarto, aparência/acessibilidade e troca da própria senha. O laboratório de simulação interno não aparece no modo autenticado.
+
+Organização do código: `ConnectedApp.tsx` coordena autenticação e tema; `DemoApp.tsx` mantém o layout e a navegação; `AccountManagement.tsx` apresenta os cadastros e usa as rotas protegidas; `SharedPanels.tsx` contém os componentes visuais Panel/Note usados pelas três áreas. O adaptador de telemetria permanece em `useAuthenticatedDevice.ts`. A tela administrativa anterior com controles duplicados de luz, sensores e Manchester foi removida; a operação fica no painel e em suas páginas dedicadas.
+
+Verificação em banco descartável: entrada, criação de usuário, concessão de leitura, salvamento de permissões, consulta de telemetria, cadastro de quarto, abertura da edição com os dados salvos, temas claro/escuro e logout. Conferidas larguras web de 1280, 390 e 320 px; não houve teste nativo Android. A sobreposição dos cartões da conta foi corrigida e as permissões permaneceram dentro da largura disponível.
+
+Capturas: [usuários desktop](evidencias/auth-local/usuarios-stitch-desktop.png), [permissões mobile](evidencias/auth-local/usuarios-stitch-mobile.png), [cadastro claro](evidencias/auth-local/cadastro-stitch-claro.png), [entrada desktop](evidencias/auth-local/login-stitch-desktop.png) e [entrada mobile](evidencias/auth-local/login-stitch-mobile.png). As contas e o quarto de ensaio pertencem apenas ao banco temporário.
+
+TIRE PRINT DESTA PARTE: usuários/permissões no desktop e celular; cadastro no tema claro; entrada sem expor senhas.
+
+MOSTRE FUNCIONANDO EM VÍDEO OU GIF: criar usuário, escolher quarto, alterar concessões, salvar, navegar para conexões, cadastrar/editar ambiente e trocar o tema sem sair do layout.
 
 Verificado no navegador com conta e banco descartáveis: login, painel Stitch, comando de luz em 25% confirmado pelo simulador, abertura da administração, retorno ao painel e saída. Captura: [painel autenticado](evidencias/auth-local/painel-stitch-autenticado.png). As capturas anteriores mostram a implementação inicial e não o painel atual. Teste em telefone físico permanece pendente.
 

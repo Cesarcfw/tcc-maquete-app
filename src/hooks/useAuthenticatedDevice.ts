@@ -14,7 +14,6 @@ export type AuthenticatedWorkspace = {
   base: string;
   token: string;
   onLogout: () => void;
-  onManage: () => void;
   onExpired: () => void;
 };
 const eventNames: Record<string, string> = {

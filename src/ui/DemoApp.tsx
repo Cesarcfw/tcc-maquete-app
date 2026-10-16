@@ -11,7 +11,6 @@ import {
   Avatar,
   BottomNavigation,
   Button,
-  Card,
   Chip,
   Dialog,
   Divider,
@@ -72,6 +71,8 @@ import {
   BackendError,
 } from "../services/backend";
 import type { DemoUser } from "../domain/access";
+import { AccountManagement } from "./AccountManagement";
+import { Panel, Note } from "./SharedPanels";
 
 type Screen =
   | "Quartos"
@@ -132,6 +133,9 @@ type Simulator = ReturnType<typeof useSimulator>;
 export type Workspace = AuthenticatedWorkspace & {
   account: Account;
   rooms: SavedRoom[];
+  dark: boolean;
+  onTheme: (dark: boolean) => void;
+  message: string;
 };
 const makeIdentity = (account: Account): DemoUser => ({
   id: account.id,
@@ -154,9 +158,11 @@ export default function App({
   isolated?: boolean;
   workspace?: Workspace;
 }) {
-  const [dark, setDark] = useState(true),
+  const [localDark, setLocalDark] = useState(true),
     [reduceMotion, setReduceMotion] = useState(false),
     [systemReduced, setSystemReduced] = useState(false);
+  const dark = workspace?.dark ?? localDark;
+  const setDark = workspace?.onTheme ?? setLocalDark;
   useEffect(() => {
     let live = true;
     AccessibilityInfo.isReduceMotionEnabled().then((value) => {
@@ -208,7 +214,7 @@ export function LoginPresentation({ children }: { children: React.ReactNode }) {
   const { colors } = useTheme();
   return (
     <View style={[s.loginPage, width >= 1000 && s.grid]}>
-      <View style={s.column}>
+      <View style={[s.column, width < 1000 && s.mobileColumn]}>
         <Brand />
         <Text variant="headlineLarge" style={s.bold}>
           Seu ambiente, ao seu alcance.
@@ -217,13 +223,17 @@ export function LoginPresentation({ children }: { children: React.ReactNode }) {
           Controle da iluminação, acompanhamento de sensores e indicador externo
           em uma interface.
         </Text>
-        <Blueprint intensity={65} indicator="blue" />
-        <Note
-          title="SAMAHI"
-          text="Automação e monitoramento de ambientes hospitalares. Ilustração do ambiente; entre para consultar os dados disponíveis."
-        />
+        {width >= 1000 && (
+          <>
+            <Blueprint intensity={65} indicator="blue" />
+            <Note
+              title="SAMAHI"
+              text="Automação e monitoramento de ambientes hospitalares. Ilustração do ambiente; entre para consultar os dados disponíveis."
+            />
+          </>
+        )}
       </View>
-      <View style={s.column}>{children}</View>
+      <View style={[s.column, width < 1000 && s.mobileColumn]}>{children}</View>
     </View>
   );
 }
@@ -244,95 +254,6 @@ function Brand({ width = 180 }: { width?: number }) {
       resizeMode="contain"
       accessibilityLabel="SAMAHI - Sistema de Automação e Monitoramento de Ambientes Hospitalares Inteligentes"
     />
-  );
-}
-function Panel({
-  title,
-  icon,
-  subtitle,
-  children,
-}: {
-  title: string;
-  icon?: string;
-  subtitle?: string;
-  children: React.ReactNode;
-}) {
-  const { colors } = useTheme();
-  return (
-    <Card
-      mode="outlined"
-      style={[
-        s.card,
-        { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
-      ]}
-    >
-      <Card.Content style={s.cardContent}>
-        <View style={s.row}>
-          {icon && <Icon source={icon} size={22} color={colors.primary} />}
-          <Text variant="titleMedium" style={[s.bold, s.flex]}>
-            {title}
-          </Text>
-        </View>
-        {subtitle && (
-          <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-            {subtitle}
-          </Text>
-        )}
-        {children}
-      </Card.Content>
-    </Card>
-  );
-}
-function Note({
-  title,
-  text,
-  warning = false,
-}: {
-  title: string;
-  text?: string;
-  warning?: boolean;
-}) {
-  const { colors, dark } = useTheme();
-  return (
-    <View
-      style={[
-        s.note,
-        {
-          backgroundColor: warning
-            ? dark
-              ? "#332A1A"
-              : "#FFF4DA"
-            : colors.primaryContainer,
-        },
-      ]}
-    >
-      <Text
-        variant="labelLarge"
-        style={{
-          color: warning
-            ? dark
-              ? "#FFE19D"
-              : "#684600"
-            : colors.onPrimaryContainer,
-        }}
-      >
-        {title}
-      </Text>
-      {text && (
-        <Text
-          variant="bodySmall"
-          style={{
-            color: warning
-              ? dark
-                ? "#FFE19D"
-                : "#684600"
-              : colors.onPrimaryContainer,
-          }}
-        >
-          {text}
-        </Text>
-      )}
-    </View>
   );
 }
 function Blueprint({
@@ -888,6 +809,7 @@ function DemoApp({
   }, [authBase, authToken]);
   const [screen, setScreen] = useState<Screen>("Quartos"),
     [snack, setSnack] = useState("");
+  const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
   const [editingUser, setEditingUser] = useState("matheus"),
     [gasClosed, setGasClosed] = useState(false);
   const [query, setQuery] = useState(""),
@@ -934,10 +856,6 @@ function DemoApp({
     setTestStatus("idle");
   }
   function navigate(next: Screen) {
-    if (workspace && ["Usuários", "Conexões", "Cadastro"].includes(next)) {
-      workspace.onManage();
-      return;
-    }
     if (
       ["Painel", "Iluminação", "Sensores", "Manchester", "Histórico"].includes(
         next,
@@ -988,7 +906,9 @@ function DemoApp({
   }
   function openEditor(value?: RoomDefinition) {
     if (workspace) {
-      workspace.onManage();
+      if (!user?.admin) return;
+      setEditingRoomId(value?.id ?? null);
+      navigate("Cadastro");
       return;
     }
     if (!user?.admin) return;
@@ -1390,6 +1310,15 @@ function DemoApp({
               contentContainerStyle={[s.pageScroll, !wide && s.mobileScroll]}
             >
               <View style={s.page}>
+                {!!workspace?.message && (
+                  <View accessibilityRole="alert">
+                    <Note
+                      title="Retorno da conta"
+                      text={workspace.message}
+                      warning
+                    />
+                  </View>
+                )}
                 <View style={[s.spread, !wide && s.titleStack]}>
                   <View style={s.flex}>
                     <Text
@@ -1402,20 +1331,37 @@ function DemoApp({
                       variant={wide ? "headlineMedium" : "headlineSmall"}
                       style={s.bold}
                     >
-                      {titles[screen]}
+                      {screen === "Cadastro" && workspace
+                        ? editingRoomId
+                          ? "Editar ambiente"
+                          : "Cadastrar ambiente"
+                        : titles[screen]}
                     </Text>
                     <Text
                       variant="bodySmall"
                       style={{ color: colors.onSurfaceVariant }}
                     >
-                      {["Quartos", "Cadastro"].includes(screen)
-                        ? workspace
-                          ? "Ambientes cadastrados · dados persistentes"
-                          : "Ambientes demonstrativos · dados mantidos nesta sessão"
-                        : `${room.wing} · ${room.bed}`}
+                      {workspace &&
+                      ["Usuários", "Conexões", "Conta"].includes(screen)
+                        ? {
+                            Usuários: "Equipe e permissões por ambiente",
+                            Conexões: "Ambientes e dispositivos cadastrados",
+                            Conta: "Perfil, preferências e segurança",
+                          }[screen as "Usuários" | "Conexões" | "Conta"]
+                        : ["Quartos", "Cadastro"].includes(screen)
+                          ? workspace
+                            ? "Ambientes cadastrados · dados persistentes"
+                            : "Ambientes demonstrativos · dados mantidos nesta sessão"
+                          : `${room.wing} · ${room.bed}`}
                     </Text>
                   </View>
-                  {screen !== "Quartos" && (
+                  {[
+                    "Painel",
+                    "Iluminação",
+                    "Sensores",
+                    "Manchester",
+                    "Histórico",
+                  ].includes(screen) && (
                     <Chip
                       compact
                       icon={connected ? "access-point" : "access-point-off"}
@@ -1737,7 +1683,7 @@ function DemoApp({
                   ))}
                 {screen === "Conta" && (
                   <View style={[s.grid, !wide && s.stack]}>
-                    <View style={s.column}>
+                    <View style={[s.column, !wide && s.mobileColumn]}>
                       <Panel
                         title={
                           workspace ? "Minha conta" : "Perfil de demonstração"
@@ -1830,97 +1776,111 @@ function DemoApp({
                         </View>
                       </Panel>
                     </View>
-                    <View style={s.column}>
-                      {workspace && (
-                        <Button mode="outlined" onPress={workspace.onManage}>
-                          Gerenciar minha conta
-                        </Button>
-                      )}
-                      <Panel
-                        title={
-                          workspace
-                            ? "Integração com Node-RED"
-                            : "Laboratório de simulação"
-                        }
-                        icon="flask-outline"
-                        subtitle={`${room.name} · controles de teste`}
-                      >
-                        <View style={s.chips}>
-                          {scenarios.map(([value, label]) => (
-                            <Chip
-                              key={value}
-                              selected={sim.scenario === value}
-                              disabled={!!workspace || !user.admin}
-                              accessibilityLabel={`Cenário ${label}`}
-                              onPress={() => {
-                                cancelTest();
-                                sim.selectScenario(value);
-                              }}
-                            >
-                              {label}
-                            </Chip>
-                          ))}
-                        </View>
-                        {read("sensors") && (
-                          <>
-                            <Text variant="titleSmall">
-                              Teste do sensor de gás
-                            </Text>
-                            <View style={s.chips}>
-                              {(
-                                [
-                                  "clear",
-                                  "detected",
-                                  "unavailable",
-                                ] as GasStatus[]
-                              ).map((value) => (
-                                <Chip
-                                  key={value}
-                                  selected={sim.device.gas === value}
-                                  disabled={!!workspace || !connected}
-                                  accessibilityLabel={`Simular gás: ${gasStatusLabels[value]}`}
-                                  onPress={() => sim.simulateGas(value)}
-                                >
-                                  {gasStatusLabels[value]}
-                                </Chip>
-                              ))}
-                            </View>
-                          </>
-                        )}
-                        <Note
-                          title="Retorno da simulação"
-                          text={
-                            read("light") ||
-                            read("indicator") ||
-                            read("sensors")
-                              ? sim.notice
-                              : "Sem acesso às funções deste ambiente."
-                          }
-                        />
-                        <Button
-                          mode="outlined"
-                          disabled={!!workspace || !user.admin}
-                          onPress={() => {
-                            cancelTest();
-                            sim.reset();
-                            setRooms((previous) =>
-                              previous.map((value) =>
-                                value.id === room.id
-                                  ? { ...value, active: true }
-                                  : value,
-                              ),
-                            );
-                            setGasClosed(false);
-                            setSnack("Simulação do ambiente reiniciada.");
+                    <View style={[s.column, !wide && s.mobileColumn]}>
+                      {workspace ? (
+                        <AccountManagement
+                          base={workspace.base}
+                          token={workspace.token}
+                          account={workspace.account}
+                          onExpired={workspace.onExpired}
+                          {...{
+                            screen: "Conta",
+                            roomId: room.id,
+                            editingRoomId,
+                            navigate,
+                            editRoom: (id) => {
+                              setEditingRoomId(id);
+                              navigate("Cadastro");
+                            },
                           }}
+                        />
+                      ) : (
+                        <Panel
+                          title={
+                            workspace
+                              ? "Integração com Node-RED"
+                              : "Laboratório de simulação"
+                          }
+                          icon="flask-outline"
+                          subtitle={`${room.name} · controles de teste`}
                         >
-                          Reiniciar simulação
-                        </Button>
-                      </Panel>
+                          <View style={s.chips}>
+                            {scenarios.map(([value, label]) => (
+                              <Chip
+                                key={value}
+                                selected={sim.scenario === value}
+                                disabled={!!workspace || !user.admin}
+                                accessibilityLabel={`Cenário ${label}`}
+                                onPress={() => {
+                                  cancelTest();
+                                  sim.selectScenario(value);
+                                }}
+                              >
+                                {label}
+                              </Chip>
+                            ))}
+                          </View>
+                          {read("sensors") && (
+                            <>
+                              <Text variant="titleSmall">
+                                Teste do sensor de gás
+                              </Text>
+                              <View style={s.chips}>
+                                {(
+                                  [
+                                    "clear",
+                                    "detected",
+                                    "unavailable",
+                                  ] as GasStatus[]
+                                ).map((value) => (
+                                  <Chip
+                                    key={value}
+                                    selected={sim.device.gas === value}
+                                    disabled={!!workspace || !connected}
+                                    accessibilityLabel={`Simular gás: ${gasStatusLabels[value]}`}
+                                    onPress={() => sim.simulateGas(value)}
+                                  >
+                                    {gasStatusLabels[value]}
+                                  </Chip>
+                                ))}
+                              </View>
+                            </>
+                          )}
+                          <Note
+                            title="Retorno da simulação"
+                            text={
+                              read("light") ||
+                              read("indicator") ||
+                              read("sensors")
+                                ? sim.notice
+                                : "Sem acesso às funções deste ambiente."
+                            }
+                          />
+                          <Button
+                            mode="outlined"
+                            disabled={!!workspace || !user.admin}
+                            onPress={() => {
+                              cancelTest();
+                              sim.reset();
+                              setRooms((previous) =>
+                                previous.map((value) =>
+                                  value.id === room.id
+                                    ? { ...value, active: true }
+                                    : value,
+                                ),
+                              );
+                              setGasClosed(false);
+                              setSnack("Simulação do ambiente reiniciada.");
+                            }}
+                          >
+                            Reiniciar simulação
+                          </Button>
+                        </Panel>
+                      )}
                     </View>
                   </View>
                 )}
-                {screen === "Conexões" && user.admin && (
+                {screen === "Conexões" && user.admin && !workspace && (
                   <>
                     {roomSelector}
                     <Note
@@ -1968,7 +1928,7 @@ function DemoApp({
                     </Panel>
                   </>
                 )}
-                {screen === "Cadastro" && user.admin && (
+                {screen === "Cadastro" && user.admin && !workspace && (
                   <>
                     <Note
                       title="Cadastro local de ambiente"
@@ -2090,7 +2050,7 @@ function DemoApp({
                     </View>
                   </>
                 )}
-                {screen === "Usuários" && user.admin && (
+                {screen === "Usuários" && user.admin && !workspace && (
                   <>
                     {roomSelector}
                     <Note
@@ -2188,6 +2148,29 @@ function DemoApp({
                     </View>
                   </>
                 )}
+                {workspace &&
+                  user.admin &&
+                  (screen === "Usuários" ||
+                    screen === "Conexões" ||
+                    screen === "Cadastro") && (
+                    <AccountManagement
+                      key={`${screen}-${editingRoomId ?? "new"}`}
+                      base={workspace.base}
+                      token={workspace.token}
+                      account={workspace.account}
+                      onExpired={workspace.onExpired}
+                      {...{
+                        screen,
+                        roomId: room.id,
+                        editingRoomId,
+                        navigate,
+                        editRoom: (id) => {
+                          setEditingRoomId(id);
+                          navigate("Cadastro");
+                        },
+                      }}
+                    />
+                  )}
                 <Text
                   variant="labelSmall"
                   style={[s.footer, { color: colors.onSurfaceVariant }]}
@@ -2341,6 +2324,12 @@ const s = StyleSheet.create({
   grid: { flexDirection: "row", gap: 24 },
   stack: { flexDirection: "column" },
   column: { flex: 1, minWidth: 0, gap: 20 },
+  mobileColumn: {
+    flexBasis: "auto",
+    flexGrow: 0,
+    flexShrink: 0,
+    width: "100%",
+  },
   card: { borderRadius: 16 },
   cardContent: { padding: 20, gap: 16 },
   bold: { fontWeight: "700" },

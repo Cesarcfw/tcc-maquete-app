@@ -2,6 +2,8 @@
 
 ## Em desenvolvimento — autenticação e persistência locais
 
+- Administração integrada ao layout Stitch: usuários com busca e cadastro em diálogo, permissões por ambiente com salvamento explícito, cartões de conexões, cadastro/edição de quartos e segurança da conta. Temas compartilhados com a entrada; versões mobile empilham os cartões sem sobreposição.
+- Componentes Panel/Note compartilhados entre painel, entrada e administração; removida a página administrativa que duplicava os controles de operação. Configuração do servidor fica recolhida na entrada; o celular prioriza o formulário.
 - Correção da regressão visual: painel Stitch restaurado com login real, quartos persistidos e telemetria/comandos autenticados; formulários administrativos acessíveis pelo menu. Entrada reutiliza logo e planta do projeto.
 - Backend Express/Better Auth com SQLite local: contas, sessões, quartos, dispositivos, concessões e auditoria persistentes.
 - Entrada por email/senha, cadastro pelo administrador, troca/redefinição de senha, desativação/reativação e revogação de sessões.
