@@ -1,5 +1,12 @@
 # Histórico de versões
 
+## 0.5.0 — preparação do APK interno para revisão
+
+- Aplicativo atual com login real, permissões, SQLite no backend, painel Stitch e integração local autenticada com o ESP virtual do Node-RED.
+- Android versionCode 4, mesmo pacote/assinatura do projeto. Perfil preview produz APK instalável com HTTP local para ensaios; não é publicação em loja ou release final.
+- Túnel HTTPS não incluído. O endereço do backend permanece editável em Configurar conexão. Banco, credenciais e arquivos .env locais ficam fora do envio EAS.
+- Compilação e instalação serão registradas em docs/apk-v0.5.0.md; preparo de versão não comprova build concluído ou funcionamento no aparelho.
+
 ## Em desenvolvimento — autenticação e persistência locais
 
 - Iniciador de teste integrado no telefone: seleciona rede, reutiliza Node-RED, abre backend em 3002 e Expo Go em 8082 com endereço do servidor e IP do QR configurados. Instâncias existentes preservadas; regras de firewall específicas e removíveis para a sub-rede local.
