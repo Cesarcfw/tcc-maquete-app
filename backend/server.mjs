@@ -305,6 +305,38 @@ export async function createApp(options = {}) {
         for (const key of keys) result[key] = t[key];
     return result;
   };
+  // Estado compartilhado/persistido por quarto: múltiplos clientes não duplicam eventos.
+  function observationTransaction(work) {
+    db.exec("BEGIN IMMEDIATE");
+    try {
+      work();
+      db.exec("COMMIT");
+    } catch (error) {
+      db.exec("ROLLBACK");
+      throw error;
+    }
+  }
+  function observeConnection(actor, roomId, state) {
+    const previous = db
+      .prepare("SELECT state FROM room_connection_state WHERE room_id=?")
+      .get(roomId)?.state;
+    if (previous === state) return;
+    if (state !== "online" || previous)
+      record(
+        actor,
+        roomId,
+        state === "offline"
+          ? "communication_lost"
+          : state === "stale"
+            ? "telemetry_stale"
+            : "communication_restored",
+        { previous: previous || "unknown", current: state },
+      );
+    db.prepare("INSERT OR REPLACE INTO room_connection_state VALUES(?,?)").run(
+      roomId,
+      state,
+    );
+  }
   app.get("/api/rooms/:roomId/telemetry", async (req, res) => {
     if (!req.room.active) throw fail(409, "Quarto inativo.");
     if (
@@ -313,24 +345,41 @@ export async function createApp(options = {}) {
       )
     )
       throw fail(403, "Sem acesso à telemetria.");
-    const t = await upstream(req.room.id, "telemetry");
-    const previous = db
-      .prepare("SELECT payload FROM latest_readings WHERE room_id=?")
-      .get(req.room.id);
-    const previousGas = previous
-      ? JSON.parse(previous.payload).gasStatus
-      : undefined;
-    if (typeof t.gasStatus === "string" && previousGas !== t.gasStatus)
-      record(req.actor.id, req.room.id, "gas_status_changed", {
-        previous: previousGas || "unknown",
-        current: t.gasStatus,
-        source: t.source,
-      });
-    db.prepare("INSERT OR REPLACE INTO latest_readings VALUES(?,?,?)").run(
-      req.room.id,
-      new Date().toISOString(),
-      JSON.stringify(t),
-    );
+    let t;
+    try {
+      t = await upstream(req.room.id, "telemetry");
+      if (!Number.isFinite(t.sampleAgeMs) || t.sampleAgeMs < 0)
+        throw fail(502, "Idade da leitura inválida.");
+    } catch (error) {
+      observationTransaction(() =>
+        observeConnection(req.actor.id, req.room.id, "offline"),
+      );
+      throw error;
+    }
+    const stale = t.sampleAgeMs >= 10000;
+    observationTransaction(() => {
+      observeConnection(req.actor.id, req.room.id, stale ? "stale" : "online");
+      // Uma amostra antiga não cria uma nova detecção nem substitui a última válida.
+      if (!stale) {
+        const previous = db
+          .prepare("SELECT payload FROM latest_readings WHERE room_id=?")
+          .get(req.room.id);
+        const previousGas = previous
+          ? JSON.parse(previous.payload).gasStatus
+          : undefined;
+        if (typeof t.gasStatus === "string" && previousGas !== t.gasStatus)
+          record(req.actor.id, req.room.id, "gas_status_changed", {
+            previous: previousGas || "unknown",
+            current: t.gasStatus,
+            source: t.source,
+          });
+        db.prepare("INSERT OR REPLACE INTO latest_readings VALUES(?,?,?)").run(
+          req.room.id,
+          new Date().toISOString(),
+          JSON.stringify(t),
+        );
+      }
+    });
     res.json(redact(req, t));
   });
   app.post("/api/rooms/:roomId/commands", async (req, res) => {

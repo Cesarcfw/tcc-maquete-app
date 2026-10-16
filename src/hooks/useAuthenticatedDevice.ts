@@ -9,20 +9,13 @@ import {
   initialState,
 } from "../domain/maquette";
 import type { LogEntry } from "./useSimulator";
+import { describeAuditEvent } from "../domain/history";
 
 export type AuthenticatedWorkspace = {
   base: string;
   token: string;
   onLogout: () => void;
   onExpired: () => void;
-};
-const eventNames: Record<string, string> = {
-  command_confirmed_simulator: "Comando confirmado pelo serviço",
-  command_unconfirmed: "Comando sem confirmação",
-  gas_status_changed: "Estado do sensor de gás atualizado",
-  room_created: "Ambiente cadastrado",
-  room_updated: "Ambiente atualizado",
-  grants_updated: "Permissões atualizadas",
 };
 export function useAuthenticatedDevice(
   roomId: string,
@@ -93,13 +86,7 @@ export function useAuthenticatedDevice(
             events.map((e) => ({
               id: e.id,
               time: new Date(e.at).toLocaleTimeString("pt-BR"),
-              message: eventNames[e.action] || "Registro do ambiente",
-              type:
-                e.action === "command_unconfirmed"
-                  ? "error"
-                  : e.action === "command_confirmed_simulator"
-                    ? "success"
-                    : "info",
+              ...describeAuditEvent(e.action, e.detail),
             })),
           );
       } catch {

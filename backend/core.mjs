@@ -102,6 +102,10 @@ export async function createCore(options = {}) {
     CREATE TABLE IF NOT EXISTS latest_readings (
       room_id TEXT PRIMARY KEY REFERENCES rooms(id) ON DELETE CASCADE, received_at TEXT NOT NULL, payload TEXT NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS room_connection_state (
+      room_id TEXT PRIMARY KEY REFERENCES rooms(id) ON DELETE CASCADE,
+      state TEXT NOT NULL CHECK(state IN ('online','offline','stale'))
+    );
     CREATE TABLE IF NOT EXISTS commands (
       actor TEXT NOT NULL, room_id TEXT NOT NULL, command_id TEXT NOT NULL, request TEXT NOT NULL,
       status TEXT NOT NULL, response TEXT, PRIMARY KEY(actor,room_id,command_id)

@@ -1584,7 +1584,7 @@ function DemoApp({
                               .length,
                           )}
                           icon="alert-circle-outline"
-                          detail="Eventos classificados como erro"
+                          detail="Falhas de comunicação e alertas ambientais"
                         />
                       </View>
                       <TextInput
@@ -1614,7 +1614,11 @@ function DemoApp({
                       <Panel
                         title="Linha do tempo"
                         icon="timeline-clock-outline"
-                        subtitle="Eventos locais deste ambiente · sem auditoria persistente"
+                        subtitle={
+                          workspace
+                            ? "Eventos persistidos deste ambiente"
+                            : "Eventos desta sessão"
+                        }
                       >
                         {filteredLogs.length === 0 ? (
                           <Note

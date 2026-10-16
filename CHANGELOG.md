@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## Em revisão — histórico de falhas e alertas
+
+- Gás detectado e leitura de gás indisponível passam a aparecer em Falhas / alertas, inclusive registros antigos com estado armazenado.
+- Backend persiste perda de comunicação, leitura antiga e recuperação por quarto, sem repetir o mesmo estado a cada consulta ou reinício.
+- Amostras antigas não geram nova detecção de gás nem substituem a última leitura válida. Documentação e limites em docs/historico-alertas.md.
+
 ## Em revisão — interface do produto
 
 - Entrada exclusivamente por conta; removido o acesso à demonstração.
