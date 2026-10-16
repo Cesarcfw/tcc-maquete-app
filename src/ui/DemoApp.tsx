@@ -137,6 +137,8 @@ export type Workspace = AuthenticatedWorkspace & {
   rooms: SavedRoom[];
   dark: boolean;
   onTheme: (dark: boolean) => void;
+  reduceMotion: boolean;
+  onReduceMotion: (value: boolean) => void;
   message: string;
 };
 const makeIdentity = (account: Account): DemoUser => ({
@@ -154,8 +156,9 @@ const makeIdentity = (account: Account): DemoUser => ({
 const makeRooms = (values: SavedRoom[], base: string): RoomDefinition[] =>
   values.map((value) => ({ ...value, active: !!value.active, endpoint: base }));
 export default function App({ workspace }: { workspace: Workspace }) {
-  const [reduceMotion, setReduceMotion] = useState(false),
-    [systemReduced, setSystemReduced] = useState(false);
+  const [systemReduced, setSystemReduced] = useState(false);
+  const reduceMotion = workspace.reduceMotion;
+  const setReduceMotion = workspace.onReduceMotion;
   const dark = workspace.dark;
   const setDark = workspace.onTheme;
   useEffect(() => {

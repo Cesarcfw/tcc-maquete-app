@@ -1,5 +1,12 @@
 # Histórico de versões
 
+## Em revisão — preferências locais
+
+- Endereço válido em Configurar conexão salvo automaticamente e restaurado ao reabrir, inclusive sem login ou servidor disponível.
+- Tema claro/escuro e opção Reduzir animações preservados no aparelho/navegador; preferência de acessibilidade do sistema continua respeitada.
+- Leitura inicial antes da interação; validação de endereço, gravações ordenadas e aviso de falha. Senha/token não entram nas preferências.
+- AsyncStorage 2.2.0 compatível com Expo; documentação e evidências em docs/preferencias-locais.md. APK anterior exige nova build para receber a mudança.
+
 ## Em revisão — identidade visual SAMAHI
 
 - Símbolo e nome separados; assinaturas para fundos claros/escuros e versão completa para documentos.
