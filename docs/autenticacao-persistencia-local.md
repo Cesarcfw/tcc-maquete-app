@@ -84,6 +84,35 @@ Administração nativa do plugin Better Auth não é exposta diretamente: as rot
 
 ## Configuração e acesso pelo telefone
 
+### Testar no Expo Go antes de gerar APK
+
+Não é necessário fazer merge, publicar no Vercel ou solicitar build EAS para abrir o código local no Expo Go. O projeto usa Expo SDK 57; o Expo Go instalado deve ser compatível com essa versão. Em Android, a versão apropriada pode ser obtida em https://expo.dev/go. As dependências nativas atuais de slider e área segura correspondem ao mapa de módulos do Expo instalado. O plugin que configura HTTP no APK não é aplicado ao aplicativo Expo Go já instalado.
+
+1. Conectar computador e telefone à mesma rede Wi-Fi.
+2. Na raiz do projeto, executar `npx.cmd expo start --go --lan`. Se 8081 já estiver ocupada pelo servidor web, usar `npx.cmd expo start --go --lan --port 8082`.
+3. Abrir Expo Go e escanear o QR code mostrado no terminal. Não é necessário gerar outro APK a cada mudança de interface.
+4. Para avaliar a interface isolada, escolher **Explorar demonstração**. Isso não testa login, banco ou Node-RED.
+5. Para o fluxo completo, manter backend e Node-RED ligados no computador. O backend atual escuta apenas 127.0.0.1: o telefone ainda não consegue acessá-lo. Preparar o endereço de rede do servidor, transporte protegido e acesso no firewall; em **Configurar conexão**, informar o endereço alcançável pelo telefone, por exemplo `https://ENDERECO-DO-SERVIDOR`. O servidor continua intermediando as chamadas ao Node-RED; não é necessário expor seu editor ao telefone.
+6. Não usar 127.0.0.1/localhost no telefone para se referir ao PC. O túnel do Expo disponibiliza o código do app; não publica automaticamente o backend de autenticação.
+
+O teste via Expo Go verifica a execução durante o desenvolvimento. O APK gerado precisa de um teste próprio de instalação, configuração de rede e execução. Não foi realizado teste no telefone físico nesta alteração.
+
+Verificação local adicional: exportação Android concluída com Hermes (877 módulos), em `entregas/verificacao-expo-go`, sem gerar APK ou publicar no EAS. A primeira tentativa foi impedida pela permissão de escrita na pasta temporária do ambiente restrito; a repetição com acesso à pasta temporária concluiu normalmente. Lint, tipos, 14 testes e exportação web também passaram.
+
+Referências: [iniciar desenvolvimento e escanear QR code](https://docs.expo.dev/get-started/start-developing/), [compatibilidade do Expo Go com o SDK](https://docs.expo.dev/troubleshooting/expo-go-version-mismatch/).
+
+### Ajustes da entrada web
+
+A área de login passou a usar os mesmos alinhamentos centralizados da demonstração. Verificado em viewport 1280 × 720: conteúdo entre x=90 e x=1190, y=72 e y=648, portanto centralizado nos dois eixos. O seletor de tema fica fora do fluxo do conteúdo. Em telas menores, a área continua rolável.
+
+`WebInputTheme.web.tsx` usa `color-scheme` e estilos de `:autofill`/`:-webkit-autofill`, inclusive foco, para preservar fundo escuro e texto legível quando o navegador completa os campos. O componente nativo equivalente retorna null, sem injetar CSS no Android. A regra acompanha o tema da entrada e do painel, inclusive demonstração.
+
+Conferidos foco, cor do texto, esquema dark e presença da regra de autofill no navegador. O preenchimento automático real do gerenciador de senhas de César ainda precisa de conferência manual; não foram lidas nem salvas credenciais do navegador. A MDN explica por que apenas background-color não sobrepõe a cor imposta pelo navegador: [pseudo-classe autofill](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:autofill).
+
+TIRE PRINT DESTA PARTE: entrada centralizada e campo preenchido automaticamente no tema escuro, ocultando senha e dados pessoais.
+
+MOSTRE FUNCIONANDO EM VÍDEO OU GIF: completar os campos, alternar claro/escuro e abrir a demonstração no Expo Go; registrar separadamente o teste de login real quando a rede estiver preparada.
+
 Variáveis lidas pelo processo do backend (não carrega .env automaticamente): SAMAHI_HOST (127.0.0.1), SAMAHI_PORT (3001), SAMAHI_PUBLIC_URL (http://127.0.0.1:3001), SAMAHI_NODE_RED_URL (http://127.0.0.1:1880), SAMAHI_DATA_DIR (data) e SAMAHI_ORIGINS (lista separada por vírgulas). No app, EXPO_PUBLIC_BACKEND_URL é somente um endereço público; também há campo de endereço no login.
 
 Para LAN será necessário escolher a interface/IP do notebook, configurar URL/origens, firewall e transporte protegido. O servidor permanece em loopback nesta entrega. HTTP local transmite senha/token sem TLS; esta configuração é de desenvolvimento no próprio PC. Não publicar na internet ou conectar dados reais de pacientes. Para uso na rede compartilhada e pelo Vercel, preparar HTTPS e proteger o acesso direto ao Node-RED. CORS não é autenticação.

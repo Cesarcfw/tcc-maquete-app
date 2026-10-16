@@ -22,6 +22,7 @@ import {
 import { appTheme } from "./theme";
 import DemoApp, { LoginPresentation } from "./DemoApp";
 import { Panel, Note } from "./SharedPanels";
+import WebInputTheme from "./WebInputTheme";
 
 export default function ConnectedApp() {
   const [demo, setDemo] = useState(false);
@@ -114,6 +115,7 @@ export default function ConnectedApp() {
           <SafeAreaView
             style={[styles.flex, { backgroundColor: theme.colors.background }]}
           >
+            <WebInputTheme />
             <ScrollView
               contentContainerStyle={styles.login}
               keyboardShouldPersistTaps="handled"
@@ -304,8 +306,13 @@ function LoginForm({
 }
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  login: { flexGrow: 1, padding: 20, paddingBottom: 40 },
-  themeControl: { alignItems: "flex-end" },
+  login: {
+    flexGrow: 1,
+    padding: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  themeControl: { position: "absolute", top: 8, right: 16, zIndex: 1 },
   primaryButton: { minHeight: 48 },
   connection: { gap: 6 },
 });

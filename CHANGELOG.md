@@ -2,6 +2,7 @@
 
 ## Em desenvolvimento — autenticação e persistência locais
 
+- Entrada centralizada horizontal e verticalmente como a demonstração, com rolagem em telas menores. Campos web recebem esquema de cor e estilos de preenchimento automático compatíveis com o tema, incluindo foco; implementação nativa separada sem CSS.
 - Administração integrada ao layout Stitch: usuários com busca e cadastro em diálogo, permissões por ambiente com salvamento explícito, cartões de conexões, cadastro/edição de quartos e segurança da conta. Temas compartilhados com a entrada; versões mobile empilham os cartões sem sobreposição.
 - Componentes Panel/Note compartilhados entre painel, entrada e administração; removida a página administrativa que duplicava os controles de operação. Configuração do servidor fica recolhida na entrada; o celular prioriza o formulário.
 - Correção da regressão visual: painel Stitch restaurado com login real, quartos persistidos e telemetria/comandos autenticados; formulários administrativos acessíveis pelo menu. Entrada reutiliza logo e planta do projeto.

@@ -72,6 +72,7 @@ import {
 } from "../services/backend";
 import type { DemoUser } from "../domain/access";
 import { AccountManagement } from "./AccountManagement";
+import WebInputTheme from "./WebInputTheme";
 import { Panel, Note } from "./SharedPanels";
 
 type Screen =
@@ -196,6 +197,7 @@ export default function App({
           ),
         }}
       >
+        <WebInputTheme />
         <DemoApp
           workspace={workspace}
           isolated={isolated}
