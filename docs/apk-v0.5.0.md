@@ -1,5 +1,7 @@
 # SAMAHI 0.5.0 — APK interno Android
 
+Registro histórico desta build. A programação por LDR descrita abaixo pertence ao APK 0.5.0 distribuído; a branch atual usa [modos Dia/Noite](modos-dia-noite.md) e exige novo APK. O código novo do backend não aceita mais automatic por LDR.
+
 Preparação em 16/10/2026. Android versionCode 4; pacote com.cesarcfw.tccmaqueteapp. Mesma assinatura remota do projeto Expo. Não é release final nem publicação em loja.
 
 ## Conteúdo

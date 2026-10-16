@@ -1,5 +1,11 @@
-// Equipamento virtual. Estado em memoria; nenhuma ligacao com ESP fisico.
-function createSimulator(clock = Date.now) {
+// Equipamento virtual. Telemetria em memória e configuração de luz persistida na instância.
+// Nenhuma ligação com ESP físico.
+const {
+  defaultLightingSchedule,
+  validLightingSchedule,
+  lightingPeriod,
+} = require("../../shared/lighting-schedule.cjs");
+function createSimulator(clock = Date.now, storage) {
   let s;
   const reset = () => {
     s = {
@@ -12,7 +18,8 @@ function createSimulator(clock = Date.now) {
       ldrRawAdc: 1001,
       intensity: 0,
       lastPositive: 65,
-      lightMode: "automatic",
+      lightMode: "manual",
+      lightingSchedule: defaultLightingSchedule(),
       indicator: "blue",
       scenario: "normal",
       gasUnavailable: false,
@@ -20,12 +27,56 @@ function createSimulator(clock = Date.now) {
     };
   };
   reset();
+  const saved = storage?.load();
+  if (saved) {
+    if (
+      !validLightingSchedule(saved.schedule) ||
+      !["manual", "scheduled"].includes(saved.mode) ||
+      !Number.isInteger(saved.intensity) ||
+      saved.intensity < 0 ||
+      saved.intensity > 100 ||
+      !Number.isInteger(saved.lastPositive) ||
+      saved.lastPositive < 1 ||
+      saved.lastPositive > 100
+    )
+      throw new Error("Configuração persistida da iluminação inválida.");
+    Object.assign(s, {
+      lightingSchedule: saved.schedule,
+      lightMode: saved.mode,
+      intensity: saved.intensity,
+      lastPositive: saved.lastPositive,
+    });
+  }
+  function applySchedule(state) {
+    if (state.lightMode !== "scheduled") return;
+    const period = lightingPeriod(state.lightingSchedule, clock());
+    state.intensity =
+      period === "day"
+        ? state.lightingSchedule.dayIntensity
+        : state.lightingSchedule.nightIntensity;
+    if (state.intensity > 0) state.lastPositive = state.intensity;
+  }
+  function commitLighting(next) {
+    applySchedule(next);
+    try {
+      storage?.save({
+        schedule: next.lightingSchedule,
+        mode: next.lightMode,
+        intensity: next.intensity,
+        lastPositive: next.lastPositive,
+      });
+    } catch {
+      return false;
+    }
+    Object.assign(s, next);
+    return true;
+  }
+  applySchedule(s);
   function sample() {
     if (["offline", "stale"].includes(s.scenario)) return;
     s.sequence++;
     s.sampledAt = clock();
-    if (s.lightMode === "automatic")
-      s.intensity = s.ldrRawAdc >= 1500 ? s.lastPositive : 0;
+    applySchedule(s);
   }
   function telemetry() {
     return {
@@ -56,6 +107,11 @@ function createSimulator(clock = Date.now) {
       darkThresholdAdc: 1500,
       dark: s.ldrRawAdc >= 1500,
       lightMode: s.lightMode,
+      lightingSchedule: { ...s.lightingSchedule },
+      lightingPeriod:
+        s.lightMode === "scheduled"
+          ? lightingPeriod(s.lightingSchedule, s.sampledAt)
+          : null,
       lightOn: s.intensity > 0,
       lightIntensityPercent: s.intensity,
       lastPositiveIntensity: s.lastPositive,
@@ -67,6 +123,7 @@ function createSimulator(clock = Date.now) {
         manchester: true,
         manchesterSimulatedOnly: true,
         hardware: false,
+        scheduledLighting: true,
       },
     };
   }
@@ -81,7 +138,14 @@ function createSimulator(clock = Date.now) {
     if (!body || typeof body !== "object" || Array.isArray(body))
       return fail(400, "Corpo JSON invalido.");
     if (action === "reset") {
+      const lighting = {
+        lightingSchedule: s.lightingSchedule,
+        lightMode: s.lightMode,
+        intensity: s.intensity,
+        lastPositive: s.lastPositive,
+      };
       reset();
+      if (storage) Object.assign(s, lighting);
       sample();
       return { status: 200, body: telemetry() };
     }
@@ -141,11 +205,36 @@ function createSimulator(clock = Date.now) {
           c.intensity > 100
         )
           return fail(400, "Intensidade invalida.");
-        s.lightMode = "manual";
-        s.intensity = c.on ? c.intensity : 0;
-        if (s.intensity > 0) s.lastPositive = s.intensity;
-      } else if (c.kind === "automatic") s.lightMode = "automatic";
-      else if (
+        if (typeof c.on !== "boolean" || c.on !== c.intensity > 0)
+          return fail(400, "Estado da luz incompatível com a intensidade.");
+        const intensity = c.on ? c.intensity : 0;
+        if (
+          !commitLighting({
+            ...s,
+            lightMode: "manual",
+            intensity,
+            lastPositive: intensity > 0 ? intensity : s.lastPositive,
+          })
+        )
+          return fail(
+            503,
+            "Não foi possível salvar a configuração de iluminação.",
+          );
+      } else if (c.kind === "lightingSchedule") {
+        if (
+          typeof c.enabled !== "boolean" ||
+          !validLightingSchedule(c.schedule)
+        )
+          return fail(400, "Programação de luz inválida.");
+        if (
+          !commitLighting({
+            ...s,
+            lightMode: c.enabled ? "scheduled" : "manual",
+            lightingSchedule: { ...c.schedule },
+          })
+        )
+          return fail(503, "Não foi possível salvar a programação.");
+      } else if (
         c.kind === "indicator" &&
         ["red", "orange", "yellow", "green", "blue", "off"].includes(c.color)
       )
@@ -168,4 +257,32 @@ function createSimulator(clock = Date.now) {
   }
   return { sample, telemetry, handle };
 }
-module.exports = { createSimulator, instance: createSimulator() };
+function fileStorage(file) {
+  const fs = require("node:fs"),
+    path = require("node:path");
+  return {
+    load() {
+      return fs.existsSync(file)
+        ? JSON.parse(fs.readFileSync(file, "utf8"))
+        : null;
+    },
+    save(value) {
+      fs.mkdirSync(path.dirname(file), { recursive: true });
+      const temp = `${file}.${process.pid}.tmp`;
+      fs.writeFileSync(temp, JSON.stringify(value), {
+        encoding: "utf8",
+        mode: 0o600,
+      });
+      fs.renameSync(temp, file);
+    },
+  };
+}
+const path = require("node:path");
+const stateFile =
+  process.env.SAMAHI_NODE_RED_STATE_FILE ||
+  path.resolve(__dirname, "../../backend/data/node-red-lighting.json");
+module.exports = {
+  createSimulator,
+  fileStorage,
+  instance: createSimulator(Date.now, fileStorage(stateFile)),
+};

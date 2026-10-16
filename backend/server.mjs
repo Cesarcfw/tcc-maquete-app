@@ -3,6 +3,7 @@ import cors from "cors";
 import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
 import { pathToFileURL } from "node:url";
 import { createCore, fail, text, roomInput, groups, levels } from "./core.mjs";
+import lightingSchedule from "../shared/lighting-schedule.cjs";
 
 export async function createApp(options = {}) {
   const core = await createCore(options);
@@ -297,6 +298,8 @@ export async function createApp(options = {}) {
         "lightIntensityPercent",
         "lastPositiveIntensity",
         "lightMode",
+        "lightingSchedule",
+        "lightingPeriod",
       ],
       indicator: ["indicatorColor"],
     };
@@ -390,10 +393,20 @@ export async function createApp(options = {}) {
     )
       throw fail(400, "Identificador de comando inválido.");
     const kind = command?.kind;
-    if (["light", "automatic"].includes(kind)) requireRoom(req, "light", true);
+    if (["light", "lightingSchedule"].includes(kind))
+      requireRoom(req, "light", true);
     else if (kind === "indicator") requireRoom(req, "indicator", true);
     else if (kind === "acknowledgeGas") requireRoom(req, "sensors");
     else throw fail(400, "Comando inválido.");
+    if (
+      kind === "lightingSchedule" &&
+      (typeof command.enabled !== "boolean" ||
+        !lightingSchedule.validLightingSchedule(command.schedule))
+    )
+      throw fail(
+        400,
+        "Informe horários diferentes em HH:mm, intensidades de 0 a 100% e fuso de Brasília.",
+      );
     if (
       kind === "light" &&
       (typeof command.on !== "boolean" ||
@@ -442,6 +455,25 @@ export async function createApp(options = {}) {
         reply.status !== "applied_in_simulator"
       )
         throw fail(502, "Confirmação incompatível.");
+      if (
+        kind === "lightingSchedule" &&
+        (!lightingSchedule.validLightingSchedule(
+          reply.telemetry.lightingSchedule,
+        ) ||
+          reply.telemetry.lightMode !==
+            (command.enabled ? "scheduled" : "manual") ||
+          [
+            "timeZone",
+            "dayStart",
+            "nightStart",
+            "dayIntensity",
+            "nightIntensity",
+          ].some(
+            (key) =>
+              reply.telemetry.lightingSchedule[key] !== command.schedule[key],
+          ))
+      )
+        throw fail(502, "O serviço não confirmou a programação enviada.");
       db.prepare(
         "UPDATE commands SET status=?,response=? WHERE actor=? AND room_id=? AND command_id=?",
       ).run(

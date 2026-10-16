@@ -10,6 +10,10 @@ import {
 } from "../domain/maquette";
 import type { LogEntry } from "./useSimulator";
 import { describeAuditEvent } from "../domain/history";
+import {
+  validLightingSchedule,
+  type LightingSchedule,
+} from "../../shared/lighting-schedule.cjs";
 
 export type AuthenticatedWorkspace = {
   base: string;
@@ -33,6 +37,11 @@ export function useAuthenticatedDevice(
   const base = workspace?.base,
     token = workspace?.token;
   const decode = (t: Reading) => ({
+    lightMode: t.lightMode,
+    lightingSchedule: validLightingSchedule(t.lightingSchedule)
+      ? t.lightingSchedule
+      : undefined,
+    lightingPeriod: t.lightingPeriod,
     temperature: t.temperatureC ?? 0,
     humidity: t.humidityPercent ?? 0,
     gas: (t.gasStatus || "unavailable") as GasStatus,
@@ -119,7 +128,14 @@ export function useAuthenticatedDevice(
     setPending(false);
   }
   async function send(
-    command: Command | { kind: "automatic" } | { kind: "acknowledgeGas" },
+    command:
+      | Command
+      | {
+          kind: "lightingSchedule";
+          enabled: boolean;
+          schedule: LightingSchedule;
+        }
+      | { kind: "acknowledgeGas" },
   ) {
     if (
       !base ||
@@ -182,8 +198,8 @@ export function useAuthenticatedDevice(
     connection: online
       ? connectionState("normal", device.receivedAt, now)
       : ("offline" as const),
-    setAutomatic() {
-      void send({ kind: "automatic" });
+    configureLighting(schedule: LightingSchedule, enabled: boolean) {
+      void send({ kind: "lightingSchedule", schedule, enabled });
     },
     acknowledgeGasAlert(_actor: string) {
       void send({ kind: "acknowledgeGas" });

@@ -31,7 +31,7 @@ test("Node-RED confirma luz, preserva intensidade ao apagar e mantém Manchester
   sim.handle("simulation", "quarto-01", { gasRawAdc: 843 });
   assert.equal(sim.telemetry().gasAcknowledged, false);
 });
-test("Node-RED valida atomicamente os sensores, pausa comandos antigos/offline e aplica LDR apenas no automático", () => {
+test("Node-RED valida sensores e falhas; LDR não controla mais a iluminação", () => {
   let now = 1000;
   const sim = createSimulator(() => now);
   sim.sample();
@@ -42,18 +42,21 @@ test("Node-RED valida atomicamente os sensores, pausa comandos antigos/offline e
   );
   assert.equal(sim.telemetry().temperatureC, 24);
   sim.handle("simulation", "quarto-01", { ldrRawAdc: 4063 });
-  assert.equal(sim.telemetry().lightIntensityPercent, 65);
+  assert.equal(sim.telemetry().lightIntensityPercent, 0);
   sim.handle("commands", "quarto-01", {
     commandId: "test-2",
     command: { kind: "light", on: true, intensity: 25 },
   });
   sim.handle("simulation", "quarto-01", { ldrRawAdc: 32 });
   assert.equal(sim.telemetry().lightIntensityPercent, 25);
-  sim.handle("commands", "quarto-01", {
-    commandId: "test-3",
-    command: { kind: "automatic" },
-  });
-  assert.equal(sim.telemetry().lightIntensityPercent, 0);
+  assert.equal(
+    sim.handle("commands", "quarto-01", {
+      commandId: "test-3",
+      command: { kind: "automatic" },
+    }).status,
+    400,
+  );
+  assert.equal(sim.telemetry().lightIntensityPercent, 25);
   now += 11000;
   assert.equal(
     sim.handle("commands", "quarto-01", {

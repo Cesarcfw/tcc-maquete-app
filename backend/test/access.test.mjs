@@ -8,6 +8,7 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { DatabaseSync } from "node:sqlite";
 import { createApp } from "../server.mjs";
+import lighting from "../../shared/lighting-schedule.cjs";
 
 test("Login, persistência, permissões por quarto, confirmação e revogação", async () => {
   const dataDir = mkdtempSync(join(tmpdir(), "samahi-auth-test-"));
@@ -22,6 +23,8 @@ test("Login, persistência, permissões por quarto, confirmação e revogação"
     lightIntensityPercent: 0,
     lastPositiveIntensity: 65,
     indicatorColor: "blue",
+    lightingSchedule: lighting.defaultLightingSchedule(),
+    lightMode: "manual",
   };
   let forwarded = 0;
   const upstream = createServer(async (req, res) => {
@@ -164,6 +167,46 @@ test("Login, persistência, permissões por quarto, confirmação e revogação"
     );
     assert.equal(sensor.data.temperatureC, 24);
     assert.equal(sensor.data.lightOn, undefined);
+    assert.equal(sensor.data.lightingSchedule, undefined);
+    assert.equal(
+      (
+        await request(
+          "/api/rooms/quarto-01/commands",
+          "POST",
+          {
+            commandId: "reader-schedule",
+            command: {
+              kind: "lightingSchedule",
+              enabled: true,
+              schedule: lighting.defaultLightingSchedule(),
+            },
+          },
+          reader.token,
+        )
+      ).status,
+      403,
+    );
+    assert.equal(
+      (
+        await request(
+          "/api/rooms/quarto-01/commands",
+          "POST",
+          {
+            commandId: "invalid-schedule",
+            command: {
+              kind: "lightingSchedule",
+              enabled: true,
+              schedule: {
+                ...lighting.defaultLightingSchedule(),
+                nightStart: "07:00",
+              },
+            },
+          },
+          token,
+        )
+      ).status,
+      400,
+    );
     assert.equal(sensor.data.indicatorColor, undefined);
     const command = {
       commandId: "teste-1",
@@ -206,12 +249,31 @@ test("Login, persistência, permissões por quarto, confirmação e revogação"
       200,
     );
     assert.equal(forwarded, 1);
+    // Um serviço que só devolve ACK genérico sem aplicar a configuração não confirma sucesso.
     assert.equal(
       (
         await request(
           "/api/rooms/quarto-01/commands",
           "POST",
-          { ...command, command: { kind: "automatic" } },
+          {
+            commandId: "bad-schedule-ack",
+            command: {
+              kind: "lightingSchedule",
+              enabled: true,
+              schedule: lighting.defaultLightingSchedule(),
+            },
+          },
+          token,
+        )
+      ).status,
+      502,
+    );
+    assert.equal(
+      (
+        await request(
+          "/api/rooms/quarto-01/commands",
+          "POST",
+          { ...command, command: { kind: "light", on: true, intensity: 50 } },
           token,
         )
       ).status,

@@ -26,7 +26,7 @@ Usar **Quarto 01 / ESP32-quarto-01**: é o único ambiente atendido pelo simulad
 | Login | Entrar com sua conta | Catálogo autorizado, sem perfis fictícios |
 | Sensores | Abrir Quarto 01 | Temperatura/umidade e atualização periódica, marcadas como simuladas |
 | Luz | 25% → apagar → religar | Confirmação pelo backend e retorno à última intensidade positiva |
-| Automático | Usar luz automática pelo LDR | No Node-RED, **Ambiente escuro** liga; **Ambiente claro** desliga. Um comando manual volta ao modo manual |
+| Dia / Noite | Configurar os dois inícios e intensidades e ativar horários | Serviço aplica o período pelo horário de Brasília. LDR não controla mais a luz; comando manual pausa a programação. Ver [roteiro atual](modos-dia-noite.md) |
 | Manchester | Selecionar uma cor | Indicador muda após confirmação; independente do gás |
 | Gás | No PC, injetar **Gás detectado** no Node-RED | Faixa de alerta aparece no telefone |
 | Reconhecimento | Reconhecer, fechar e reabrir a faixa | Detecção continua até retirar gás; Manchester não muda |

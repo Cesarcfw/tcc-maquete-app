@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNodeRed } from "./useNodeRed";
+import type { LightingSchedule } from "../../shared/lighting-schedule.cjs";
 import {
   applyCommand,
   Command,
@@ -37,9 +38,9 @@ export function useSimulator(
   );
   return {
     ...(endpoint === "https://servico.exemplo" ? local : remote),
-    setAutomatic() {
+    configureLighting(schedule: LightingSchedule, enabled: boolean) {
       if (endpoint !== "https://servico.exemplo")
-        void remote.send({ kind: "automatic" });
+        void remote.send({ kind: "lightingSchedule", schedule, enabled });
     },
   };
 }

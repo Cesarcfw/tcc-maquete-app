@@ -1,4 +1,5 @@
 import { Platform } from "react-native";
+import type { LightingSchedule } from "../../shared/lighting-schedule.cjs";
 
 export type Account = {
   id: string;
@@ -23,6 +24,9 @@ export type SavedRoom = {
   grants: Partial<Grants>;
 };
 export type Reading = {
+  lightMode?: "manual" | "scheduled";
+  lightingSchedule?: LightingSchedule;
+  lightingPeriod?: "day" | "night" | null;
   source: string;
   sampleAgeMs: number;
   deviceId: string;

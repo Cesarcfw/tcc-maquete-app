@@ -74,6 +74,7 @@ import type { DemoUser } from "../domain/access";
 import { AccountManagement } from "./AccountManagement";
 import WebInputTheme from "./WebInputTheme";
 import { Panel, Note } from "./SharedPanels";
+import { LightingScheduleControls } from "./LightingScheduleControls";
 
 type Screen =
   | "Quartos"
@@ -504,15 +505,12 @@ function Dashboard({
       <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
         Ao religar, restaura a última intensidade positiva.
       </Text>
-      {room.endpoint !== "https://servico.exemplo" && (
-        <Button
-          disabled={!ready || !control("light")}
-          onPress={() => sim.setAutomatic()}
-          icon="brightness-auto"
-        >
-          Usar luz automática pelo LDR
-        </Button>
-      )}
+      <LightingScheduleControls
+        device={sim.device}
+        ready={ready}
+        canControl={control("light")}
+        onConfigure={sim.configureLighting}
+      />
     </Panel>
   ) : (
     <Note

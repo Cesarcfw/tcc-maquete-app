@@ -1,5 +1,12 @@
 # Histórico de versões
 
+## Em revisão — modos Dia e Noite
+
+- Automático por LDR substituído por programação diária de horários e intensidades no fuso de Brasília.
+- Comando autorizado e confirmado pelo serviço; controle manual pausa os horários até reativação. LDR não altera a luz.
+- Node-RED executa a regra sem o app aberto e preserva a configuração em backend/data/node-red-lighting.json. Backup inclui o arquivo quando disponível.
+- Roteiro, limitações e fontes em docs/modos-dia-noite.md. Requer reiniciar backend/Node-RED e atualizar o cliente; nenhum APK recompilado nesta entrega.
+
 ## Em revisão — histórico de falhas e alertas
 
 - Gás detectado e leitura de gás indisponível passam a aparecer em Falhas / alertas, inclusive registros antigos com estado armazenado.
