@@ -1,3 +1,5 @@
+> **Situação atual:** recurso incluído no código 0.6.0 e no [APK registrado](apk-v0.6.0.md). Ensaios abaixo são registros da etapa de implementação; aceite completo do APK instalado e integração física permanecem separados. Consulte o [índice atual](README.md).
+
 # Histórico de falhas e alertas
 
 ## Problema e correção

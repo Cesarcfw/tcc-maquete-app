@@ -1,3 +1,5 @@
+> **Situação atual:** recurso incluído no código 0.6.0 e no [APK registrado](apk-v0.6.0.md). Ensaios abaixo são registros da etapa de implementação; aceite completo do APK instalado e integração física permanecem separados. Consulte o [índice atual](README.md).
+
 # Preferências locais — conexão, tema e animações
 
 ## Necessidade e comportamento
@@ -44,11 +46,11 @@ Navegador isolado em `127.0.0.1:8094`, backend/serviço virtual e banco descart�
 
 ### Validação pendente no telefone
 
-1. Abrir o código atualizado no Expo Go, ou instalar um novo APK que inclua a dependência nativa AsyncStorage. APK antigo não recebe a funcionalidade sozinho.
+1. Abrir o código atualizado no Expo Go, ou instalar o APK 0.6.0, que inclui a dependência nativa AsyncStorage. APK antigo não recebe a funcionalidade sozinho.
 2. Configurar o endereço LAN real do computador, aguardar salvamento e escolher tema/redução de animações.
 3. Fechar o aplicativo pelo gerenciador do telefone e abrir novamente. Conferir endereço/tema; entrar e conferir a opção de animações.
 4. Repetir com o servidor desligado: configuração deve continuar disponível; a conexão pode falhar normalmente.
-5. Registrar aparelho, Android, versão/build e resultado. Ensaio no navegador não comprova retenção em APK físico; nenhuma build nativa foi gerada nesta alteração.
+5. Registrar aparelho, Android, versão/build e resultado. Ensaio no navegador não comprova retenção em APK físico. Na etapa inicial desta funcionalidade não houve build; posteriormente ela foi incluída no APK 0.6.0, conforme o registro vinculado no início.
 
 ## Referências
 

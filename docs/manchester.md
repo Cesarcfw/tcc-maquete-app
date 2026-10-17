@@ -1,23 +1,11 @@
-# Indicador externo — Protocolo de Manchester
+# Indicador externo e Manchester
 
-Requisito esclarecido por César: as cores do indicador representam o Protocolo de Manchester no contexto hospitalar da maquete.
+O aplicativo permite selecionar manualmente **vermelho, laranja, amarelo, verde, azul** e apagar (`off`). Essas cinco cores seguem a referência do Sistema Manchester; no SAMAHI são uma representação visual operada pelo usuário autorizado para exemplificar o indicador externo da maquete.
 
-| Cor      | Prioridade    |
-| -------- | ------------- |
-| Vermelho | Emergente     |
-| Laranja  | Muito urgente |
-| Amarelo  | Urgente       |
-| Verde    | Pouco urgente |
-| Azul     | Não urgente   |
+Não existe algoritmo de triagem, classificação automática de paciente, cronômetro clínico ou vínculo com prontuário. O app não define a prioridade por temperatura, gás ou outro sensor. A validação clínica não faz parte desta implementação.
 
-O aplicativo permite selecionar manualmente uma classificação já definida. Não calcula prioridade a partir dos sensores e não executa triagem. Desligado é somente o comando de apagar o indicador, fora das cinco categorias. Os sensores ambientais não determinam a classificação.
+O alerta de gás é independente: reconhecer gás não muda a cor, e alterar a cor não reconhece ou resolve gás. Controle depende de `indicator: control`; leitura, de `indicator: read` ou control. O comando é `{ "kind": "indicator", "color": "blue" }` dentro do envelope de comandos documentado na [API](api/README.md).
 
-Fonte primária: [Grupo Brasileiro de Classificação de Risco — nota técnica, julho de 2024](https://www.gbcr.org.br/wp-content/uploads/2024/07/Nota-Tecnica-GBCR-Pais-preocupados-mal-estar.pdf). Consulta em 30/09/2026. A tabela de cores e prioridades foi parafraseada a partir da fonte; os controles e o comportamento simulado foram implementados para o projeto.
+No Node-RED, a cor representa estado virtual e reinicia com o processo; não há LED RGB físico integrado por essa cadeia ainda. A capacidade `manchesterSimulatedOnly: true` descreve essa limitação. Não remover essa indicação técnica para aparentar integração concluída.
 
-**TIRE PRINT DESTA PARTE:** indicador com as cinco opções e seus nomes de prioridade, exibindo também o aviso de simulação.
-
-**MOSTRE FUNCIONANDO EM VÍDEO OU GIF:** selecionar cada uma das cinco cores, verificar a confirmação e depois apagar o indicador. Demonstrar que sensores e luz mantêm seus valores. Registrar como simulação até realizar a integração física.
-
-As capturas da prévia anterior são históricas; não representam este ajuste. Android e execução no LED físico continuam pendentes.
-
-Validação do ajuste: lint, TypeScript, os quatro testes de domínio e exportação web aprovados. No navegador, laranja e amarelo foram selecionados e confirmados, mantendo luz em 65% e sensores em 24,6 °C / 58%. Captura atual: capturas/v0.1.0-preview.3_manchester.jpg.
+Fonte primária para as cores: [Grupo Brasileiro de Classificação de Risco — nota técnica de julho de 2024](https://www.gbcr.org.br/wp-content/uploads/2024/07/Nota-Tecnica-GBCR-Pais-preocupados-mal-estar.pdf). A seleção de cor no aplicativo não substitui os protocolos e formação profissional exigidos para classificação clínica.

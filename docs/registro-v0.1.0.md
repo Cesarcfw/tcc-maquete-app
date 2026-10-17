@@ -1,3 +1,5 @@
+> **Registro histórico.** Reflete a etapa/versão indicada, não a situação operacional atual. Consulte o [índice da documentação atual](README.md).
+
 # Registro de desenvolvimento — v0.1.0
 
 ## Problema e entrega

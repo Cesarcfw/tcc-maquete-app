@@ -1,3 +1,5 @@
+> **Situação atual:** recurso incluído no código 0.6.0 e no [APK registrado](apk-v0.6.0.md). Ensaios abaixo são registros da etapa de implementação; aceite completo do APK instalado e integração física permanecem separados. Consulte o [índice atual](README.md).
+
 # Iluminação: modos Dia e Noite
 
 ## Decisão de César
@@ -83,7 +85,7 @@ Para transferir ao notebook: parar Node-RED/backend, gerar o backup, restaurar b
 - Testes com relógio injetado: limites de Dia/Noite, madrugada e intervalo invertido; 0%, pausa manual, LDR independente e gás/Manchester preservados.
 - Persistência em arquivo temporário e reinício; falha de gravação sem mudança do estado confirmado.
 - Backend: permissões, rejeição de configuração inválida e de ACK sem configuração/mode aplicados; fluxo nativo com ativação de horários.
-- Revisão/ensaio de César, novo APK e integração física com Gabriel permanecem pendentes. O firmware físico deverá respeitar a autoridade dos comandos/programação; não manter uma regra antiga de LDR concorrendo com ela.
+- Revisão/ensaio completo de César no APK instalado e integração física com Gabriel permanecem pendentes. O APK 0.6.0 já foi gerado; ver o registro de build vinculado no início deste documento. O firmware físico deverá respeitar a autoridade dos comandos/programação; não manter uma regra antiga de LDR concorrendo com ela.
 
 ## Referências
 

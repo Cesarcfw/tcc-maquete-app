@@ -1,3 +1,5 @@
+> **Registro histórico.** Reflete a etapa/versão indicada, não a situação operacional atual. Consulte o [índice da documentação atual](README.md).
+
 # v0.3.0 — protótipo interativo com React Native Paper
 
 ## Escopo e decisão
