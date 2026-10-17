@@ -1,0 +1,86 @@
+[
+  {
+    "arquivo": "figuras/13-arquitetura.png",
+    "legenda": "Figura 1 Arquitetura implementada do SAMAHI",
+    "origem": "Elaboração deste pacote a partir do código 0.6.0.",
+    "alcance": "Separação entre cliente, backend, banco, serviço virtual e arquivo operacional."
+  },
+  {
+    "arquivo": "figuras/01-login.png",
+    "legenda": "Figura 2 Entrada autenticada e identidade atual",
+    "origem": "Captura web em ambiente descartável, 17/10/2026, código 0.6.0.",
+    "alcance": "Login real por email/senha e apresentação no tema escuro. A planta é ilustrativa, sem escala."
+  },
+  {
+    "arquivo": "figuras/07-mobile-escuro.png",
+    "legenda": "Figura 3 Painel mobile claro e escuro",
+    "origem": "Web 390x844, 16/10, etapa da identidade.",
+    "alcance": "Layout responsivo; não comprova execução em telefone."
+  },
+  {
+    "arquivo": "figuras/08-mobile-claro.png",
+    "legenda": "Figura 3 Painel mobile claro e escuro",
+    "origem": "Web 390x844, 16/10, etapa da identidade.",
+    "alcance": "Layout responsivo; não comprova execução em telefone."
+  },
+  {
+    "arquivo": "figuras/04-permissoes.png",
+    "legenda": "Figura 4 Administração de concessões por ambiente",
+    "origem": "Captura web com conta fictícia e banco descartável, 17/10/2026.",
+    "alcance": "Escolha de pessoa/quarto e níveis separados para luz, sensores, Manchester e histórico."
+  },
+  {
+    "arquivo": "figuras/03-programacao.png",
+    "legenda": "Figura 5 Programação Dia e Noite confirmada pelo serviço",
+    "origem": "Captura web em ambiente descartável, 17/10/2026.",
+    "alcance": "Configuração Dia 07:00/80% e Noite 19:00/15%, modo Noite e confirmação do serviço virtual."
+  },
+  {
+    "arquivo": "figuras/05-gas.png",
+    "legenda": "Figura 6 Faixa de alerta de gás sobre a interface",
+    "origem": "Captura web após injeção de gás no serviço virtual isolado, 17/10/2026.",
+    "alcance": "Alerta de largura total, botões de reconhecimento e separação explícita da triagem do paciente."
+  },
+  {
+    "arquivo": "figuras/06-historico.png",
+    "legenda": "Figura 7 Histórico filtrado por falhas e alertas",
+    "origem": "Captura web de banco descartável, 17/10/2026.",
+    "alcance": "Gás aparece na categoria de alerta. O banco de ensaio também contém transições registradas em verificações anteriores."
+  },
+  {
+    "arquivo": "figuras/09-conexao-restaurada.png",
+    "legenda": "Figura 8 Endereço do backend restaurado na entrada",
+    "origem": "Captura web da implementação das preferências, 16/10/2026.",
+    "alcance": "Endereço de ensaio 127.0.0.1:3104 após fechar e reabrir a aba; tema claro preservado."
+  },
+  {
+    "arquivo": "figuras/02-quartos.png",
+    "legenda": "Imagem complementar 02-quartos.png",
+    "origem": "Captura web em banco descartável, 17/10/2026.",
+    "alcance": "Catálogo autenticado com um quarto; não é dispositivo físico."
+  },
+  {
+    "arquivo": "figuras/10-acessibilidade.png",
+    "legenda": "Imagem complementar 10-acessibilidade.png",
+    "origem": "Captura web da etapa de preferências, 16/10/2026.",
+    "alcance": "Preferência de reduzir animações após recarga e novo login."
+  },
+  {
+    "arquivo": "figuras/11-identidade.png",
+    "legenda": "Imagem complementar 11-identidade.png",
+    "origem": "Prancha técnica da marca, 16/10/2026.",
+    "alcance": "Comparação de exportações; máscaras ilustradas não são capturas de launcher."
+  },
+  {
+    "arquivo": "figuras/12-fluxo-node-red.png",
+    "legenda": "Imagem complementar 12-fluxo-node-red.png",
+    "origem": "Captura histórica do fluxo Node-RED, etapa de integração em 10/10/2026.",
+    "alcance": "Figura complementar histórica. A regra LDR de versões antigas foi substituída por Dia/Noite; não usar como fluxo físico concluído."
+  },
+  {
+    "arquivo": "figuras/14-logo-horizontal.png",
+    "legenda": "Figura 9 Assinatura horizontal atual",
+    "origem": "Assets da marca na versão 0.6.0.",
+    "alcance": "Arte raster para documentos; não é captura de ícone instalado."
+  }
+]
