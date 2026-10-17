@@ -1,21 +1,25 @@
 ## Alteração e finalidade
 
-Descreva a função alterada e o resultado para quem usa o app.
+Descrever comportamento, requisito/cartão e motivo. Informar base e ordem se o PR depender de outro PR.
 
-## Validação
+## Verificação
 
-- [ ] Verificação de tipos
-- [ ] Testes pertinentes
-- [ ] Prévia web gerada e fluxo conferido
-- [ ] Teste Android, quando realizado (registrar dispositivo e resultado)
+| Verificação | Resultado/ambiente ou motivo de não execução |
+| --- | --- |
+| lint / typecheck | |
+| testes domínio / backend | |
+| exportação web | |
+| OpenAPI (se contrato alterado) | |
+| ensaio web / Expo Go / APK | |
 
 ## Documentação e evidências
 
-- [ ] Atualizar CHANGELOG e documentação técnica
-- [ ] Atualizar o registro da versão no Notion
-- [ ] Indicar prints, vídeos ou GIFs necessários
-- [ ] Vincular cartão do Trello
+- [ ] CHANGELOG e guias atuais correspondem ao código.
+- [ ] Contrato, configuração, dados/migração e ADR atualizados quando aplicável.
+- [ ] Notion/Trello atualizados com links e estado real.
+- [ ] Prints/vídeos identificam versão, ambiente e origem de dados.
+- [ ] Segredos, bancos e dados pessoais não foram incluídos.
 
-## Limitações observadas
+## Compatibilidade, riscos e recuperação
 
-Informe o que foi simulado e o que foi validado em equipamento real.
+Descrever efeito sobre banco/arquivo persistido, clientes existentes, distribuição instalada e procedimento de recuperação. Separar resultado observado de pendência. Identificar explicitamente o que usa serviço virtual e o que foi testado em hardware/aparelho real.

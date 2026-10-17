@@ -1,3 +1,5 @@
+> **Registro histórico.** Reflete a etapa/versão indicada, não a situação operacional atual. Consulte o [índice da documentação atual](README.md).
+
 # SAMAHI v0.4.1 — APK de teste Android
 
 ## Objetivo e configuração

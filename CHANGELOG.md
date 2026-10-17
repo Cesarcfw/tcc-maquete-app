@@ -1,5 +1,21 @@
 # Histórico de versões
 
+
+## Não lançado
+
+### Documentação
+
+- Revisão técnica do código 0.6.0: arquitetura, mapa de módulos, requisitos/aceitação, configuração, dados, autenticação, segurança, operação, testes e distribuição.
+- Dois contratos OpenAPI 3.1.1 (backend autenticado e Node-RED interno), seis ADRs, glossário e índice com separação entre guias atuais e registros históricos.
+- README, contribuição, templates de PR/defeito, fontes e roteiros de evidências alinhados à integração atual; material fechado de Matheus preservado.
+- Instruções corrigidas para backend real, agenda Dia/Noite, preferências e APK 0.6.0; limitações de validação física e coleta de incidentes explícitas.
+
+### Manutenção
+
+- CI também abrange PRs cuja base é fix/** ou docs/**, incluindo revisão de documentação em branches empilhadas.
+- Verificador local `npm run docs:check` integrado à CI: links Markdown para arquivos, referências internas OpenAPI e identificadores de operação únicos.
+
+
 ## Documentação para Matheus — estágio 0.6.0
 
 - Pacote de 27 páginas para apoiar a atualização da monografia, em PDF, Word e Markdown, com 14 imagens originais/complementares catalogadas.

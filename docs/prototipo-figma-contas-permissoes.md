@@ -1,3 +1,5 @@
+> **Registro histórico.** Reflete a etapa/versão indicada, não a situação operacional atual. Consulte o [índice da documentação atual](README.md).
+
 # Protótipo Figma — mobile, web, contas e permissões
 
 ## Entrega e estágio

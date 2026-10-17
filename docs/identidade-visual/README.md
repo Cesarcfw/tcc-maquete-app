@@ -1,3 +1,5 @@
+> **Situação atual:** recurso incluído no código 0.6.0 e no [APK registrado](../apk-v0.6.0.md). Ensaios abaixo são registros da etapa de implementação; aceite completo do APK instalado e integração física permanecem separados. Consulte o [índice atual](../README.md).
+
 # Identidade visual — SAMAHI
 
 Padrão para interface, ícone do aplicativo e materiais do projeto. O símbolo da marca existente foi isolado e refinado a partir de `assets/samahi-logo.png`, preservado como referência histórica. Nome: **SAMAHI — Sistema de Automação e Monitoramento de Ambientes Hospitalares Inteligentes**.
@@ -64,13 +66,13 @@ Prompt final da versão monocromática:
 
 ## Evidências e validação
 
-**TIRE PRINT DESTA PARTE:** assinatura no login e no cabeçalho do quarto em tema claro/escuro; prancha com símbolo/nome separados; ícone na tela inicial depois da próxima build, registrando versão e aparelho.
+**TIRE PRINT DESTA PARTE:** assinatura no login e no cabeçalho do quarto em tema claro/escuro; prancha com símbolo/nome separados; ícone do APK 0.6.0 na tela inicial após instalação, registrando versão e aparelho.
 
 **MOSTRE FUNCIONANDO EM VÍDEO OU GIF:** alternar tema no app; fechar e abrir o aplicativo pelo novo ícone após instalação. Não apresentar a prancha de recorte circular como captura de aparelho: ela é uma conferência gráfica da camada exportada.
 
 Verificações automáticas: lint, TypeScript, 18 testes e exportação web. O teste de persistência precisou de execução com acesso à pasta temporária, bloqueada pelo sandbox na primeira tentativa. Conferência de dimensões/transparência das imagens e revisão visual da prancha. Ícone base e favicon têm alpha inteiramente opaco; camadas adaptativas possuem fundo transparente. A marca foi reduzida a 560 px nas camadas adaptativas para manter também os arcos dentro da área circular segura.
 
-Navegador: login desktop 1280 × 720 e painel autenticado mobile 390 × 844 nos temas claro/escuro, com backend/serviço virtual e banco descartáveis. Capturas `login-desktop-light.png`, `login-desktop-dark.png`, `painel-mobile-light.png` e `painel-mobile-dark.png` nesta pasta. Sem erro de console no ensaio; aviso existente de animação nativa indisponível na web, que usa JavaScript. Não houve mudança de fluxo ou ensaio físico de hardware. Validação do ícone no Android instalado permanece pendente de nova build.
+Navegador: login desktop 1280 × 720 e painel autenticado mobile 390 × 844 nos temas claro/escuro, com backend/serviço virtual e banco descartáveis. Capturas `login-desktop-light.png`, `login-desktop-dark.png`, `painel-mobile-light.png` e `painel-mobile-dark.png` nesta pasta. Sem erro de console no ensaio; aviso existente de animação nativa indisponível na web, que usa JavaScript. Não houve mudança de fluxo ou ensaio físico de hardware. O ícone foi incluído na build 0.6.0; sua validação no Android instalado permanece pendente.
 
 ## Referências técnicas
 

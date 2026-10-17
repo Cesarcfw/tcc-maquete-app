@@ -1,0 +1,651 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "SAMAHI — Node-RED interno",
+    "version": "1.0.0",
+    "description": "Documentação do protocolo virtual 1 usado pelo app 0.6.0. Versão do contrato não é versão instalada do Node-RED. Não expor API de cenários/editor na rede."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:1880",
+      "description": "Apenas loopback do computador"
+    }
+  ],
+  "security": [],
+  "tags": [
+    {
+      "name": "Dispositivo virtual",
+      "description": "Operações de dispositivo virtual no serviço documentado."
+    }
+  ],
+  "paths": {
+    "/api/v1/rooms/{roomId}/telemetry": {
+      "get": {
+        "operationId": "getVirtualTelemetry",
+        "summary": "Consultar leitura virtual",
+        "description": "Endpoint interno sem autenticação; manter loopback. roomId atendido: quarto-01. Reset preserva luz somente na instância com storage. Leitura stale bloqueia comando; erro de gravação não confirma luz.",
+        "tags": ["Dispositivo virtual"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Telemetry"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso ausente ou existência ocultada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível, rede ou persistência de luz.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/rooms/{roomId}/commands": {
+      "post": {
+        "operationId": "sendVirtualCommand",
+        "summary": "Aplicar comando no dispositivo virtual",
+        "description": "Endpoint interno sem autenticação; manter loopback. roomId atendido: quarto-01. Reset preserva luz somente na instância com storage. Leitura stale bloqueia comando; erro de gravação não confirma luz.",
+        "tags": ["Dispositivo virtual"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Conteúdo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso ausente ou existência ocultada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito, quarto inativo, comando já registrado sem confirmação ou leitura antiga no dispositivo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível, rede ou persistência de luz.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Timeout reportado pelo serviço virtual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/rooms/{roomId}/simulation": {
+      "post": {
+        "operationId": "changeSimulation",
+        "summary": "Alterar cenário ou sensores virtuais",
+        "description": "Endpoint interno sem autenticação; manter loopback. roomId atendido: quarto-01. Reset preserva luz somente na instância com storage. Leitura stale bloqueia comando; erro de gravação não confirma luz.",
+        "tags": ["Dispositivo virtual"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Telemetry"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Conteúdo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso ausente ou existência ocultada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulationInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/rooms/{roomId}/reset": {
+      "post": {
+        "operationId": "resetVirtualDevice",
+        "summary": "Reiniciar estado virtual",
+        "description": "Endpoint interno sem autenticação; manter loopback. roomId atendido: quarto-01. Reset preserva luz somente na instância com storage. Leitura stale bloqueia comando; erro de gravação não confirma luz.",
+        "tags": ["Dispositivo virtual"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Telemetry"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Conteúdo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso ausente ou existência ocultada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LightingSchedule": {
+        "type": "object",
+        "properties": {
+          "timeZone": {
+            "type": "string",
+            "const": "America/Sao_Paulo"
+          },
+          "dayStart": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+          },
+          "nightStart": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+          },
+          "dayIntensity": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "nightIntensity": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "timeZone",
+          "dayStart",
+          "nightStart",
+          "dayIntensity",
+          "nightIntensity"
+        ],
+        "description": "Horários distintos; dia inclui início e termina no início da noite. Intervalo pode atravessar meia-noite. A desigualdade dos horários é validada em runtime."
+      },
+      "Command": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "const": "light",
+                "type": "string"
+              },
+              "on": {
+                "type": "boolean"
+              },
+              "intensity": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              }
+            },
+            "required": ["kind", "on", "intensity"],
+            "description": "on deve ser exatamente intensity > 0; manual pausa agenda."
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "const": "lightingSchedule",
+                "type": "string"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "schedule": {
+                "$ref": "#/components/schemas/LightingSchedule"
+              }
+            },
+            "required": ["kind", "enabled", "schedule"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "const": "indicator",
+                "type": "string"
+              },
+              "color": {
+                "type": "string",
+                "enum": ["red", "orange", "yellow", "green", "blue", "off"]
+              }
+            },
+            "required": ["kind", "color"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "const": "acknowledgeGas",
+                "type": "string"
+              }
+            },
+            "required": ["kind"],
+            "description": "Reconhece detecção sem eliminar gás. Autorização sensors:read no backend."
+          }
+        ],
+        "discriminator": {
+          "propertyName": "kind"
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": ["error"]
+      },
+      "Telemetry": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "telemetry"
+          },
+          "protocolVersion": {
+            "type": "integer",
+            "const": 1
+          },
+          "roomId": {
+            "type": "string"
+          },
+          "deviceId": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "const": "node-red-simulator"
+          },
+          "sampledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sampleAgeMs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "temperatureC": {
+            "type": "number"
+          },
+          "temperatureValid": {
+            "type": "boolean"
+          },
+          "humidityPercent": {
+            "type": "number"
+          },
+          "humidityValid": {
+            "type": "boolean"
+          },
+          "gasRawAdc": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4095
+          },
+          "gasStatus": {
+            "type": "string",
+            "enum": ["clear", "detected", "unavailable"]
+          },
+          "gasAcknowledged": {
+            "type": "boolean"
+          },
+          "buzzerOn": {
+            "type": "boolean"
+          },
+          "ldrRawAdc": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4095
+          },
+          "dark": {
+            "type": "boolean"
+          },
+          "lightOn": {
+            "type": "boolean"
+          },
+          "lightIntensityPercent": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "lastPositiveIntensity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "lightMode": {
+            "type": "string",
+            "enum": ["manual", "scheduled"]
+          },
+          "lightingSchedule": {
+            "$ref": "#/components/schemas/LightingSchedule"
+          },
+          "lightingPeriod": {
+            "type": ["string", "null"],
+            "enum": ["day", "night", null]
+          },
+          "indicatorColor": {
+            "type": "string",
+            "enum": ["red", "orange", "yellow", "green", "blue", "off"]
+          },
+          "uptimeMs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "adcBits": {
+            "type": "integer",
+            "const": 12
+          },
+          "gasThresholdAdc": {
+            "type": "integer",
+            "const": 2000
+          },
+          "darkThresholdAdc": {
+            "type": "integer",
+            "const": 1500
+          },
+          "scenario": {
+            "type": "string",
+            "enum": ["normal", "offline", "stale", "timeout"]
+          },
+          "capabilities": {
+            "type": "object",
+            "properties": {
+              "network": {
+                "type": "boolean"
+              },
+              "pwm": {
+                "type": "boolean"
+              },
+              "manchester": {
+                "type": "boolean"
+              },
+              "manchesterSimulatedOnly": {
+                "type": "boolean",
+                "const": true
+              },
+              "hardware": {
+                "type": "boolean",
+                "const": false
+              },
+              "scheduledLighting": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "network",
+              "pwm",
+              "manchester",
+              "manchesterSimulatedOnly",
+              "hardware",
+              "scheduledLighting"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "protocolVersion",
+          "roomId",
+          "deviceId",
+          "source",
+          "sampledAt",
+          "sampleAgeMs",
+          "sequence",
+          "temperatureC",
+          "temperatureValid",
+          "humidityPercent",
+          "humidityValid",
+          "gasRawAdc",
+          "gasStatus",
+          "gasAcknowledged",
+          "buzzerOn",
+          "ldrRawAdc",
+          "dark",
+          "lightOn",
+          "lightIntensityPercent",
+          "lastPositiveIntensity",
+          "lightMode",
+          "lightingSchedule",
+          "lightingPeriod",
+          "indicatorColor",
+          "uptimeMs",
+          "adcBits",
+          "gasThresholdAdc",
+          "darkThresholdAdc",
+          "scenario",
+          "capabilities"
+        ]
+      },
+      "CommandRequest": {
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9-]{1,80}$"
+          },
+          "command": {
+            "$ref": "#/components/schemas/Command"
+          }
+        },
+        "required": ["commandId", "command"],
+        "description": "Node-RED atual aceita somente letras/números/hífen no ID. Use esse subconjunto para interoperabilidade. Não há retry automático seguro de comando unconfirmed."
+      },
+      "CommandResult": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "command_result"
+          },
+          "commandId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "const": "applied_in_simulator"
+          },
+          "telemetry": {
+            "$ref": "#/components/schemas/Telemetry"
+          }
+        },
+        "required": ["type", "commandId", "status", "telemetry"]
+      },
+      "SimulationInput": {
+        "type": "object",
+        "properties": {
+          "temperatureC": {
+            "type": "number",
+            "minimum": -40,
+            "maximum": 80
+          },
+          "humidityPercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "gasRawAdc": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4095
+          },
+          "ldrRawAdc": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4095
+          },
+          "gasUnavailable": {
+            "type": "boolean"
+          },
+          "scenario": {
+            "type": "string",
+            "enum": ["normal", "offline", "stale", "timeout"]
+          }
+        },
+        "additionalProperties": false,
+        "description": "Atualização parcial de entradas virtuais. Afeta todos os clientes da instância."
+      }
+    }
+  }
+}

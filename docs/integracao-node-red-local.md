@@ -1,99 +1,82 @@
-# Integração local do SAMAHI com Node-RED
+# Integração Node-RED local
 
-## Entrega e arquitetura
+Fluxo operacional: cliente → backend autenticado → Node-RED → ESP virtual. O telefone precisa alcançar o backend, não o editor Node-RED.
 
-O app web local envia comandos HTTP e consulta a telemetria a cada 2 segundos. O Node-RED mantém um ESP virtual em memória, atualiza suas leituras a cada 2 segundos e devolve confirmação identificada como `applied_in_simulator`. Nenhum equipamento físico foi conectado. O app só altera o estado reportado após resposta válida; não usa aplicação otimista de comandos.
+## Preparar uma instância
 
-```mermaid
-flowchart LR
-  APP[App web local] -->|POST commands + commandId| API[HTTP In → Function → HTTP Response]
-  API --> SIM[ESP virtual no Node-RED]
-  SIM -->|confirmação + telemetria| APP
-  TICK[Inject a cada 2 segundos] --> SIM
-  SENSOR[Botões de sensores no fluxo] --> SIM
-  APP -->|GET telemetry a cada 2 segundos| API
+O projeto usa uma instalação vizinha em `../samahi-node-red`, fora do repositório do app. Se ela já existe, confira os caminhos/configuração e preserve seus fluxos. Para uma instalação nova, execute a partir da raiz do repositório:
+
+```powershell
+New-Item -ItemType Directory -Path ..\samahi-node-red -Force
+Set-Location ..\samahi-node-red
+npm init -y
+npm install --save-exact node-red@5.0.8
+New-Item -ItemType Directory -Path data -Force
 ```
 
-## Como usar neste PC
+5.0.8 é a versão registrada no ambiente do projeto, não uma afirmação de versão mais recente. A instalação usa o registry npm e cria package/lock próprios. Se precisar outra versão, valide os fluxos antes de adotá-la.
 
-1. Node-RED: `C:\Users\cesar\Documents\TCC\samahi-node-red\Iniciar-Node-RED.cmd`.
-2. App conectado: `C:\Users\cesar\Documents\TCC\tcc-maquete-app\Iniciar-App-Node-RED.cmd`.
-3. Editor: http://127.0.0.1:1880/ — aba **SAMAHI — ESP virtual e API**.
-4. App: http://localhost:8082/ — entre com César, acesse o quarto e use os controles de luz.
-5. No Node-RED, clique no pequeno botão do lado esquerdo de cada Inject de teste para mudar temperatura/umidade, gás e luminosidade. Eles mudam entradas simuladas, não comandos da luz.
-6. No app, o botão **Usar luz automática pelo LDR** devolve o controle ao simulador. Escuro usa a última intensidade positiva; claro apaga.
-7. Para parar, Ctrl+C no terminal correspondente. Não iniciar duas instâncias na mesma porta. Reiniciar Node-RED reinicia o estado virtual.
+Crie `settings.js` nessa pasta (o arquivo **não é** uma cópia literal de settings.example.cjs, pois o caminho muda):
 
-O atalho do app define `EXPO_PUBLIC_NODE_RED_URL=http://127.0.0.1:1880` apenas para aquele processo. A URL do quarto pode ser editada em Conexões/Cadastro. O teste de conexão faz GET real quando a URL não é `https://servico.exemplo`. Sem variável, a demonstração interna anterior continua disponível; não existe troca silenciosa para dados internos se a API falhar.
+```javascript
+module.exports = {
+  uiHost: "127.0.0.1",
+  uiPort: 1880,
+  flowFile: "flows.json",
+  functionGlobalContext: {
+    samahi: require("../tcc-maquete-app/integration/node-red/simulator.cjs").instance,
+  },
+  httpNodeCors: {
+    origin: /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/,
+    methods: "GET,POST,OPTIONS",
+  },
+};
+```
 
-## Reproduzir em outro checkout
+`settings.example.cjs` no repositório supõe o módulo ao lado do settings; ajuste o caminho ao copiar. Se renomear a pasta do repositório, atualize o require. Na instalação nova, copie o fluxo e inicie:
 
-Instale Node-RED 5.0.8 em uma pasta de runtime separada, como nesta instalação. Inicie seu executável com `--userDir <pasta-dados> --settings <caminho-absoluto-do-repo>/integration/node-red/settings.example.cjs`. Importe `integration/node-red/flows.json` pelo menu Importar do editor e clique em Deploy. O arquivo de configuração precisa carregar o módulo `simulator.cjs`; importar apenas o JSON não é suficiente. `node integration/node-red/build-flow.cjs` regenera o JSON exportável.
+```powershell
+Copy-Item ..\tcc-maquete-app\integration\node-red\flows.json .\data\flows.json
+npx node-red --userDir ./data --settings ./settings.js
+```
 
-Nesta instalação, settings.js do runtime carrega o módulo do checkout atual. Não remover ou mover essa pasta sem ajustar esse caminho. O backup dos fluxos anteriores está no runtime em `data/flows-before-samahi.json`.
+Em instalação que já tem fluxo, use importação pelo editor e confira duplicatas em vez de sobrescrever o arquivo. Abra `http://127.0.0.1:1880`, confira a aba SAMAHI, faça Deploy e veja o tick de 2 segundos. Reinicie o processo após alterar simulator/shared para recarregar módulos.
 
-## Contrato HTTP v1 de bancada
+## Interfaces
 
-Base: `/api/v1/rooms/quarto-01`.
+Base interna `/api/v1/rooms/quarto-01`:
 
-| Método e rota | Responsabilidade |
+| Método/caminho | Uso |
 | --- | --- |
-| GET `/telemetry` | Última amostra, idade, sensores e atuadores |
-| POST `/commands` | Validar comando, aplicar no ESP virtual e confirmar |
-| POST `/simulation` | Configurar entradas e cenários de teste |
-| POST `/reset` | Reiniciar estado virtual |
+| GET `/telemetry` | Última amostra e idade |
+| POST `/commands` | Controle com commandId e ACK |
+| POST `/simulation` | Alterar entradas/cenários de ensaio |
+| POST `/reset` | Reiniciar estado virtual; preserva luz na instância com storage |
 
-Exemplo de comando:
+[Contrato OpenAPI](api/node-red.openapi.json) e [explicação dos contratos](api/README.md). Endpoints internos **não têm autenticação de aplicação**. Mantenha 1880 em loopback; CORS não impede acesso por outro programa. Backend usa esse endereço interno, valida e filtra a resposta antes de atender o usuário.
 
-```json
-{"commandId":"app-teste-1","command":{"kind":"light","on":true,"intensity":25}}
+## Verificação local não destrutiva
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:1880/api/v1/rooms/quarto-01/telemetry
+Invoke-RestMethod http://127.0.0.1:3001/health
 ```
 
-Comandos adicionais: `indicator` com `color` (red, orange, yellow, green, blue, off); `automatic`; `acknowledgeGas`. Desligar usa intensidade zero; religar envia a última intensidade positiva reportada. O cliente valida `commandId`, status e telemetria da resposta. Não há reenvio automático; os comandos definem estados, sem alternância implícita no servidor.
+Depois faça login no app, abra o quarto e envie uma alteração permitida. A resposta atual usa `source: node-red-simulator` e `status: applied_in_simulator`; não é confirmação de hardware.
 
-Exemplo de entrada de sensor:
+## Cenários de ensaio
 
-```json
-{"temperatureC":30,"humidityPercent":70,"gasRawAdc":3628,"ldrRawAdc":4063}
+Use os Injects do editor ou POST simulation. Eles alteram a instância compartilhada por todos os usuários: avisar a equipe e registrar o ensaio. Exemplo em ambiente de ensaio:
+
+```powershell
+$body = @{ gasRawAdc = 2500; gasUnavailable = $false } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri http://127.0.0.1:1880/api/v1/rooms/quarto-01/simulation -ContentType application/json -Body $body
 ```
 
-Rejeições: 400 corpo/comando inválido; 404 ambiente não cadastrado; 409 amostra antiga; 503 offline; 504 cenário de ausência de confirmação. Este último devolve erro imediatamente, não simula 5 segundos de espera. O cliente limita requisições a 5 segundos para indisponibilidade real da API.
+Cenários: normal, offline (503), stale (para amostragem e envelhece leitura), timeout (504 para comando). `gasUnavailable` distingue falha de leitura de nível detectado. LDR permanece telemetria, com `dark = ldrRawAdc >= 1500`; não comanda mais a iluminação. A polaridade deve ser conferida no circuito físico, não copiada de uma hipótese de ligação.
 
-`sequence`, `uptimeMs`, temperaturas, umidade, ADC de gás/LDR, limiares, modo/intensidade e buzzer seguem as ideias da bancada Wokwi. Diferenças explícitas: `source=node-red-simulator`, `sampledAt`, `sampleAgeMs`, identificação do comando, reconhecimento de gás e Manchester virtual. A sequência reinicia com o runtime/reset. O app calcula a idade usando `sampleAgeMs`, sem exigir relógios sincronizados. Estado e histórico não são banco de dados.
+O script `integration/node-red/check-api.cjs` executa cenários e muda estado; rode somente em instância de ensaio apropriada. Para editar nós, altere `build-flow.cjs` e gere `flows.json` com `node integration/node-red/build-flow.cjs` na raiz.
 
-## Limites importantes
+## Integração física pendente
 
-- Só `quarto-01` é cadastrado no servidor. Outros ambientes no app precisam ser implementados no backend; receberão 404.
-- Manchester funciona aqui somente como atuador virtual, independente de gás. O código Wokwi entregue ainda não tem RGB nem esse comando.
-- Indisponibilidade do sensor de gás é um cenário de teste; o firmware ADC original não identifica cabo desconectado.
-- Firmware Wokwi atual ainda é serial. Para trocar o simulador pelo ESP será necessário transporte de rede, mapeamento das mensagens, confirmações e tratamento de falhas. Não basta apontar o app para o Wokwi.
-- Sem autenticação de backend: perfis e permissões são demonstrativos na interface. Instância restrita ao próprio PC; não abrir o editor/API na rede ou internet como se já tivessem autorização por usuário.
-- Celular não alcança o PC por `127.0.0.1`. Teste móvel em rede e APK conectado ficam pendentes. Vercel não foi atualizado nesta etapa.
-- Temperatura/umidade usadas neste simulador são válidas. A adaptação física deverá incorporar falha DHT/null e validação antes de usar o contrato real.
-
-## Código para estudar
-
-- `src/services/nodeRed.ts`: HTTP, timeout e validação das mensagens.
-- `src/hooks/useNodeRed.ts`: consultas periódicas, comandos pendentes, preservação do último estado e cancelamento de atualização da tela ao trocar ambiente/perfil. Cancelar na interface não desfaz comando que já chegou ao servidor.
-- `src/hooks/useSimulator.ts`: seleção entre demonstração interna e API.
-- `integration/node-red/simulator.cjs`: regras do ESP virtual e validação das entradas.
-- `integration/node-red/build-flow.cjs` e `flows.json`: composição e nós do fluxo.
-- `integration/node-red/settings.example.cjs`: configuração local reproduzível.
-
-## Evidências e verificação
-
-TIRE PRINT DESTA PARTE: fluxo com nós HTTP, atualização a cada 2 segundos e botões de entrada dos sensores; app com retorno de confirmação do Node-RED e luz em 25%.
-
-MOSTRE FUNCIONANDO EM VÍDEO OU GIF: app pede 25%, apaga e religa; Node-RED altera temperatura/umidade e app atualiza; gás dispara a faixa, reconhecimento não altera Manchester; modo automático reage a escuro/claro; offline/timeout preservam estado reportado.
-
-Resultados verificados em 10/10/2026: app web exibiu 24 °C/40%, controle de 25% foi confirmado e observado na API; alteração externa para 30 °C/70%/gás detectado apareceu no app; reconhecimento retornou à API sem retirar a detecção; modo automático enviado pelo app. Prints e transcrição da API ficam em `docs/evidencias/node-red/`. Verificação nativa/móvel não realizada.
-
-Tipos, lint e 14 testes passaram. Exportação web concluída. O teste integrado `node integration/node-red/check-api.cjs` passou em periodicidade, confirmação, validação, offline, timeout, leitura antiga, reconhecimento de gás e CORS local. Botão Inject de temperatura/umidade testado no editor; campos padrão dos Inject corrigidos para eliminar avisos de configuração. O PR desta etapa tem base `feat/stitch-samahi` para isolar a integração do redesign ainda pendente; antes de incorporar à main, revisar a dependência e ajustar a base do PR. CI ampliado para validar também PRs com base em branches feat/.
-
-## Referências oficiais consultadas
-
-- [Node-RED — endpoint HTTP](https://cookbook.nodered.org/http/create-an-http-endpoint)
-- [Node-RED — configuração, Function global context e CORS](https://nodered.org/docs/user-guide/runtime/configuration)
-- [Expo — variáveis públicas do ambiente](https://docs.expo.dev/guides/environment-variables/)
-- [Wokwi — LDR](https://docs.wokwi.com/parts/wokwi-photoresistor-sensor)
-- [Espressif — ADC](https://docs.espressif.com/projects/arduino-esp32/en/latest/api/adc.html)
+O firmware Wokwi histórico não é a implementação deste serviço. Antes de substituir a origem virtual, definir junto com Gabriel transporte, payload/qualidade da leitura, tempo, identidade, segurança, PWM, agenda local e ACK de aplicação. Backend e cliente hoje exigem os identificadores virtuais no contrato; essa substituição exige mudança coordenada e evidências reais.

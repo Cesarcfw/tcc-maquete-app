@@ -1,3 +1,5 @@
+> **Registro histórico.** Reflete a etapa/versão indicada, não a situação operacional atual. Consulte o [índice da documentação atual](README.md).
+
 # SAMAHI 0.5.0 — APK interno Android
 
 Registro histórico desta build. A programação por LDR descrita abaixo pertence ao APK 0.5.0 distribuído; a branch atual usa [modos Dia/Noite](modos-dia-noite.md) e exige novo APK. O código novo do backend não aceita mais automatic por LDR.

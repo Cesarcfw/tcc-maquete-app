@@ -1,3 +1,5 @@
+> **Registro histórico.** Reflete a etapa/versão indicada, não a situação operacional atual. Consulte o [índice da documentação atual](README.md).
+
 # SAMAHI v0.4.0 — redesign baseado no Stitch
 
 Status: candidata em revisão. Responsável pelo aplicativo: César. Base de trabalho: branch `feat/stitch-samahi`, derivada da documentação v0.3.0. Não houve merge, release final, atualização do APK ou publicação de produção por esta tarefa.

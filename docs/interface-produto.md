@@ -1,3 +1,5 @@
+> **Situação atual:** recurso incluído no código 0.6.0 e no [APK registrado](apk-v0.6.0.md). Ensaios abaixo são registros da etapa de implementação; aceite completo do APK instalado e integração física permanecem separados. Consulte o [índice atual](README.md).
+
 # SAMAHI — interface do produto
 
 ## Decisão e escopo
@@ -38,6 +40,6 @@ Identificar figuras como interface web com serviço Node-RED virtual; registrar 
 - Lint, tipos, 14 testes existentes e exportação web aprovados.
 - Conferência web com banco e conta descartáveis, em portas próprias: login, catálogo, luz 25% confirmada, histórico, conta e administração.
 - Alerta de gás, reconhecimento e retorno conferidos. Layout responsivo em 390 × 844 com temas claro/escuro e sem textos de simulação nas telas revisadas.
-- Revisão de César e execução de um novo APK instalado pendentes. O ensaio informado por César se refere à versão anterior à mudança visual.
+- Revisão de César no APK 0.6.0 instalado pendente. A build já inclui esta interface; o ensaio anteriormente informado por César se referia à versão anterior à mudança visual.
 
 Dados como ala/nome do ambiente são cadastros persistidos: esta alteração não os reescreve. O administrador pode editá-los em Ambientes.

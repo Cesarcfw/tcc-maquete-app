@@ -1,0 +1,1993 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "SAMAHI — backend autenticado",
+    "version": "0.1.0",
+    "description": "Contrato documentado do backend usado pelo app 0.6.0. Inclui rotas de domínio e somente as rotas Better Auth consumidas pelo app. Não é um gateway público pronto para internet."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:3001",
+      "description": "PC local padrão; ajustar na LAN"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Operação",
+      "description": "Operações de operação no serviço documentado."
+    },
+    {
+      "name": "Autenticação",
+      "description": "Operações de autenticação no serviço documentado."
+    },
+    {
+      "name": "Conta",
+      "description": "Operações de conta no serviço documentado."
+    },
+    {
+      "name": "Administração",
+      "description": "Operações de administração no serviço documentado."
+    },
+    {
+      "name": "Ambientes",
+      "description": "Operações de ambientes no serviço documentado."
+    },
+    {
+      "name": "Dispositivo",
+      "description": "Operações de dispositivo no serviço documentado."
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Verificar o processo de backend",
+        "description": "Não verifica Node-RED ou dispositivo.",
+        "tags": ["Operação"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "const": "ok",
+                      "type": "string"
+                    },
+                    "service": {
+                      "const": "samahi-backend",
+                      "type": "string"
+                    },
+                    "schemaVersion": {
+                      "const": 1,
+                      "type": "integer"
+                    }
+                  },
+                  "required": ["status", "service", "schemaVersion"]
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/me": {
+      "get": {
+        "operationId": "getMe",
+        "summary": "Obter conta e concessões da sessão",
+        "description": "Obter conta e concessões da sessão",
+        "tags": ["Conta"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "operationId": "listUsers",
+        "summary": "Listar contas (admin)",
+        "description": "Listar contas (admin)",
+        "tags": ["Administração"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Account"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createUser",
+        "summary": "Criar usuário comum (admin)",
+        "description": "Criar usuário comum (admin)",
+        "tags": ["Administração"],
+        "responses": {
+          "201": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "const": "user",
+                      "type": "string"
+                    }
+                  },
+                  "required": ["id", "name", "email", "role"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Conteúdo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito, quarto inativo, comando já registrado sem confirmação ou leitura antiga no dispositivo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "maxLength": 160
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 12,
+                    "maxLength": 128,
+                    "writeOnly": true
+                  }
+                },
+                "required": ["name", "email", "password"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{userId}/grants/{roomId}": {
+      "put": {
+        "operationId": "replaceGrants",
+        "summary": "Substituir os quatro grupos (admin)",
+        "description": "Transação com auditoria; usuário/quarto devem existir. Papel admin não ignora concessões operacionais.",
+        "tags": ["Administração"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ok"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Conteúdo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso ausente ou existência ocultada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Grants"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/users/{userId}/disable": {
+      "post": {
+        "operationId": "userDisable",
+        "summary": "Bloquear usuário comum e remover sessões (admin)",
+        "description": "Bloquear usuário comum e remover sessões (admin)",
+        "tags": ["Administração"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ok"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Conteúdo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso ausente ou existência ocultada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/users/{userId}/enable": {
+      "post": {
+        "operationId": "userEnable",
+        "summary": "Reativar conta (admin)",
+        "description": "Reativar conta (admin)",
+        "tags": ["Administração"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ok"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Conteúdo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso ausente ou existência ocultada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/users/{userId}/password": {
+      "post": {
+        "operationId": "userPassword",
+        "summary": "Redefinir senha de usuário comum e remover sessões (admin)",
+        "description": "Redefinir senha de usuário comum e remover sessões (admin)",
+        "tags": ["Administração"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ok"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Conteúdo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso ausente ou existência ocultada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newPassword": {
+                    "type": "string",
+                    "minLength": 12,
+                    "maxLength": 128,
+                    "writeOnly": true
+                  }
+                },
+                "required": ["newPassword"]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/rooms": {
+      "get": {
+        "operationId": "listRooms",
+        "summary": "Listar ambientes visíveis e concessões",
+        "description": "Admin vê todos os cadastros; demais somente quartos com algum grupo autorizado. Não provisiona dispositivo.",
+        "tags": ["Ambientes"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListedRoom"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createRoom",
+        "summary": "Cadastrar ambiente (admin)",
+        "description": "Cadastrar ambiente (admin)",
+        "tags": ["Ambientes"],
+        "responses": {
+          "201": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Conteúdo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito, quarto inativo, comando já registrado sem confirmação ou leitura antiga no dispositivo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoomInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rooms/{roomId}": {
+      "put": {
+        "operationId": "updateRoom",
+        "summary": "Atualizar ambiente (admin)",
+        "description": "Atualizar ambiente (admin)",
+        "tags": ["Ambientes"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Conteúdo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso ausente ou existência ocultada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito, quarto inativo, comando já registrado sem confirmação ou leitura antiga no dispositivo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "bed": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "wing": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "device": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "active": {
+                    "type": "boolean"
+                  }
+                },
+                "required": ["name", "bed", "wing", "device", "active"],
+                "description": "ID vem da URL e não é alterado."
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/rooms/{roomId}/telemetry": {
+      "get": {
+        "operationId": "getTelemetry",
+        "summary": "Consultar telemetria autorizada",
+        "description": "Pelo menos light/sensors/indicator em read/control. Retorna campos conforme grupo. Observa e persiste transições de gás e conexão nesta consulta; idade >=10000 é stale.",
+        "tags": ["Dispositivo"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Telemetry"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso ausente ou existência ocultada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito, quarto inativo, comando já registrado sem confirmação ou leitura antiga no dispositivo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Resposta upstream incompatível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível, rede ou persistência de luz.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Timeout reportado pelo serviço virtual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/rooms/{roomId}/commands": {
+      "post": {
+        "operationId": "sendCommand",
+        "summary": "Enviar comando e aguardar ACK virtual",
+        "description": "Luz/agenda exigem light:control; indicador indicator:control; reconhecer gás sensors:read. Chave persistida por ator/quarto/ID; repetição só retorna cache quando confirmed e JSON.stringify(command) é idêntico. Resposta não é prova de hardware físico.",
+        "tags": ["Dispositivo"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Conteúdo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso ausente ou existência ocultada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito, quarto inativo, comando já registrado sem confirmação ou leitura antiga no dispositivo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Resposta upstream incompatível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível, rede ou persistência de luz.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Timeout reportado pelo serviço virtual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/rooms/{roomId}/history": {
+      "get": {
+        "operationId": "getHistory",
+        "summary": "Consultar últimos 100 eventos do quarto",
+        "description": "Exige history:read. Ordem id decrescente, sem paginação, sem eventos globais de quarto nulo.",
+        "tags": ["Dispositivo"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEvent"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso ausente ou existência ocultada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito, quarto inativo, comando já registrado sem confirmação ou leitura antiga no dispositivo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/auth/sign-in/email": {
+      "post": {
+        "operationId": "signInEmail",
+        "summary": "Entrar com email e senha",
+        "description": "Handler Better Auth; formato de erros é da biblioteca. Veja o guia de autenticação e documentação oficial.",
+        "tags": ["Autenticação"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Resposta da biblioteca Better Auth 1.7.10. Campos de usuário/sessão não são o contrato de perfil /api/me."
+                }
+              }
+            },
+            "headers": {
+              "set-auth-token": {
+                "description": "Token de sessão lido pelo cliente; exposto pelo CORS do backend. Não registrar em logs.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Conteúdo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de autenticação excedido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "writeOnly": true
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/auth/sign-out": {
+      "post": {
+        "operationId": "signOut",
+        "summary": "Revogar sessão",
+        "description": "Handler Better Auth; formato de erros é da biblioteca. Veja o guia de autenticação e documentação oficial.",
+        "tags": ["Autenticação"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Resposta da biblioteca Better Auth 1.7.10. Campos de usuário/sessão não são o contrato de perfil /api/me."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Conteúdo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de autenticação excedido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/change-password": {
+      "post": {
+        "operationId": "changePassword",
+        "summary": "Alterar a própria senha",
+        "description": "Handler Better Auth; formato de erros é da biblioteca. Veja o guia de autenticação e documentação oficial.",
+        "tags": ["Autenticação"],
+        "responses": {
+          "200": {
+            "description": "Sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Resposta da biblioteca Better Auth 1.7.10. Campos de usuário/sessão não são o contrato de perfil /api/me."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Conteúdo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente, inválida ou conta indisponível.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem privilégio ou origem não autorizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de autenticação excedido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno sem detalhes sensíveis.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currentPassword": {
+                    "type": "string",
+                    "writeOnly": true
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "minLength": 12,
+                    "maxLength": 128,
+                    "writeOnly": true
+                  },
+                  "revokeOtherSessions": {
+                    "type": "boolean"
+                  }
+                },
+                "required": ["currentPassword", "newPassword"]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Token de sessão Better Auth, não necessariamente JWT. No navegador também pode existir cookie da biblioteca."
+      }
+    },
+    "schemas": {
+      "LightingSchedule": {
+        "type": "object",
+        "properties": {
+          "timeZone": {
+            "type": "string",
+            "const": "America/Sao_Paulo"
+          },
+          "dayStart": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+          },
+          "nightStart": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+          },
+          "dayIntensity": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "nightIntensity": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "timeZone",
+          "dayStart",
+          "nightStart",
+          "dayIntensity",
+          "nightIntensity"
+        ],
+        "description": "Horários distintos; dia inclui início e termina no início da noite. Intervalo pode atravessar meia-noite. A desigualdade dos horários é validada em runtime."
+      },
+      "Command": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "const": "light",
+                "type": "string"
+              },
+              "on": {
+                "type": "boolean"
+              },
+              "intensity": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              }
+            },
+            "required": ["kind", "on", "intensity"],
+            "description": "on deve ser exatamente intensity > 0; manual pausa agenda."
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "const": "lightingSchedule",
+                "type": "string"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "schedule": {
+                "$ref": "#/components/schemas/LightingSchedule"
+              }
+            },
+            "required": ["kind", "enabled", "schedule"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "const": "indicator",
+                "type": "string"
+              },
+              "color": {
+                "type": "string",
+                "enum": ["red", "orange", "yellow", "green", "blue", "off"]
+              }
+            },
+            "required": ["kind", "color"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "const": "acknowledgeGas",
+                "type": "string"
+              }
+            },
+            "required": ["kind"],
+            "description": "Reconhece detecção sem eliminar gás. Autorização sensors:read no backend."
+          }
+        ],
+        "discriminator": {
+          "propertyName": "kind"
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": ["error"]
+      },
+      "Grants": {
+        "type": "object",
+        "properties": {
+          "light": {
+            "type": "string",
+            "enum": ["none", "read", "control"]
+          },
+          "sensors": {
+            "type": "string",
+            "enum": ["none", "read"]
+          },
+          "indicator": {
+            "type": "string",
+            "enum": ["none", "read", "control"]
+          },
+          "history": {
+            "type": "string",
+            "enum": ["none", "read"]
+          }
+        },
+        "required": ["light", "sensors", "indicator", "history"],
+        "additionalProperties": false
+      },
+      "PartialGrants": {
+        "type": "object",
+        "properties": {
+          "light": {
+            "type": "string",
+            "enum": ["none", "read", "control"]
+          },
+          "sensors": {
+            "type": "string",
+            "enum": ["none", "read"]
+          },
+          "indicator": {
+            "type": "string",
+            "enum": ["none", "read", "control"]
+          },
+          "history": {
+            "type": "string",
+            "enum": ["none", "read"]
+          }
+        }
+      },
+      "RoomInput": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]{1,64}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "bed": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "wing": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "device": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": ["id", "name", "bed", "wing", "device", "active"]
+      },
+      "Room": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]{1,64}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "bed": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "wing": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "device": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "active": {
+            "type": "integer",
+            "enum": [0, 1]
+          }
+        },
+        "required": ["id", "name", "bed", "wing", "device", "active"]
+      },
+      "ListedRoom": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]{1,64}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "bed": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "wing": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "device": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "active": {
+            "type": "integer",
+            "enum": [0, 1]
+          },
+          "grants": {
+            "$ref": "#/components/schemas/PartialGrants"
+          }
+        },
+        "required": ["id", "name", "bed", "wing", "device", "active", "grants"]
+      },
+      "Account": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "banned": {
+            "type": ["integer", "boolean", "null"]
+          },
+          "grants": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PartialGrants"
+            }
+          }
+        },
+        "required": ["id", "name", "email", "role", "banned", "grants"],
+        "description": "banned reflete o valor retornado pelo driver SQLite. Perfil não traz senha/token."
+      },
+      "Telemetry": {
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "deviceId": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "const": "node-red-simulator"
+          },
+          "sampledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sampleAgeMs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "temperatureC": {
+            "type": "number"
+          },
+          "temperatureValid": {
+            "type": "boolean"
+          },
+          "humidityPercent": {
+            "type": "number"
+          },
+          "humidityValid": {
+            "type": "boolean"
+          },
+          "gasRawAdc": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4095
+          },
+          "gasStatus": {
+            "type": "string",
+            "enum": ["clear", "detected", "unavailable"]
+          },
+          "gasAcknowledged": {
+            "type": "boolean"
+          },
+          "buzzerOn": {
+            "type": "boolean"
+          },
+          "ldrRawAdc": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4095
+          },
+          "dark": {
+            "type": "boolean"
+          },
+          "lightOn": {
+            "type": "boolean"
+          },
+          "lightIntensityPercent": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "lastPositiveIntensity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "lightMode": {
+            "type": "string",
+            "enum": ["manual", "scheduled"]
+          },
+          "lightingSchedule": {
+            "$ref": "#/components/schemas/LightingSchedule"
+          },
+          "lightingPeriod": {
+            "type": ["string", "null"],
+            "enum": ["day", "night", null]
+          },
+          "indicatorColor": {
+            "type": "string",
+            "enum": ["red", "orange", "yellow", "green", "blue", "off"]
+          }
+        },
+        "required": [
+          "roomId",
+          "deviceId",
+          "source",
+          "sampledAt",
+          "sampleAgeMs",
+          "sequence"
+        ],
+        "description": "Campos de sensores/luz/indicador são omitidos conforme concessão. Os campos de identidade/tempo são comuns. Backend valida upstream parcialmente; isto documenta o payload esperado do serviço atual."
+      },
+      "CommandRequest": {
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{1,80}$"
+          },
+          "command": {
+            "$ref": "#/components/schemas/Command"
+          }
+        },
+        "required": ["commandId", "command"],
+        "description": "Node-RED atual aceita somente letras/números/hífen no ID. Use esse subconjunto para interoperabilidade. Não há retry automático seguro de comando unconfirmed."
+      },
+      "CommandResult": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "command_result"
+          },
+          "commandId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "const": "applied_in_simulator"
+          },
+          "telemetry": {
+            "$ref": "#/components/schemas/Telemetry"
+          }
+        },
+        "required": ["type", "commandId", "status", "telemetry"]
+      },
+      "AuditEvent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actor": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": ["id", "at", "actor", "action", "detail"]
+      },
+      "Ok": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": ["ok"]
+      },
+      "AuthError": {
+        "type": "object",
+        "description": "Erro gerado pelo Better Auth, com code/message conforme endpoint; não usa necessariamente o envelope error do domínio.",
+        "additionalProperties": true
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Guia dos contratos neste repositório",
+    "url": "https://github.com/Cesarcfw/tcc-maquete-app/blob/main/docs/api/README.md"
+  }
+}

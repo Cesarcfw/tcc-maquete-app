@@ -1,17 +1,28 @@
-name: Falha no aplicativo
-description: Registrar uma falha reproduzível
+name: Relatar defeito
+description: Registrar falha reproduzível com dados fictícios
+title: "[Bug]: "
 body:
+  - type: markdown
+    attributes:
+      value: "Não envie senha, token, banco ou dados pessoais. Para vulnerabilidade, consulte SECURITY.md e use canal privado."
   - type: input
     id: version
     attributes:
-      label: Versão e ambiente
-      placeholder: v0.1.0, navegador ou modelo Android
+      label: Versão, commit e build
     validations:
       required: true
   - type: textarea
-    id: steps
+    id: environment
     attributes:
-      label: Passos para reproduzir
+      label: Ambiente
+      description: Web, Expo Go ou APK; aparelho/Android ou navegador; backend/Node-RED e origem virtual/física.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Preparação e passos para reproduzir
+      description: Use conta e dados fictícios; informe concessões, quarto e cenário sem credenciais.
     validations:
       required: true
   - type: textarea
@@ -23,4 +34,5 @@ body:
   - type: textarea
     id: evidence
     attributes:
-      label: Evidência e cartão do Trello
+      label: Evidências e impacto
+      description: Prints/logs sem segredos; informar frequência e se há alternativa de uso.
