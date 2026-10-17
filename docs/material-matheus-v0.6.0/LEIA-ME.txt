@@ -1,0 +1,9 @@
+PACOTE PARA MATHEUS - SAMAHI 0.6.0
+
+Leia primeiro o PDF. O DOCX é editável, o Markdown contém o texto e a pasta figuras preserva as imagens em resolução original. O catálogo informa origem e alcance de cada figura.
+
+Estágio: aplicativo compilado, integração Node-RED virtual. Instalação/aceite completo do APK e hardware físico ainda sem registro. Não apresentar capturas web mobile como foto de telefone.
+
+O pacote não inclui banco de usuários, credenciais ou APK. O link para o APK está no documento. Links privados do GitHub exigem acesso.
+
+Registro consolidado em 17/10/2026.

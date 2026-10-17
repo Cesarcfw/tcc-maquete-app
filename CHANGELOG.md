@@ -5,7 +5,7 @@
 - Pacote de 27 páginas para apoiar a atualização da monografia, em PDF, Word e Markdown, com 14 imagens originais/complementares catalogadas.
 - Arquitetura, acesso, banco, contrato, luz manual/Dia e Noite, gás, Manchester, histórico, preferências, marca, rede, build e limites de validação consolidados.
 - Capturas web atuais em banco descartável, referências oficiais verificadas e roteiro de prints/vídeos; sem apresentar ensaio virtual como hardware físico ou aceite do APK.
-- Entrega versionada em docs/entregas/matheus-v0.6.0/. Nenhuma mudança de comportamento do aplicativo.
+- Entrega versionada em docs/material-matheus-v0.6.0/. Nenhuma mudança de comportamento do aplicativo.
 
 ## 0.6.0 — APK interno Android gerado
 
@@ -152,3 +152,4 @@
 - Documentação, testes de domínio e validação automática por PR.
 
 Validação Android e integração real não realizadas nesta entrega.
+
