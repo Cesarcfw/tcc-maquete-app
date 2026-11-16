@@ -3,6 +3,13 @@
 
 ## Não lançado
 
+### Edição de avaliação offline
+
+- Perfil EAS `evaluation` com nome e pacote Android próprios, permitindo instalação junto ao app autenticado.
+- Tela de acesso com conta local Orientador, sem senha nem cadastro, e mesmas telas de ambientes/controles em simulação independente.
+- Agenda Dia/Noite também funciona no simulador local; comandos manuais pausam a agenda. Nenhum backend, Node-RED ou hardware é acionado nessa edição.
+- Inicializador web separado e guia com limitações e roteiro de evidências. Autenticação da edição principal preservada.
+
 ### Indicador de quatro cores
 
 - Removida a seleção laranja do app, backend e simulador; novos comandos usam vermelho, amarelo, verde, azul ou apagar. Leitura legada laranja é preservada sem conversão automática.

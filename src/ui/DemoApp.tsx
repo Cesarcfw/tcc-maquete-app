@@ -76,6 +76,7 @@ import WebInputTheme from "./WebInputTheme";
 import { Panel, Note } from "./SharedPanels";
 import { LightingScheduleControls } from "./LightingScheduleControls";
 import { Brand } from "./Brand";
+import { evaluationUsers } from "../domain/evaluation";
 
 type Screen =
   | "Quartos"
@@ -156,12 +157,24 @@ const makeIdentity = (account: Account): DemoUser => ({
 });
 const makeRooms = (values: SavedRoom[], base: string): RoomDefinition[] =>
   values.map((value) => ({ ...value, active: !!value.active, endpoint: base }));
-export default function App({ workspace }: { workspace: Workspace }) {
+export function OfflineEvaluationApp() {
+  return <App evaluation />;
+}
+
+export default function App({
+  workspace,
+  evaluation = false,
+}: {
+  workspace?: Workspace;
+  evaluation?: boolean;
+}) {
   const [systemReduced, setSystemReduced] = useState(false);
-  const reduceMotion = workspace.reduceMotion;
-  const setReduceMotion = workspace.onReduceMotion;
-  const dark = workspace.dark;
-  const setDark = workspace.onTheme;
+  const [localDark, setLocalDark] = useState(true);
+  const [localReduceMotion, setLocalReduceMotion] = useState(false);
+  const reduceMotion = workspace?.reduceMotion ?? localReduceMotion;
+  const setReduceMotion = workspace?.onReduceMotion ?? setLocalReduceMotion;
+  const dark = workspace?.dark ?? localDark;
+  const setDark = workspace?.onTheme ?? setLocalDark;
   useEffect(() => {
     let live = true;
     AccessibilityInfo.isReduceMotionEnabled().then((value) => {
@@ -198,6 +211,7 @@ export default function App({ workspace }: { workspace: Workspace }) {
         <WebInputTheme />
         <DemoApp
           workspace={workspace}
+          evaluation={evaluation}
           isolated
           dark={dark}
           setDark={setDark}
@@ -711,6 +725,7 @@ function Dashboard({
 
 function DemoApp({
   workspace,
+  evaluation = false,
   isolated,
   dark,
   setDark,
@@ -718,6 +733,7 @@ function DemoApp({
   setReduceMotion,
 }: {
   workspace?: Workspace;
+  evaluation?: boolean;
   isolated: boolean;
   dark: boolean;
   setDark: (value: boolean) => void;
@@ -729,7 +745,11 @@ function DemoApp({
   const desktop = width >= 1100,
     wide = width >= 760;
   const [users, setUsers] = useState(() =>
-      workspace ? [makeIdentity(workspace.account)] : initialUsers(),
+      workspace
+        ? [makeIdentity(workspace.account)]
+        : evaluation
+          ? evaluationUsers()
+          : initialUsers(),
     ),
     [rooms, setRooms] = useState(() =>
       workspace
@@ -1103,80 +1123,131 @@ function DemoApp({
     </View>
   );
 
+  const evaluationLogin = (
+    <ScrollView
+      contentContainerStyle={s.loginScroll}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View style={s.spread}>{themeControl}</View>
+      <LoginPresentation>
+        <Panel
+          title="Acesso de avaliação"
+          icon="account-circle-outline"
+          subtitle="Conta de teste pré-configurada"
+        >
+          <View style={s.row}>
+            <Avatar.Text size={42} label="O" />
+            <View style={s.flex}>
+              <Text variant="titleMedium" style={s.bold}>
+                Orientador
+              </Text>
+              <Text variant="bodyMedium">Administrador da demonstração</Text>
+            </View>
+          </View>
+          <Text variant="bodyMedium">
+            Entre para explorar os quartos e controles. Não é necessário
+            cadastrar conta, informar senha ou iniciar um servidor.
+          </Text>
+          <Button
+            mode="contained"
+            icon="login"
+            onPress={() => changeSession(users[0].id)}
+          >
+            Entrar como Orientador
+          </Button>
+          <Note
+            title="Demonstração independente"
+            text="Dados e comandos simulados no aparelho. Nenhum equipamento físico conectado."
+          />
+        </Panel>
+      </LoginPresentation>
+    </ScrollView>
+  );
+
   return (
     <SafeAreaView style={[s.root, { backgroundColor: colors.background }]}>
       <StatusBar style={dark ? "light" : "dark"} />
       {!user ? (
-        <ScrollView contentContainerStyle={s.loginScroll}>
-          <View style={[s.loginPage, wide && s.grid]}>
-            <View style={s.column}>
-              <View style={s.spread}>
-                <Brand />
-                {themeControl}
-              </View>
-              <Text
-                variant={wide ? "displaySmall" : "headlineLarge"}
-                style={s.bold}
-              >
-                Seu ambiente, ao seu alcance.
-              </Text>
-              <Text
-                variant="bodyLarge"
-                style={{ color: colors.onSurfaceVariant }}
-              >
-                Controle da iluminação, acompanhamento de sensores e indicador
-                externo em uma interface.
-              </Text>
-              <Blueprint intensity={65} indicator="blue" />
-              <Note
-                title="Modo de demonstração"
-                text="Dados e comandos simulados. Nenhum equipamento físico conectado."
-              />
-            </View>
-            <View style={s.column}>
-              <Panel
-                title="Escolha um perfil"
-                icon="account-circle-outline"
-                subtitle="Perfis fictícios · sem autenticação real"
-              >
-                {users.map((profile) => (
-                  <View
-                    key={profile.id}
-                    style={[s.profile, { borderColor: colors.outlineVariant }]}
-                  >
-                    <View style={s.row}>
-                      <Avatar.Text size={38} label={profile.name.slice(0, 1)} />
-                      <View style={s.flex}>
-                        <Text variant="titleMedium" style={s.bold}>
-                          {profile.name}
-                        </Text>
-                        <Text variant="bodySmall">
-                          {profile.admin
-                            ? "Administrador"
-                            : "Usuário com permissões específicas"}
-                        </Text>
-                      </View>
-                    </View>
-                    <Button
-                      mode={profile.admin ? "contained" : "outlined"}
-                      accessibilityLabel={`Entrar como ${profile.name}`}
-                      onPress={() => changeSession(profile.id)}
-                    >
-                      Entrar como {profile.name}
-                    </Button>
-                  </View>
-                ))}
+        evaluation ? (
+          evaluationLogin
+        ) : (
+          <ScrollView contentContainerStyle={s.loginScroll}>
+            <View style={[s.loginPage, wide && s.grid]}>
+              <View style={s.column}>
+                <View style={s.spread}>
+                  <Brand />
+                  {themeControl}
+                </View>
                 <Text
-                  variant="bodySmall"
+                  variant={wide ? "displaySmall" : "headlineLarge"}
+                  style={s.bold}
+                >
+                  Seu ambiente, ao seu alcance.
+                </Text>
+                <Text
+                  variant="bodyLarge"
                   style={{ color: colors.onSurfaceVariant }}
                 >
-                  Recarregar reinicia o cadastro local. O estado do Node-RED
-                  permanece enquanto ele estiver rodando.
+                  Controle da iluminação, acompanhamento de sensores e indicador
+                  externo em uma interface.
                 </Text>
-              </Panel>
+                <Blueprint intensity={65} indicator="blue" />
+                <Note
+                  title="Modo de demonstração"
+                  text="Dados e comandos simulados. Nenhum equipamento físico conectado."
+                />
+              </View>
+              <View style={s.column}>
+                <Panel
+                  title="Escolha um perfil"
+                  icon="account-circle-outline"
+                  subtitle="Perfis fictícios · sem autenticação real"
+                >
+                  {users.map((profile) => (
+                    <View
+                      key={profile.id}
+                      style={[
+                        s.profile,
+                        { borderColor: colors.outlineVariant },
+                      ]}
+                    >
+                      <View style={s.row}>
+                        <Avatar.Text
+                          size={38}
+                          label={profile.name.slice(0, 1)}
+                        />
+                        <View style={s.flex}>
+                          <Text variant="titleMedium" style={s.bold}>
+                            {profile.name}
+                          </Text>
+                          <Text variant="bodySmall">
+                            {profile.admin
+                              ? "Administrador"
+                              : "Usuário com permissões específicas"}
+                          </Text>
+                        </View>
+                      </View>
+                      <Button
+                        mode={profile.admin ? "contained" : "outlined"}
+                        accessibilityLabel={`Entrar como ${profile.name}`}
+                        onPress={() => changeSession(profile.id)}
+                      >
+                        Entrar como {profile.name}
+                      </Button>
+                    </View>
+                  ))}
+                  <Text
+                    variant="bodySmall"
+                    style={{ color: colors.onSurfaceVariant }}
+                  >
+                    Recarregar reinicia o cadastro local. O estado do Node-RED
+                    permanece enquanto ele estiver rodando.
+                  </Text>
+                </Panel>
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        )
       ) : (
         <View style={s.shell}>
           {desktop && (
@@ -1273,7 +1344,7 @@ function DemoApp({
                 style={{ backgroundColor: colors.primaryContainer }}
                 textStyle={{ fontSize: 11 }}
               >
-                Conta autenticada
+                {workspace ? "Conta autenticada" : "Conta de teste"}
               </Chip>
               {themeControl}
             </View>
