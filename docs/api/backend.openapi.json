@@ -1607,7 +1607,7 @@
               },
               "color": {
                 "type": "string",
-                "enum": ["red", "orange", "yellow", "green", "blue", "off"]
+                "enum": ["red", "yellow", "green", "blue", "off"]
               }
             },
             "required": ["kind", "color"]

@@ -116,6 +116,20 @@ test("Cliente nativo Bearer: login, sensores, controles, gas, historico e logout
       true,
     );
     await command({ kind: "indicator", color: "red" });
+    assert.equal(
+      (await command({ kind: "indicator", color: "yellow" })).indicatorColor,
+      "yellow",
+    );
+    assert.equal(
+      (
+        await request(route + "commands", {
+          commandId: `phone-${++id}`,
+          command: { kind: "indicator", color: "orange" },
+        })
+      ).status,
+      400,
+    );
+    await command({ kind: "indicator", color: "red" });
     const schedule = {
       ...lighting.defaultLightingSchedule(),
       dayIntensity: 35,

@@ -236,7 +236,7 @@ function createSimulator(clock = Date.now, storage) {
           return fail(503, "Não foi possível salvar a programação.");
       } else if (
         c.kind === "indicator" &&
-        ["red", "orange", "yellow", "green", "blue", "off"].includes(c.color)
+        ["red", "yellow", "green", "blue", "off"].includes(c.color)
       )
         s.indicator = c.color;
       else if (c.kind === "acknowledgeGas") {

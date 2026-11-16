@@ -46,6 +46,7 @@ import {
   gasStatusLabels,
   IndicatorColor,
   indicatorPriorities,
+  selectableIndicatorColors,
   Scenario,
   toggleLight,
 } from "../domain/maquette";
@@ -102,7 +103,7 @@ const navIcons: Record<Screen, string> = {
 const navLabels: Partial<Record<Screen, string>> = {
   Painel: "Visão geral",
   Sensores: "Sensores e gás",
-  Manchester: "Triagem Manchester",
+  Manchester: "Indicador de triagem",
   Usuários: "Usuários e permissões",
 };
 const indicatorColors: Record<IndicatorColor, string> = {
@@ -565,9 +566,9 @@ function Dashboard({
   );
   const triage = read("indicator") ? (
     <Panel
-      title="Triagem Manchester"
+      title="Indicador de triagem"
       icon="medical-bag"
-      subtitle="Indicador externo · seleção manual"
+      subtitle="Indicador externo · quatro cores · seleção manual"
     >
       <View
         style={[
@@ -594,31 +595,29 @@ function Dashboard({
         </Text>
       </View>
       <View style={s.triageOptions}>
-        {(["red", "orange", "yellow", "green", "blue"] as IndicatorColor[]).map(
-          (color) => (
-            <Button
-              key={color}
-              mode={
-                sim.device.indicator === color ? "contained-tonal" : "outlined"
-              }
-              disabled={!ready || !control("indicator")}
-              style={{ borderColor: indicatorColors[color] }}
-              contentStyle={s.triageButton}
-              accessibilityLabel={`Indicador ${colorNames[color]}`}
-              icon={() => (
-                <View
-                  style={[
-                    s.priorityDot,
-                    { backgroundColor: indicatorColors[color] },
-                  ]}
-                />
-              )}
-              onPress={() => send({ kind: "indicator", color })}
-            >
-              {colorNames[color]} · {indicatorPriorities[color]}
-            </Button>
-          ),
-        )}
+        {selectableIndicatorColors.map((color) => (
+          <Button
+            key={color}
+            mode={
+              sim.device.indicator === color ? "contained-tonal" : "outlined"
+            }
+            disabled={!ready || !control("indicator")}
+            style={{ borderColor: indicatorColors[color] }}
+            contentStyle={s.triageButton}
+            accessibilityLabel={`Indicador ${colorNames[color]}`}
+            icon={() => (
+              <View
+                style={[
+                  s.priorityDot,
+                  { backgroundColor: indicatorColors[color] },
+                ]}
+              />
+            )}
+            onPress={() => send({ kind: "indicator", color })}
+          >
+            {colorNames[color]} · {indicatorPriorities[color]}
+          </Button>
+        ))}
       </View>
       <Button
         mode="outlined"
@@ -630,7 +629,8 @@ function Dashboard({
       </Button>
       <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
         A cor muda após confirmação do serviço. O aplicativo não realiza
-        classificação clínica.
+        classificação clínica. Esta versão usa uma seleção simplificada de
+        quatro cores; não representa o conjunto completo do Sistema Manchester.
       </Text>
     </Panel>
   ) : (
@@ -1059,7 +1059,7 @@ function DemoApp({
     Painel: room.name,
     Iluminação: "Controle de iluminação",
     Sensores: "Sensores e gás",
-    Manchester: "Triagem Manchester",
+    Manchester: "Indicador de triagem",
     Histórico: "Histórico do ambiente",
     Conta: "Minha conta",
     Conexões: "Conexões e dispositivos",

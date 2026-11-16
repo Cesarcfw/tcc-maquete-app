@@ -16,7 +16,7 @@ Prioridades: autorização no servidor; estado apresentado somente após confirm
 - Operação inicial no PC, transferível ao notebook. Rede local HTTP é o cenário atual de ensaio.
 - Dispositivo implementado: virtual, um quarto. Não há transporte para ESP físico implementado nesta cadeia.
 - Vercel publica o cliente estático. Não hospeda o SQLite local nem o Node-RED por consequência dessa publicação.
-- Manchester é seleção manual independente. Gás por ADC não informa espécie/toxicidade/concentração calibrada.
+- O indicador usa seleção manual independente e simplificada de quatro cores (sem laranja), sem representar todo o Sistema Manchester. Gás por ADC não informa espécie/toxicidade/concentração calibrada.
 - Não há coleta contínua de incidentes no backend sem requisições de telemetria, nem notificações push.
 
 ## 3. Contexto e contêineres

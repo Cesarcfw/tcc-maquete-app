@@ -5,7 +5,28 @@ import {
   connectionState,
   initialState,
   toggleLight,
+  selectableIndicatorColors,
 } from "../src/domain/maquette";
+test("indicador do protótipo oferece quatro cores e rejeita laranja como novo comando", () => {
+  assert.deepEqual(selectableIndicatorColors, [
+    "red",
+    "yellow",
+    "green",
+    "blue",
+  ]);
+  assert.equal(
+    applyCommand(initialState(0), { kind: "indicator", color: "yellow" })
+      .indicator,
+    "yellow",
+  );
+  // Entrada externa invalida: a verificacao em execucao protege tambem o modo local.
+  assert.throws(() =>
+    applyCommand(initialState(0), {
+      kind: "indicator",
+      color: "orange",
+    } as never),
+  );
+});
 test("desligar e religar restaura a última intensidade positiva", () => {
   const off = applyCommand(initialState(0), toggleLight(initialState(0)));
   assert.equal(off.intensity, 0);
