@@ -8,7 +8,7 @@ Referência desta documentação: **aplicativo 0.6.0**, backend 0.1.0 e protocol
 
 - Iluminação: ligar/desligar, intensidade 0–100% e programação Dia/Noite em `America/Sao_Paulo`.
 - Temperatura, umidade, gás e estado de comunicação.
-- Indicador manual com cinco cores de Manchester e opção de apagar, independente dos alertas de gás.
+- Indicador manual simplificado com vermelho, amarelo, verde, azul e opção de apagar, independente dos alertas de gás. Não representa o conjunto completo de Manchester.
 - Contas, cadastro de ambientes, concessões por grupo e histórico persistente.
 - Temas claro/escuro, redução de movimento e endereço do backend preservados no dispositivo.
 

@@ -418,9 +418,7 @@ export async function createApp(options = {}) {
       throw fail(400, "Intensidade inválida.");
     if (
       kind === "indicator" &&
-      !["red", "orange", "yellow", "green", "blue", "off"].includes(
-        command.color,
-      )
+      !["red", "yellow", "green", "blue", "off"].includes(command.color)
     )
       throw fail(400, "Cor inválida.");
     const request = JSON.stringify(command);
