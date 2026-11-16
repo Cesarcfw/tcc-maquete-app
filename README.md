@@ -14,6 +14,8 @@ Referência desta documentação: **aplicativo 0.6.0**, backend 0.1.0 e protocol
 
 Não há classificação clínica automática, identificação de gás tóxico ou prontuário. Cadastrar um ambiente não provisiona um novo dispositivo.
 
+Há uma [edição de avaliação offline para o orientador](docs/demo-orientador-offline.md), com conta de teste pré-configurada e pacote Android separado. Use `Iniciar-Demo-Orientador.cmd` para explorar a interface web sem backend; essa edição não controla hardware.
+
 ## Começar pelo computador
 
 Pré-requisitos: **Node.js 24.15 ou superior da série 24**, npm e Node-RED configurado com os arquivos deste repositório. Execute na raiz:
