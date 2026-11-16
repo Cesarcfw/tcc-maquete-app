@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useNodeRed } from "./useNodeRed";
 import type { LightingSchedule } from "../../shared/lighting-schedule.cjs";
+import { validLightingSchedule } from "../../shared/lighting-schedule.cjs";
+import {
+  applyLocalLightingSchedule,
+  localScheduleDefaults,
+} from "../domain/evaluation";
 import {
   applyCommand,
   Command,
@@ -12,6 +17,7 @@ import {
   gasStatusLabels,
   applyGasReading,
   acknowledgeGas,
+  DeviceState,
 } from "../domain/maquette";
 export type LogEntry = {
   id: number;
@@ -20,7 +26,12 @@ export type LogEntry = {
   type: "info" | "success" | "error";
 };
 const initialSession = () => ({
-  device: initialState(),
+  device: {
+    ...initialState(),
+    lightMode: "manual",
+    lightingSchedule: localScheduleDefaults(),
+    lightingPeriod: null,
+  } as DeviceState,
   scenario: "normal" as Scenario,
   pending: false,
   notice: "Simulação pronta. Nenhum equipamento físico conectado.",
@@ -41,6 +52,7 @@ export function useSimulator(
     configureLighting(schedule: LightingSchedule, enabled: boolean) {
       if (endpoint !== "https://servico.exemplo")
         void remote.send({ kind: "lightingSchedule", schedule, enabled });
+      else local.configureLighting(schedule, enabled);
     },
   };
 }
@@ -124,7 +136,13 @@ function useLocalSimulator(environment = "quarto-01") {
         Object.entries(sessionsRef.current).map(([id, current]) => [
           id,
           current.scenario === "normal" || current.scenario === "timeout"
-            ? { ...current, device: { ...current.device, receivedAt: time } }
+            ? {
+                ...current,
+                device: {
+                  ...applyLocalLightingSchedule(current.device, time),
+                  receivedAt: time,
+                },
+              }
             : current,
         ]),
       );
@@ -216,7 +234,17 @@ function useLocalSimulator(environment = "quarto-01") {
                 {
                   ...value,
                   pending: false,
-                  device: applyCommand(value.device, command),
+                  device: {
+                    ...applyCommand(value.device, command),
+                    lightMode:
+                      command.kind === "light"
+                        ? "manual"
+                        : value.device.lightMode,
+                    lightingPeriod:
+                      command.kind === "light"
+                        ? null
+                        : value.device.lightingPeriod,
+                  },
                   notice: `${label}: confirmado na simulação.`,
                 },
                 `${label}: confirmado na simulação.`,
@@ -265,6 +293,39 @@ function useLocalSimulator(environment = "quarto-01") {
           },
           `Sensor de gás (simulação): ${gasStatusLabels[status]}.`,
           status === "detected" ? "error" : "info",
+        ),
+      );
+    },
+    configureLighting(schedule: LightingSchedule, enabled: boolean) {
+      const current = sessionsRef.current[environment];
+      if (
+        !current ||
+        busy.current ||
+        connectionState(
+          current.scenario,
+          current.device.receivedAt,
+          Date.now(),
+        ) !== "online"
+      )
+        return;
+      if (!validLightingSchedule(schedule)) return;
+      update(environment, (value) =>
+        log(
+          {
+            ...value,
+            device: applyLocalLightingSchedule(
+              {
+                ...value.device,
+                lightingSchedule: { ...schedule },
+                lightMode: enabled ? "scheduled" : "manual",
+                lightingPeriod: null,
+              },
+              Date.now(),
+            ),
+            notice: "Programação de iluminação aplicada na simulação local.",
+          },
+          "Programação Dia/Noite atualizada na simulação.",
+          "success",
         ),
       );
     },
