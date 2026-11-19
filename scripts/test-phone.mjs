@@ -155,10 +155,11 @@ try {
     if (r.ok) {
       const data = await r.json();
       nodeRedRunning =
-        data.source === "node-red-simulator" && data.roomId === "quarto-01";
+        ["node-red-simulator", "esp32-physical"].includes(data.source) &&
+        data.roomId === "quarto-01";
     } else if (r.status === 503) {
       console.log(
-        "Node-RED ativo, mas o simulador esta offline. Use o cenario normal no editor para validar controles.",
+        "Node-RED ativo, aguardando telemetria. Confira o ESP e a rede antes de validar controles.",
       );
       nodeRedRunning = true;
     }
@@ -219,6 +220,7 @@ try {
     {
       REACT_NATIVE_PACKAGER_HOSTNAME: host,
       EXPO_PUBLIC_BACKEND_URL: backendURL,
+      APP_VARIANT: "integrated",
     },
   );
 } catch (error) {
