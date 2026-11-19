@@ -1,21 +1,23 @@
+import { decodeReading } from "../domain/reading";
+import { confirmedReply } from "../../shared/device-contract.cjs";
 import {
   Command,
   DeviceState,
   GasStatus,
   IndicatorColor,
 } from "../domain/maquette";
-import {
-  validLightingSchedule,
-  type LightingSchedule,
-} from "../../shared/lighting-schedule.cjs";
+import { type LightingSchedule } from "../../shared/lighting-schedule.cjs";
 export type Telemetry = {
   lightMode?: "manual" | "scheduled";
   lightingSchedule?: LightingSchedule;
   lightingPeriod?: "day" | "night" | null;
-  source: "node-red-simulator";
+  source: "node-red-simulator" | "esp32-physical";
   roomId: string;
-  temperatureC: number;
-  humidityPercent: number;
+  deviceId: string;
+  temperatureC: number | null;
+  temperatureValid?: boolean;
+  humidityPercent: number | null;
+  humidityValid?: boolean;
   gasStatus: GasStatus;
   gasAcknowledged: boolean;
   sampleAgeMs: number;
@@ -28,10 +30,8 @@ export function decodeTelemetry(value: unknown, roomId: string): DeviceState {
   const t = value as Telemetry;
   if (
     !t ||
-    t.source !== "node-red-simulator" ||
+    !["node-red-simulator", "esp32-physical"].includes(t.source) ||
     t.roomId !== roomId ||
-    !Number.isFinite(t.temperatureC) ||
-    !Number.isFinite(t.humidityPercent) ||
     !Number.isFinite(t.sampleAgeMs) ||
     t.sampleAgeMs < 0 ||
     !Number.isInteger(t.lightIntensityPercent) ||
@@ -49,22 +49,7 @@ export function decodeTelemetry(value: unknown, roomId: string): DeviceState {
     )
   )
     throw new Error("Telemetria incompatível com este ambiente.");
-  return {
-    lightMode: t.lightMode,
-    lightingSchedule: validLightingSchedule(t.lightingSchedule)
-      ? t.lightingSchedule
-      : undefined,
-    lightingPeriod: t.lightingPeriod,
-    temperature: t.temperatureC,
-    humidity: t.humidityPercent,
-    gas: t.gasStatus,
-    gasAcknowledged: t.gasAcknowledged,
-    receivedAt: Date.now() - t.sampleAgeMs,
-    lightOn: t.lightOn,
-    intensity: t.lightIntensityPercent,
-    lastPositiveIntensity: t.lastPositiveIntensity,
-    indicator: t.indicatorColor,
-  };
+  return decodeReading(t);
 }
 export async function requestNodeRed(
   endpoint: string,
@@ -110,10 +95,7 @@ export async function sendNodeRedCommand(
     commandId,
     command,
   });
-  if (
-    result.commandId !== commandId ||
-    result.status !== "applied_in_simulator"
-  )
+  if (!confirmedReply(result, commandId, command.kind))
     throw new Error("Confirmação inválida.");
   return decodeTelemetry(result.telemetry, roomId);
 }
