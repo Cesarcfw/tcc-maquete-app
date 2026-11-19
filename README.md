@@ -4,7 +4,7 @@
 
 ## Estado atual
 
-Referência: **app 0.6.0**, backend 0.1.0 e telemetria 1. A branch atual prepara a [integração física quarto-01 / ESP32-bancada](docs/integracao-esp-fisico.md), com ACK, sensores, alerta LED e agenda no gateway. A simulação continua um modo separado, sem fallback automático. Testes locais com ESP sintético não equivalem ao aceite na placa/telefone. O APK anterior não contém automaticamente estas mudanças.
+Referência desta candidata: **app 0.7.0**, backend 0.1.0 e telemetria 1. Inclui a [integração física quarto-01 / ESP32-bancada](docs/integracao-esp-fisico.md), com ACK, sensores, alerta LED e agenda no gateway. A simulação continua um modo separado, sem fallback automático. Testes locais com ESP sintético não equivalem ao aceite na placa/telefone. Consulte o [registro do APK 0.7.0](docs/apk-v0.7.0.md) para o resultado da compilação e limites; o APK anterior 0.6.0 não contém automaticamente estas mudanças.
 
 - Iluminação: ligar/desligar, intensidade 0–100% e programação Dia/Noite em `America/Sao_Paulo`.
 - Temperatura, umidade, gás e estado de comunicação.

@@ -23,6 +23,8 @@ Os testes de software e a leitura real da API estão registrados no guia de inte
 
 ## Rastreabilidade da compilação
 
-Build em preparação; identificador, resultado, artefato e SHA-256 serão registrados após a execução. Comando: `npx --yes eas-cli@latest build --platform android --profile preview --non-interactive`.
+Build **1813290f-116e-48f6-bae5-384b1fbc8ccd**, enviada em 19/11/2026 às 17:59:13 de Brasília, commit **4c025a34f98c008455063789f669364b22f72103**. [Compilação no Expo](https://expo.dev/accounts/cesarcfw/projects/tcc-maquete-app/builds/1813290f-116e-48f6-bae5-384b1fbc8ccd). Upload de 14,2 MB e uso do keystore existente confirmados. Resultado, artefato e SHA-256 serão registrados após a conclusão. Comando: `npx --yes eas-cli@latest build --platform android --profile preview --non-interactive`.
+
+Antes do envio: tipagem, 31 testes e exportação web aprovados. Inspeção da configuração Android confirmou variante integrated, pacote/versionCode corretos e usesCleartextTraffic=true. Exportação Android local com Hermes também aprovada (895 módulos), sem erro de bundle. Isso ainda não comprova execução no aparelho.
 
 Fonte primária: [Expo — Build APKs](https://docs.expo.dev/build-reference/apk/).

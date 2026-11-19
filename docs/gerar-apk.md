@@ -30,10 +30,10 @@ Configure no app a origem do backend alcançável pelo telefone, por exemplo `ht
 
 ## Identidade e rastreabilidade
 
-Pacote Android atual: `com.cesarcfw.tccmaqueteapp`. Build 0.6.0 registrada com versionCode 5. Registre build id, commit, perfil, horário, URL, tamanho e SHA-256 do artefato; não chame outro APK de “o mesmo” apenas porque tem o mesmo nome visível.
+Pacote Android atual: `com.cesarcfw.tccmaqueteapp`. Build 0.7.0 usa versionCode 6; a anterior 0.6.0 usava 5. Registre build id, commit, perfil, horário, URL, tamanho e SHA-256 do artefato; não chame outro APK de “o mesmo” apenas porque tem o mesmo nome visível.
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\entregas\SAMAHI-v0.6.0-android.apk
+Get-FileHash -Algorithm SHA256 .\entregas\SAMAHI-v0.7.0-android.apk
 ```
 
 Arquivos em `entregas/` e dados/segredos do backend são excluídos do Git; `.easignore` também limita o pacote enviado ao EAS. Revisar conteúdo e variáveis públicas antes de uma nova build. Uma mudança no README não exige nova build; uma alteração no bundle/configuração nativa exige nova distribuição para alcançar o APK instalado, salvo se houver atualização OTA configurada e validada — não é o fluxo assumido aqui.
