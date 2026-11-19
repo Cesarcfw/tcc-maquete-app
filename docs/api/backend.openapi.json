@@ -48,7 +48,9 @@
         "operationId": "getHealth",
         "summary": "Verificar o processo de backend",
         "description": "Não verifica Node-RED ou dispositivo.",
-        "tags": ["Operação"],
+        "tags": [
+          "Operação"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -70,7 +72,11 @@
                       "type": "integer"
                     }
                   },
-                  "required": ["status", "service", "schemaVersion"]
+                  "required": [
+                    "status",
+                    "service",
+                    "schemaVersion"
+                  ]
                 }
               }
             }
@@ -84,7 +90,9 @@
         "operationId": "getMe",
         "summary": "Obter conta e concessões da sessão",
         "description": "Obter conta e concessões da sessão",
-        "tags": ["Conta"],
+        "tags": [
+          "Conta"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -134,7 +142,9 @@
         "operationId": "listUsers",
         "summary": "Listar contas (admin)",
         "description": "Listar contas (admin)",
-        "tags": ["Administração"],
+        "tags": [
+          "Administração"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -185,7 +195,9 @@
         "operationId": "createUser",
         "summary": "Criar usuário comum (admin)",
         "description": "Criar usuário comum (admin)",
-        "tags": ["Administração"],
+        "tags": [
+          "Administração"
+        ],
         "responses": {
           "201": {
             "description": "Sucesso.",
@@ -208,7 +220,12 @@
                       "type": "string"
                     }
                   },
-                  "required": ["id", "name", "email", "role"]
+                  "required": [
+                    "id",
+                    "name",
+                    "email",
+                    "role"
+                  ]
                 }
               }
             }
@@ -288,7 +305,11 @@
                     "writeOnly": true
                   }
                 },
-                "required": ["name", "email", "password"]
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ]
               }
             }
           }
@@ -300,7 +321,9 @@
         "operationId": "replaceGrants",
         "summary": "Substituir os quatro grupos (admin)",
         "description": "Transação com auditoria; usuário/quarto devem existir. Papel admin não ignora concessões operacionais.",
-        "tags": ["Administração"],
+        "tags": [
+          "Administração"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -398,7 +421,9 @@
         "operationId": "userDisable",
         "summary": "Bloquear usuário comum e remover sessões (admin)",
         "description": "Bloquear usuário comum e remover sessões (admin)",
-        "tags": ["Administração"],
+        "tags": [
+          "Administração"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -478,7 +503,9 @@
         "operationId": "userEnable",
         "summary": "Reativar conta (admin)",
         "description": "Reativar conta (admin)",
-        "tags": ["Administração"],
+        "tags": [
+          "Administração"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -558,7 +585,9 @@
         "operationId": "userPassword",
         "summary": "Redefinir senha de usuário comum e remover sessões (admin)",
         "description": "Redefinir senha de usuário comum e remover sessões (admin)",
-        "tags": ["Administração"],
+        "tags": [
+          "Administração"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -635,7 +664,9 @@
                     "writeOnly": true
                   }
                 },
-                "required": ["newPassword"]
+                "required": [
+                  "newPassword"
+                ]
               }
             }
           }
@@ -657,7 +688,9 @@
         "operationId": "listRooms",
         "summary": "Listar ambientes visíveis e concessões",
         "description": "Admin vê todos os cadastros; demais somente quartos com algum grupo autorizado. Não provisiona dispositivo.",
-        "tags": ["Ambientes"],
+        "tags": [
+          "Ambientes"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -708,7 +741,9 @@
         "operationId": "createRoom",
         "summary": "Cadastrar ambiente (admin)",
         "description": "Cadastrar ambiente (admin)",
-        "tags": ["Ambientes"],
+        "tags": [
+          "Ambientes"
+        ],
         "responses": {
           "201": {
             "description": "Sucesso.",
@@ -788,7 +823,9 @@
         "operationId": "updateRoom",
         "summary": "Atualizar ambiente (admin)",
         "description": "Atualizar ambiente (admin)",
-        "tags": ["Ambientes"],
+        "tags": [
+          "Ambientes"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -892,7 +929,13 @@
                     "type": "boolean"
                   }
                 },
-                "required": ["name", "bed", "wing", "device", "active"],
+                "required": [
+                  "name",
+                  "bed",
+                  "wing",
+                  "device",
+                  "active"
+                ],
                 "description": "ID vem da URL e não é alterado."
               }
             }
@@ -915,7 +958,9 @@
         "operationId": "getTelemetry",
         "summary": "Consultar telemetria autorizada",
         "description": "Pelo menos light/sensors/indicator em read/control. Retorna campos conforme grupo. Observa e persiste transições de gás e conexão nesta consulta; idade >=10000 é stale.",
-        "tags": ["Dispositivo"],
+        "tags": [
+          "Dispositivo"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -1025,7 +1070,9 @@
         "operationId": "sendCommand",
         "summary": "Enviar comando e aguardar ACK virtual",
         "description": "Luz/agenda exigem light:control; indicador indicator:control; reconhecer gás sensors:read. Chave persistida por ator/quarto/ID; repetição só retorna cache quando confirmed e JSON.stringify(command) é idêntico. Resposta não é prova de hardware físico.",
-        "tags": ["Dispositivo"],
+        "tags": [
+          "Dispositivo"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -1155,7 +1202,9 @@
         "operationId": "getHistory",
         "summary": "Consultar últimos 100 eventos do quarto",
         "description": "Exige history:read. Ordem id decrescente, sem paginação, sem eventos globais de quarto nulo.",
-        "tags": ["Dispositivo"],
+        "tags": [
+          "Dispositivo"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -1238,7 +1287,9 @@
         "operationId": "signInEmail",
         "summary": "Entrar com email e senha",
         "description": "Handler Better Auth; formato de erros é da biblioteca. Veja o guia de autenticação e documentação oficial.",
-        "tags": ["Autenticação"],
+        "tags": [
+          "Autenticação"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -1327,7 +1378,10 @@
                     "writeOnly": true
                   }
                 },
-                "required": ["email", "password"]
+                "required": [
+                  "email",
+                  "password"
+                ]
               }
             }
           }
@@ -1340,7 +1394,9 @@
         "operationId": "signOut",
         "summary": "Revogar sessão",
         "description": "Handler Better Auth; formato de erros é da biblioteca. Veja o guia de autenticação e documentação oficial.",
-        "tags": ["Autenticação"],
+        "tags": [
+          "Autenticação"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -1423,7 +1479,9 @@
         "operationId": "changePassword",
         "summary": "Alterar a própria senha",
         "description": "Handler Better Auth; formato de erros é da biblioteca. Veja o guia de autenticação e documentação oficial.",
-        "tags": ["Autenticação"],
+        "tags": [
+          "Autenticação"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -1509,7 +1567,10 @@
                     "type": "boolean"
                   }
                 },
-                "required": ["currentPassword", "newPassword"]
+                "required": [
+                  "currentPassword",
+                  "newPassword"
+                ]
               }
             }
           }
@@ -1579,7 +1640,11 @@
                 "maximum": 100
               }
             },
-            "required": ["kind", "on", "intensity"],
+            "required": [
+              "kind",
+              "on",
+              "intensity"
+            ],
             "description": "on deve ser exatamente intensity > 0; manual pausa agenda."
           },
           {
@@ -1596,7 +1661,11 @@
                 "$ref": "#/components/schemas/LightingSchedule"
               }
             },
-            "required": ["kind", "enabled", "schedule"]
+            "required": [
+              "kind",
+              "enabled",
+              "schedule"
+            ]
           },
           {
             "type": "object",
@@ -1607,10 +1676,19 @@
               },
               "color": {
                 "type": "string",
-                "enum": ["red", "yellow", "green", "blue", "off"]
+                "enum": [
+                  "red",
+                  "yellow",
+                  "green",
+                  "blue",
+                  "off"
+                ]
               }
             },
-            "required": ["kind", "color"]
+            "required": [
+              "kind",
+              "color"
+            ]
           },
           {
             "type": "object",
@@ -1620,7 +1698,9 @@
                 "type": "string"
               }
             },
-            "required": ["kind"],
+            "required": [
+              "kind"
+            ],
             "description": "Reconhece detecção sem eliminar gás. Autorização sensors:read no backend."
           }
         ],
@@ -1635,29 +1715,50 @@
             "type": "string"
           }
         },
-        "required": ["error"]
+        "required": [
+          "error"
+        ]
       },
       "Grants": {
         "type": "object",
         "properties": {
           "light": {
             "type": "string",
-            "enum": ["none", "read", "control"]
+            "enum": [
+              "none",
+              "read",
+              "control"
+            ]
           },
           "sensors": {
             "type": "string",
-            "enum": ["none", "read"]
+            "enum": [
+              "none",
+              "read"
+            ]
           },
           "indicator": {
             "type": "string",
-            "enum": ["none", "read", "control"]
+            "enum": [
+              "none",
+              "read",
+              "control"
+            ]
           },
           "history": {
             "type": "string",
-            "enum": ["none", "read"]
+            "enum": [
+              "none",
+              "read"
+            ]
           }
         },
-        "required": ["light", "sensors", "indicator", "history"],
+        "required": [
+          "light",
+          "sensors",
+          "indicator",
+          "history"
+        ],
         "additionalProperties": false
       },
       "PartialGrants": {
@@ -1665,19 +1766,33 @@
         "properties": {
           "light": {
             "type": "string",
-            "enum": ["none", "read", "control"]
+            "enum": [
+              "none",
+              "read",
+              "control"
+            ]
           },
           "sensors": {
             "type": "string",
-            "enum": ["none", "read"]
+            "enum": [
+              "none",
+              "read"
+            ]
           },
           "indicator": {
             "type": "string",
-            "enum": ["none", "read", "control"]
+            "enum": [
+              "none",
+              "read",
+              "control"
+            ]
           },
           "history": {
             "type": "string",
-            "enum": ["none", "read"]
+            "enum": [
+              "none",
+              "read"
+            ]
           }
         }
       },
@@ -1712,7 +1827,14 @@
             "type": "boolean"
           }
         },
-        "required": ["id", "name", "bed", "wing", "device", "active"]
+        "required": [
+          "id",
+          "name",
+          "bed",
+          "wing",
+          "device",
+          "active"
+        ]
       },
       "Room": {
         "type": "object",
@@ -1743,10 +1865,20 @@
           },
           "active": {
             "type": "integer",
-            "enum": [0, 1]
+            "enum": [
+              0,
+              1
+            ]
           }
         },
-        "required": ["id", "name", "bed", "wing", "device", "active"]
+        "required": [
+          "id",
+          "name",
+          "bed",
+          "wing",
+          "device",
+          "active"
+        ]
       },
       "ListedRoom": {
         "type": "object",
@@ -1777,13 +1909,24 @@
           },
           "active": {
             "type": "integer",
-            "enum": [0, 1]
+            "enum": [
+              0,
+              1
+            ]
           },
           "grants": {
             "$ref": "#/components/schemas/PartialGrants"
           }
         },
-        "required": ["id", "name", "bed", "wing", "device", "active", "grants"]
+        "required": [
+          "id",
+          "name",
+          "bed",
+          "wing",
+          "device",
+          "active",
+          "grants"
+        ]
       },
       "Account": {
         "type": "object",
@@ -1801,7 +1944,11 @@
             "type": "string"
           },
           "banned": {
-            "type": ["integer", "boolean", "null"]
+            "type": [
+              "integer",
+              "boolean",
+              "null"
+            ]
           },
           "grants": {
             "type": "object",
@@ -1810,7 +1957,14 @@
             }
           }
         },
-        "required": ["id", "name", "email", "role", "banned", "grants"],
+        "required": [
+          "id",
+          "name",
+          "email",
+          "role",
+          "banned",
+          "grants"
+        ],
         "description": "banned reflete o valor retornado pelo driver SQLite. Perfil não traz senha/token."
       },
       "Telemetry": {
@@ -1824,7 +1978,10 @@
           },
           "source": {
             "type": "string",
-            "const": "node-red-simulator"
+            "enum": [
+              "node-red-simulator",
+              "esp32-physical"
+            ]
           },
           "sampledAt": {
             "type": "string",
@@ -1839,25 +1996,38 @@
             "minimum": 0
           },
           "temperatureC": {
-            "type": "number"
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "temperatureValid": {
             "type": "boolean"
           },
           "humidityPercent": {
-            "type": "number"
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "humidityValid": {
             "type": "boolean"
           },
           "gasRawAdc": {
-            "type": "integer",
+            "type": [
+              "integer",
+              "null"
+            ],
             "minimum": 0,
             "maximum": 4095
           },
           "gasStatus": {
             "type": "string",
-            "enum": ["clear", "detected", "unavailable"]
+            "enum": [
+              "clear",
+              "detected",
+              "unavailable"
+            ]
           },
           "gasAcknowledged": {
             "type": "boolean"
@@ -1888,18 +2058,83 @@
           },
           "lightMode": {
             "type": "string",
-            "enum": ["manual", "scheduled"]
+            "enum": [
+              "manual",
+              "scheduled"
+            ]
           },
           "lightingSchedule": {
             "$ref": "#/components/schemas/LightingSchedule"
           },
           "lightingPeriod": {
-            "type": ["string", "null"],
-            "enum": ["day", "night", null]
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "day",
+              "night",
+              null
+            ]
           },
           "indicatorColor": {
             "type": "string",
-            "enum": ["red", "orange", "yellow", "green", "blue", "off"]
+            "enum": [
+              "red",
+              "orange",
+              "yellow",
+              "green",
+              "blue",
+              "off"
+            ]
+          },
+          "gasThresholdAdc": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 4094
+          },
+          "gasClearThresholdAdc": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 4094
+          },
+          "gasAlarmActive": {
+            "type": "boolean"
+          },
+          "gasAlarmFault": {
+            "type": "boolean"
+          },
+          "gasMonitoringConfigured": {
+            "type": "boolean"
+          },
+          "rgbBlinking": {
+            "type": "boolean"
+          },
+          "rgbAlarmFallback": {
+            "type": "boolean"
+          },
+          "rgbVisibleColor": {
+            "type": "string",
+            "enum": [
+              "red",
+              "yellow",
+              "green",
+              "blue",
+              "off",
+              "unknown"
+            ]
+          },
+          "lightingScheduleError": {
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [
@@ -1910,7 +2145,7 @@
           "sampleAgeMs",
           "sequence"
         ],
-        "description": "Campos de sensores/luz/indicador são omitidos conforme concessão. Os campos de identidade/tempo são comuns. Backend valida upstream parcialmente; isto documenta o payload esperado do serviço atual."
+        "description": "Campos de sensores/luz/indicador são omitidos conforme concessão. Os campos de identidade/tempo são comuns. Backend valida upstream parcialmente; isto documenta o payload esperado do serviço atual. Origem fisica nao usa fallback simulado. Valores DHT invalidos sao null; gasAlarmActive e estado latched do firmware e nao comparacao ADC instantanea. sampledAt na ponte fisica e o instante de recepcao no gateway."
       },
       "CommandRequest": {
         "type": "object",
@@ -1923,7 +2158,10 @@
             "$ref": "#/components/schemas/Command"
           }
         },
-        "required": ["commandId", "command"],
+        "required": [
+          "commandId",
+          "command"
+        ],
         "description": "Node-RED atual aceita somente letras/números/hífen no ID. Use esse subconjunto para interoperabilidade. Não há retry automático seguro de comando unconfirmed."
       },
       "CommandResult": {
@@ -1938,13 +2176,33 @@
           },
           "status": {
             "type": "string",
-            "const": "applied_in_simulator"
+            "enum": [
+              "applied_in_simulator",
+              "applied_in_hardware",
+              "acknowledged_in_gateway"
+            ]
           },
           "telemetry": {
             "$ref": "#/components/schemas/Telemetry"
+          },
+          "confirmationScope": {
+            "type": "string",
+            "enum": [
+              "firmware_ack",
+              "app-only"
+            ]
+          },
+          "wireCommandId": {
+            "type": "string",
+            "description": "ID UDP correlacionado ao ACK, somente em confirmacao fisica."
           }
         },
-        "required": ["type", "commandId", "status", "telemetry"]
+        "required": [
+          "type",
+          "commandId",
+          "status",
+          "telemetry"
+        ]
       },
       "AuditEvent": {
         "type": "object",
@@ -1967,7 +2225,13 @@
             "additionalProperties": true
           }
         },
-        "required": ["id", "at", "actor", "action", "detail"]
+        "required": [
+          "id",
+          "at",
+          "actor",
+          "action",
+          "detail"
+        ]
       },
       "Ok": {
         "type": "object",
@@ -1977,7 +2241,9 @@
             "const": true
           }
         },
-        "required": ["ok"]
+        "required": [
+          "ok"
+        ]
       },
       "AuthError": {
         "type": "object",

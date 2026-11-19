@@ -72,6 +72,17 @@ export function LightingScheduleControls({
             : "Noite · programação ativa"
           : "Manual"}
       </Text>
+      {device.source === "esp32-physical" && (
+        <Text variant="bodySmall">
+          A programação é executada pelo Node-RED, que precisa permanecer
+          ligado.
+        </Text>
+      )}
+      {!!device.lightingScheduleError && (
+        <Text style={{ color: colors.error }}>
+          {device.lightingScheduleError}
+        </Text>
+      )}
       {!confirmed ? (
         <Text>Programação indisponível neste dispositivo.</Text>
       ) : !canControl ? (

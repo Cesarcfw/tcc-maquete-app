@@ -28,6 +28,14 @@ export function describeAuditEvent(
       message: "Comando confirmado pelo serviço",
       type: "success",
     },
+    command_confirmed_hardware: {
+      message: "Comando confirmado pelo ESP físico",
+      type: "success",
+    },
+    gas_alert_acknowledged: {
+      message: "Alerta reconhecido no app; sinalização local preservada",
+      type: "info",
+    },
     command_unconfirmed: { message: "Comando sem confirmação", type: "error" },
     communication_lost: {
       message: "Comunicação com o serviço do ambiente perdida",

@@ -529,13 +529,21 @@ function Dashboard({
       <View style={[s.metrics, !wide && s.wrap]}>
         <Metric
           title="Temperatura"
-          value={`${sim.device.temperature.toFixed(1).replace(".", ",")} °C`}
+          value={
+            sim.device.temperature === null
+              ? "Indisponível"
+              : `${sim.device.temperature.toFixed(1).replace(".", ",")} °C`
+          }
           icon="thermometer"
           detail={detail}
         />
         <Metric
           title="Umidade"
-          value={`${sim.device.humidity}%`}
+          value={
+            sim.device.humidity === null
+              ? "Indisponível"
+              : `${sim.device.humidity}%`
+          }
           icon="water-percent"
           detail={detail}
         />
@@ -545,6 +553,14 @@ function Dashboard({
         icon="molecule"
         subtitle="Monitoramento ambiental"
       >
+        {sim.device.source === "esp32-physical" && (
+          <Text variant="bodySmall">
+            MQ-2 físico · {sim.device.gasRawAdc ?? "—"} ADC ·{" "}
+            {sim.device.gasMonitoringConfigured
+              ? `limiares experimentais ${sim.device.gasThresholdAdc}/${sim.device.gasClearThresholdAdc}`
+              : "alarme ainda não configurado no ESP"}
+          </Text>
+        )}
         <Note
           title={
             outdated
@@ -555,13 +571,23 @@ function Dashboard({
           text={
             outdated
               ? "Sem leitura atual. O último estado é preservado."
-              : sim.device.gas === "unavailable"
-                ? "Ausência de leitura não significa ausência de gás."
-                : sim.device.gas === "detected"
-                  ? "Possível presença de gás ou fumaça. Tipo de gás não identificado."
-                  : "Nenhuma detecção informada na última leitura."
+              : sim.device.source === "esp32-physical" &&
+                  sim.device.gasMonitoringConfigured === false
+                ? "Leitura disponível; envie o firmware do alerta para habilitar o monitoramento experimental."
+                : sim.device.gas === "unavailable"
+                  ? "Ausência de leitura não significa ausência de gás."
+                  : sim.device.gas === "detected"
+                    ? "Possível presença de gás ou fumaça. Tipo de gás não identificado."
+                    : sim.device.source === "esp32-physical"
+                      ? "Alerta experimental inativo na última leitura. Isso não comprova ausência de gás."
+                      : "Nenhuma detecção informada na última leitura."
           }
         />
+        {sim.device.gasAlarmFault && (
+          <Text>
+            Falha ou leitura antiga do MQ-2. Um alerta ativo é mantido pelo ESP.
+          </Text>
+        )}
         {sim.device.gas === "detected" && (
           <Button mode="outlined" icon="alert-outline" onPress={onGas}>
             Ver alerta de gás
@@ -608,6 +634,15 @@ function Dashboard({
           {indicatorPriorities[sim.device.indicator]}
         </Text>
       </View>
+      {sim.device.rgbBlinking && (
+        <Text variant="bodySmall">
+          Indicador piscando por alerta ambiental
+          {sim.device.rgbAlarmFallback
+            ? " em amarelo temporário"
+            : " na cor selecionada"}
+          . A classificação de triagem permanece inalterada.
+        </Text>
+      )}
       <View style={s.triageOptions}>
         {selectableIndicatorColors.map((color) => (
           <Button
