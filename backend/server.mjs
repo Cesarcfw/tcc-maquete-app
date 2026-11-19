@@ -4,6 +4,7 @@ import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
 import { pathToFileURL } from "node:url";
 import { createCore, fail, text, roomInput, groups, levels } from "./core.mjs";
 import lightingSchedule from "../shared/lighting-schedule.cjs";
+import deviceContract from "../shared/device-contract.cjs";
 
 export async function createApp(options = {}) {
   const core = await createCore(options);
@@ -261,7 +262,7 @@ export async function createApp(options = {}) {
       t.roomId !== roomId ||
       t.deviceId !==
         db.prepare("SELECT device FROM rooms WHERE id=?").get(roomId)?.device ||
-      t.source !== "node-red-simulator"
+      !["node-red-simulator", "esp32-physical"].includes(t.source)
     )
       throw fail(502, "Telemetria incompatível com o dispositivo cadastrado.");
     return payload;
@@ -279,6 +280,7 @@ export async function createApp(options = {}) {
       sampledAt: t.sampledAt,
       sampleAgeMs: t.sampleAgeMs,
       sequence: t.sequence,
+      capabilities: t.capabilities,
     };
     const fields = {
       sensors: [
@@ -292,6 +294,11 @@ export async function createApp(options = {}) {
         "buzzerOn",
         "ldrRawAdc",
         "dark",
+        "gasThresholdAdc",
+        "gasClearThresholdAdc",
+        "gasAlarmActive",
+        "gasAlarmFault",
+        "gasMonitoringConfigured",
       ],
       light: [
         "lightOn",
@@ -300,8 +307,14 @@ export async function createApp(options = {}) {
         "lightMode",
         "lightingSchedule",
         "lightingPeriod",
+        "lightingScheduleError",
       ],
-      indicator: ["indicatorColor"],
+      indicator: [
+        "indicatorColor",
+        "rgbVisibleColor",
+        "rgbBlinking",
+        "rgbAlarmFallback",
+      ],
     };
     for (const [group, keys] of Object.entries(fields))
       if (allowed(req.actor.id, t.roomId, group))
@@ -448,10 +461,7 @@ export async function createApp(options = {}) {
         commandId,
         command,
       });
-      if (
-        reply.commandId !== commandId ||
-        reply.status !== "applied_in_simulator"
-      )
+      if (!deviceContract.confirmedReply(reply, commandId, kind))
         throw fail(502, "Confirmação incompatível.");
       if (
         kind === "lightingSchedule" &&
@@ -481,11 +491,20 @@ export async function createApp(options = {}) {
         req.room.id,
         commandId,
       );
-      record(req.actor.id, req.room.id, "command_confirmed_simulator", {
-        commandId,
-        command,
-        status: reply.status,
-      });
+      record(
+        req.actor.id,
+        req.room.id,
+        reply.status === "acknowledged_in_gateway"
+          ? "gas_alert_acknowledged"
+          : reply.status === "applied_in_hardware"
+            ? "command_confirmed_hardware"
+            : "command_confirmed_simulator",
+        {
+          commandId,
+          command,
+          status: reply.status,
+        },
+      );
       res.json({ ...reply, telemetry: redact(req, reply.telemetry) });
     } catch (error) {
       db.prepare(

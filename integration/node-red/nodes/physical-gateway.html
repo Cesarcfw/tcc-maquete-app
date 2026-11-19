@@ -1,0 +1,48 @@
+<script type="text/javascript">
+  RED.nodes.registerType("samahi-physical-gateway", {
+    category: "network",
+    color: "#b8d6ef",
+    icon: "bridge.svg",
+    inputs: 1,
+    outputs: 1,
+    defaults: {
+      name: { value: "" },
+      roomId: { value: "quarto-01", required: true },
+      deviceId: { value: "ESP32-bancada", required: true },
+    },
+    label: function () {
+      return this.name || "Ponte ESP fisico / app";
+    },
+  });
+</script>
+<script type="text/html" data-template-name="samahi-physical-gateway">
+  <div class="form-row">
+    <label for="node-input-name">Nome</label
+    ><input id="node-input-name" type="text" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-roomId">Ambiente</label
+    ><input id="node-input-roomId" type="text" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-deviceId">ESP fisico</label
+    ><input id="node-input-deviceId" type="text" />
+  </div>
+</script>
+<script type="text/html" data-help-name="samahi-physical-gateway">
+  <p>
+    Recebe UDP do ESP; envia comandos pela saida ao UDP out existente (origem
+    4210/destino 4211). Somente ACK correlacionado confirma alteracoes.
+    Source/device/porta/IP/pinos/acao/valor sao conferidos.
+  </p>
+  <p>
+    Disponibiliza samahiPhysical no contexto global para as rotas HTTP da API
+    fisica. Nao ativa sensores simulados. Agenda Dia/Noite depende deste
+    processo ligado e usa ACK real.
+  </p>
+  <p>
+    Reconhecer gas e uma acao do app; nao silencia nem desliga a sinalizacao
+    local do ESP. O acesso HTTP deve permanecer local, atras do backend
+    autenticado.
+  </p>
+</script>

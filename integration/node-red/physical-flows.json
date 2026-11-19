@@ -1,0 +1,212 @@
+[
+  {
+    "id": "samahi-physical-api",
+    "type": "tab",
+    "label": "SAMAHI — API do ESP fisico",
+    "disabled": false,
+    "info": "Backend autenticado -> API local -> UDP e ACK do ESP. Desativar API virtual para evitar rotas duplicadas."
+  },
+  {
+    "id": "samahi-physical-telemetry-http",
+    "type": "http in",
+    "z": "samahi-physical-api",
+    "name": "GET telemetry",
+    "url": "/api/v1/rooms/:roomId/telemetry",
+    "method": "get",
+    "upload": false,
+    "x": 200,
+    "y": 100,
+    "wires": [
+      [
+        "samahi-physical-telemetry-fn"
+      ]
+    ]
+  },
+  {
+    "id": "samahi-physical-telemetry-fn",
+    "type": "function",
+    "z": "samahi-physical-api",
+    "name": "Consultar ponte fisica",
+    "func": "const gateway=global.get('samahiPhysical'); const result=gateway ? await gateway.handle('telemetry',msg.req.params.roomId,msg.payload) : {status:503,body:{error:'Ponte fisica nao carregada. Reinicie o Node-RED.'}}; msg.statusCode=result.status; msg.headers={'Content-Type':'application/json','Cache-Control':'no-store'};msg.payload=result.body;return msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 520,
+    "y": 100,
+    "wires": [
+      [
+        "samahi-physical-telemetry-response"
+      ]
+    ]
+  },
+  {
+    "id": "samahi-physical-telemetry-response",
+    "type": "http response",
+    "z": "samahi-physical-api",
+    "name": "Resposta fisica JSON",
+    "statusCode": "",
+    "headers": {},
+    "x": 840,
+    "y": 100,
+    "wires": []
+  },
+  {
+    "id": "samahi-physical-commands-http",
+    "type": "http in",
+    "z": "samahi-physical-api",
+    "name": "POST commands",
+    "url": "/api/v1/rooms/:roomId/commands",
+    "method": "post",
+    "upload": false,
+    "x": 200,
+    "y": 220,
+    "wires": [
+      [
+        "samahi-physical-commands-fn"
+      ]
+    ]
+  },
+  {
+    "id": "samahi-physical-commands-fn",
+    "type": "function",
+    "z": "samahi-physical-api",
+    "name": "Enviar e aguardar ACK fisico",
+    "func": "const gateway=global.get('samahiPhysical'); const result=gateway ? await gateway.handle('commands',msg.req.params.roomId,msg.payload) : {status:503,body:{error:'Ponte fisica nao carregada. Reinicie o Node-RED.'}}; msg.statusCode=result.status; msg.headers={'Content-Type':'application/json','Cache-Control':'no-store'};msg.payload=result.body;return msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 520,
+    "y": 220,
+    "wires": [
+      [
+        "samahi-physical-commands-response"
+      ]
+    ]
+  },
+  {
+    "id": "samahi-physical-commands-response",
+    "type": "http response",
+    "z": "samahi-physical-api",
+    "name": "Resposta fisica JSON",
+    "statusCode": "",
+    "headers": {},
+    "x": 840,
+    "y": 220,
+    "wires": []
+  },
+  {
+    "id": "samahi-physical-simulation-http",
+    "type": "http in",
+    "z": "samahi-physical-api",
+    "name": "POST simulation",
+    "url": "/api/v1/rooms/:roomId/simulation",
+    "method": "post",
+    "upload": false,
+    "x": 200,
+    "y": 340,
+    "wires": [
+      [
+        "samahi-physical-simulation-fn"
+      ]
+    ]
+  },
+  {
+    "id": "samahi-physical-simulation-fn",
+    "type": "function",
+    "z": "samahi-physical-api",
+    "name": "Consultar ponte fisica",
+    "func": "const gateway=global.get('samahiPhysical'); const result=gateway ? await gateway.handle('simulation',msg.req.params.roomId,msg.payload) : {status:503,body:{error:'Ponte fisica nao carregada. Reinicie o Node-RED.'}}; msg.statusCode=result.status; msg.headers={'Content-Type':'application/json','Cache-Control':'no-store'};msg.payload=result.body;return msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 520,
+    "y": 340,
+    "wires": [
+      [
+        "samahi-physical-simulation-response"
+      ]
+    ]
+  },
+  {
+    "id": "samahi-physical-simulation-response",
+    "type": "http response",
+    "z": "samahi-physical-api",
+    "name": "Resposta fisica JSON",
+    "statusCode": "",
+    "headers": {},
+    "x": 840,
+    "y": 340,
+    "wires": []
+  },
+  {
+    "id": "samahi-physical-reset-http",
+    "type": "http in",
+    "z": "samahi-physical-api",
+    "name": "POST reset",
+    "url": "/api/v1/rooms/:roomId/reset",
+    "method": "post",
+    "upload": false,
+    "x": 200,
+    "y": 460,
+    "wires": [
+      [
+        "samahi-physical-reset-fn"
+      ]
+    ]
+  },
+  {
+    "id": "samahi-physical-reset-fn",
+    "type": "function",
+    "z": "samahi-physical-api",
+    "name": "Consultar ponte fisica",
+    "func": "const gateway=global.get('samahiPhysical'); const result=gateway ? await gateway.handle('reset',msg.req.params.roomId,msg.payload) : {status:503,body:{error:'Ponte fisica nao carregada. Reinicie o Node-RED.'}}; msg.statusCode=result.status; msg.headers={'Content-Type':'application/json','Cache-Control':'no-store'};msg.payload=result.body;return msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 520,
+    "y": 460,
+    "wires": [
+      [
+        "samahi-physical-reset-response"
+      ]
+    ]
+  },
+  {
+    "id": "samahi-physical-reset-response",
+    "type": "http response",
+    "z": "samahi-physical-api",
+    "name": "Resposta fisica JSON",
+    "statusCode": "",
+    "headers": {},
+    "x": 840,
+    "y": 460,
+    "wires": []
+  },
+  {
+    "id": "samahi-physical-bridge",
+    "type": "samahi-physical-gateway",
+    "z": "esp32wifi12tab",
+    "name": "Ponte ESP fisico / app",
+    "roomId": "quarto-01",
+    "deviceId": "ESP32-bancada",
+    "x": 650,
+    "y": 1800,
+    "wires": [
+      [
+        "esp32led14out"
+      ]
+    ]
+  }
+]

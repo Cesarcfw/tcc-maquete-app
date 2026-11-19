@@ -20,7 +20,7 @@ export function useNodeRed(environment: string, endpoint: string) {
   const [online, setOnline] = useState(false);
   const [scenario, setScenario] = useState<Scenario>("normal");
   const [notice, setNotice] = useState(
-    "Aguardando Node-RED local. Nenhum equipamento físico conectado.",
+    "Aguardando telemetria do Node-RED local.",
   );
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [now, setNow] = useState(() => Date.now());
@@ -76,9 +76,7 @@ export function useNodeRed(environment: string, endpoint: string) {
       setDevice(initialState(0));
       setLogs([]);
       setScenario("normal");
-      setNotice(
-        "Aguardando Node-RED local. Nenhum equipamento físico conectado.",
-      );
+      setNotice("Aguardando telemetria do Node-RED local.");
       void poll();
     }, 0);
     const interval = setInterval(() => {
@@ -127,7 +125,12 @@ export function useNodeRed(environment: string, endpoint: string) {
       if (revision.current === generation) {
         setDevice(data);
         setOnline(true);
-        log("Comando confirmado pelo simulador Node-RED.", "success");
+        log(
+          data.source === "esp32-physical"
+            ? "Resposta confirmada pela ponte do ESP físico."
+            : "Comando confirmado pelo simulador Node-RED.",
+          "success",
+        );
       }
     } catch (error) {
       if (revision.current === generation)
