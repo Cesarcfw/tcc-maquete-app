@@ -1,6 +1,6 @@
 # Gerar e distribuir o APK interno
 
-Build atual documentada: [SAMAHI 0.6.0](apk-v0.6.0.md). Esta página descreve o procedimento; não inicia uma nova build nem declara aceite físico.
+Build em preparação: [SAMAHI 0.7.0](apk-v0.7.0.md). Entrega anterior: [SAMAHI 0.6.0](apk-v0.6.0.md). Esta página descreve o procedimento; não declara aceite físico.
 
 ## Pré-requisitos
 
@@ -14,7 +14,7 @@ npx --yes eas-cli@latest whoami
 npx --yes eas-cli@latest project:info
 ```
 
-Antes de gerar, conferir commit e status Git. O perfil `preview` de `eas.json` usa distribuição internal, buildType apk e não é developmentClient. `app.config.js` habilita HTTP local via plugin nesse perfil. A variável legada de Node-RED presente no perfil não substitui o endereço do backend autenticado, que pode ser configurado no login.
+Antes de gerar, conferir commit e status Git. O perfil `preview` de `eas.json` usa distribuição internal, buildType apk e não é developmentClient. `app.config.js` habilita HTTP local via plugin nesse perfil. A variante integrada é explícita e arquivos .env locais não são carregados. O endereço do backend autenticado pode ser configurado no login.
 
 ```powershell
 npx --yes eas-cli@latest build --platform android --profile preview
