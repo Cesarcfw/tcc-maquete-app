@@ -3,6 +3,12 @@
 
 ## Não lançado
 
+### APK integrado 0.7.0
+
+- Preparação Android versionCode 6, mesmo pacote e assinatura do SAMAHI integrado, com integração física da bancada.
+- Perfil preview fixa a variante integrated e não carrega arquivos .env locais; endereço do backend configurado no aparelho.
+- Build interna não representa release final nem aceite de instalação/controle físico no telefone.
+
 ### Preparação da integração com ESP físico
 
 - Ponte Node-RED para ESP32-bancada: DHT22/MQ-2, luz PWM e triagem, sem fallback simulado.
