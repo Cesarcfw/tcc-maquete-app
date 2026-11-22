@@ -1,0 +1,37 @@
+SAMAHI — PACOTE PRIVADO DO NOTEBOOK / WINDOWS 10 OU 11, 64 BITS
+
+O QUE JA VEM PRONTO
+Node.js portatil, dependencias do backend e Node-RED, fluxo fisico, configuracoes de iluminacao, copia consistente das contas/quartos/historico do app e do historico da bancada. Nao precisa instalar Node, VS Code, Arduino IDE ou Expo no notebook para executar os servicos. Nao precisa baixar dependencias.
+
+COMO USAR
+1. Extraia TODO o ZIP para uma pasta curta e gravavel, por exemplo C:\SAMAHI. Nao execute dentro do ZIP. Nao separe as pastas runtime, tcc-maquete-app e samahi-node-red.
+2. Abra 01-VERIFICAR-PACOTE.cmd. Aguarde a confirmacao. Ele confere arquivos e bancos, sem mudar dados nem abrir a comunicacao com o ESP.
+3. Ligue o ESP. Conecte notebook e telefone ao mesmo Wi-Fi: ambos na rede propria do ESP ou ambos no Wi-Fi externo. A rede propria exige que o firmware AP+STA ja tenha sido gravado. O pacote nao grava o ESP automaticamente.
+4. Abra 02-INICIAR-SAMAHI.cmd. Se aparecer uma lista de interfaces, escolha o Wi-Fi usado pelo telefone/ESP. Ele inicia Node-RED e backend, sem Expo. Nao feche essa janela durante a apresentacao.
+5. Copie a URL mostrada em COLOQUE NO APP para Configurar conexao no APK integrado do telefone. Use a porta mostrada, normalmente 3002, e entre com sua conta e senha ja existentes. Nao use a edicao SAMAHI Avaliacao para controlar o hardware.
+6. No portal do ESP, informe o IP deste notebook mostrado no console, no campo da rede escolhida. AP e STA nao fazem ponte automatica entre redes. Consulte o guia em tcc-maquete-app\docs\rede-esp-notebook.md. Para a rede propria, os dados de acesso estao no arquivo PRIVADO\REDE-DO-ESP.txt, quando incluido.
+7. Se a URL /health nao abrir no navegador do telefone, clique com o botao direito em 03-LIBERAR-ACESSO-TELEFONE.cmd e escolha Executar como administrador. O iniciador precisa ter sido executado antes para registrar a interface. Ele libera apenas as portas do SAMAHI para aquela interface/sub-rede; nao desliga o firewall.
+8. Confira login, quarto, leituras recentes e comandos com confirmacao do ESP. Enter no console mostra novamente a URL. Ctrl+C encerra os servicos abertos pelo iniciador; confirme S se o Windows perguntar sobre encerrar o arquivo em lotes.
+
+PAINEL NODE-RED NO NOTEBOOK
+http://127.0.0.1:1880 — editor somente local.
+O app usa o IP do NOTEBOOK com porta 3002; nao usa o IP do ESP nem a porta 1880.
+
+SE TROCAR DE REDE
+Encerre os servicos com Ctrl+C, conecte-se a rede nova e abra o iniciador novamente. Atualize IP no app, destino no portal do ESP e regra de firewall se necessario. Nao ha IP unico garantido em todas as redes.
+
+DADOS PRIVADOS E BACKUP
+Este pacote contem hashes de senha, contas, permissoes, historicos e o segredo do servidor. Se incluido, PRIVADO contem a senha do AP do ESP. Envie apenas ao seu proprio notebook, de forma privada; nao publique no GitHub, Trello ou link aberto. O pacote nao e criptografado.
+Os dados sao uma copia do momento da preparacao. Mudancas no PC e no notebook NAO se sincronizam automaticamente. Use uma pasta nova ao transferir outra copia; nao sobreponha dados de uma instalacao em uso. Guarde o ZIP original como ponto de restauracao e encerre os servicos antes de copiar a pasta de trabalho.
+
+LIMITES DA VERIFICACAO
+Os bancos sao snapshots SQLite consistentes por banco, incluindo WAL. Nao constituem uma transacao unica entre backend e coletor. O registro PACOTE.json informa versoes e momento da captura. Testes locais nao substituem o ensaio deste notebook Windows 10 com ESP e telefone. Dependencias e licencas estao preservadas no pacote. A parte web no Vercel continua separada; o APK instalado funciona sem internet com os servicos locais ativos.
+
+FONTES
+Node.js Windows x64: https://nodejs.org/download/release/
+Node-RED / Node recomendado: https://nodered.org/docs/faq/node-versions
+Node.js / plataformas: https://github.com/nodejs/node/blob/v24.22.3/BUILDING.md
+
+TCC — EVIDENCIAS
+TIRE PRINT DESTA PARTE: verificacao concluida, console com URL e leituras/ACK, sem senhas.
+MOSTRE FUNCIONANDO EM VIDEO OU GIF: iniciar pelo pacote no notebook, telefone controlando LEDs e sensores, reinicio e reconexao. Identificar dados fisicos e versao; nao apresentar teste sintetico como acionamento real.
