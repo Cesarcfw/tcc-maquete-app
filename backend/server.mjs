@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
 import { pathToFileURL } from "node:url";
+import { connectionSummary } from "../scripts/connection-summary.mjs";
 import { createCore, fail, text, roomInput, groups, levels } from "./core.mjs";
 import lightingSchedule from "../shared/lighting-schedule.cjs";
 import deviceContract from "../shared/device-contract.cjs";
@@ -553,10 +554,12 @@ if (
   const server = core.app.listen(
     Number(process.env.SAMAHI_PORT || 3001),
     host,
-    () =>
+    () => {
       console.log(
         `SAMAHI backend: ${host}:${process.env.SAMAHI_PORT || 3001}. Banco local persistente. Node-RED continua separado.`,
-      ),
+      );
+      console.log(connectionSummary(host, server.address().port));
+    },
   );
   const close = () =>
     server.close(() => {

@@ -50,3 +50,11 @@ playwright-report/
 .env*
 backend/data/
 backend/backups/
+integration/esp32/**/wifi_config.h
+integration/esp32/**/ota_config.h
+integration/esp32/**/network_config.h
+integration/esp32/build*/
+integration/esp32/**/build*/
+integration/esp32/**/*.bin
+integration/esp32/**/*.elf
+integration/esp32/**/*.map

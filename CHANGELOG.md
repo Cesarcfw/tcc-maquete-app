@@ -3,6 +3,13 @@
 
 ## Não lançado
 
+### Rede AP+STA e operação no notebook
+
+- Firmware versionado com AP protegido permanente, configuração do Wi-Fi e caminho/IP do notebook via portal autenticado e persistência NVS. Preserva pinagem, UDP/ACK, sensores, alarme local e OTA.
+- Inicializador `Iniciar-SAMAHI-Notebook.cmd` usa o APK instalado sem abrir Expo, mostra a URL do backend e permite reapresentá-la com Enter. Backend também informa o endereço de escuta ao iniciar.
+- Firewall opcional inclui UDP4210 restrito à interface/sub-rede do ensaio. Guia documenta redes separadas, mudança de IP e testes físicos pendentes.
+- A preparação não representa gravação na placa, aceite da rede no hardware nem nova build do APK.
+
 ### APK integrado 0.7.0
 
 - Preparação Android versionCode 6, mesmo pacote e assinatura do SAMAHI integrado, com integração física da bancada.
