@@ -169,3 +169,8 @@
 
 Validação Android e integração real não realizadas nesta entrega.
 
+## Manutenção do repositório
+
+- Exportações de referência do Stitch e cópias em PDF e DOCX da entrega 0.6.0 arquivadas na tag v0.6.0.
+- Regras de exclusão do Git, do EAS e do Vercel ampliadas para evitar o envio de configurações privadas da bancada e do pacote portátil.
+

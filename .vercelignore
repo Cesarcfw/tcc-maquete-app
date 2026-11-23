@@ -11,6 +11,14 @@ test-results/
 playwright-report/
 .env
 .env*.local
+.env.*
+backend/data/
+backend/backups/
+integration/esp32/
+PRIVADO/
+SAMAHI-Notebook-*-PRIVADO.zip
+**/auth-secret
+stitch_maquete_conectada_redesign/
 *.jks
 *.key
 *.pem

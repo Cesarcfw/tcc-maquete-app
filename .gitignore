@@ -1,5 +1,21 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
+# Material arquivado e dados privados da bancada
+/stitch_maquete_conectada_redesign/
+/PRIVADO/
+/backend/data/
+/backend/backups/
+SAMAHI-Notebook-*-PRIVADO.zip
+**/auth-secret
+.env.*
+**/wifi_config.h
+**/ota_config.h
+**/network_config.h
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
 # dependencies
 node_modules/
 
