@@ -3,7 +3,7 @@
   "info": {
     "title": "SAMAHI — backend autenticado",
     "version": "0.1.0",
-    "description": "Contrato documentado do backend usado pelo app 0.6.0. Inclui rotas de domínio e somente as rotas Better Auth consumidas pelo app. Não é um gateway público pronto para internet."
+    "description": "Contrato documentado do backend usado pelo app 0.7.0. Inclui rotas de domínio e as rotas Better Auth consumidas pelo app. O backend local suporta telemetria física ou simulada conforme o vínculo do quarto."
   },
   "servers": [
     {
@@ -1043,7 +1043,7 @@
             }
           },
           "504": {
-            "description": "Timeout reportado pelo serviço virtual.",
+            "description": "Timeout reportado pelo serviço de dispositivo.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1068,7 +1068,7 @@
     "/api/rooms/{roomId}/commands": {
       "post": {
         "operationId": "sendCommand",
-        "summary": "Enviar comando e aguardar ACK virtual",
+        "summary": "Enviar comando e aguardar confirmação compatível com a origem",
         "description": "Luz/agenda exigem light:control; indicador indicator:control; reconhecer gás sensors:read. Chave persistida por ator/quarto/ID; repetição só retorna cache quando confirmed e JSON.stringify(command) é idêntico. Resposta não é prova de hardware físico.",
         "tags": [
           "Dispositivo"
@@ -1165,7 +1165,7 @@
             }
           },
           "504": {
-            "description": "Timeout reportado pelo serviço virtual.",
+            "description": "Timeout do serviço de dispositivo, inclusive ausência de ACK físico.",
             "content": {
               "application/json": {
                 "schema": {

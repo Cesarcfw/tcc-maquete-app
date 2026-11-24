@@ -8,14 +8,18 @@ Data: 22/11/2026. Branch `feat/rede-esp-notebook`, firmware `samahi-ap-sta-2026.
 - `npm run typecheck`, `npm test` (**31 testes**) e `npm run export:web`: aprovados. Não foram alteradas telas do app.
 - `node --test backend/test/*.test.mjs integration/node-red/physical-runtime.test.cjs`: **8 testes aprovados**, incluindo 3 verificações do banner e os ensaios existentes de autenticação/permissões, histórico, cliente nativo Bearer, cadeia física autenticada e HTTP/UDP/ACK sintéticos.
 - A primeira execução desses ensaios HTTP no ambiente restrito falhou com `EACCES` nas conexões de loopback. A repetição com acesso local autorizado passou, usando bancos e portas temporários; não utilizou a placa nem a conta real.
-- `node scripts/test-phone.mjs --apk --prepare --host 192.168.1.9`: mostrou a interface Wi-Fi 2, backend em `http://192.168.1.9:3002` e rota `/health`. Foi apenas preparação, sem iniciar serviços. O IP vale para esse PC/rede naquele momento.
+- `node scripts/test-phone.mjs --apk --prepare --host IP_PRIVADO_DO_NOTEBOOK`: o ensaio conferiu seleção da interface, URL com porta 3002 e rota `/health`. Foi uma preparação, sem iniciar serviços. Substitua o exemplo por um IP real da interface local ao repetir.
 - Lint e referências locais da documentação: aprovados. Arquivos reais `wifi_config.h`, `ota_config.h` e `network_config.h` permanecem ignorados pelo Git. Binários de compilação ficam fora do repositório e contêm credenciais; não distribuir.
 
-## Não comprovado nesta etapa
+## Confirmação posterior da equipe
+
+César informou que o Wi-Fi do ESP e o pacote do notebook funcionaram. É um relato de operação, separado do ensaio automatizado de 22/11. Para a monografia, registrar a data do ensaio, versões de firmware e APK, modo de rede, modelo do notebook e quais ações de tela e placa foram observadas. O relato não discrimina os resultados de cada cenário abaixo.
+
+## Não comprovado no ensaio automatizado de 22/11
 
 Não houve gravação nem teste físico AP/STA/portal/OTA; não foi comprovada persistência NVS na placa, passagem de canal, mudança de sub-rede ou coexistência dos clientes. Não foi iniciado o conjunto real no notebook da apresentação, aplicada regra de firewall nem gerado novo APK. O fluxo Node-RED e o banco reais foram preservados. O iniciador foi conferido em modo de preparação; validação interativa completa, inclusive Enter/Ctrl+C, deve ser feita no ensaio físico.
 
-## Aceite pendente
+## Matriz para registrar o aceite
 
 1. Gravar e conferir firmwareVersion.
 2. Conectar notebook e telefone ao AP; salvar IP real no portal, iniciar serviços e abrir `/health` no telefone.

@@ -1,4 +1,7 @@
-> **Situação atual:** recurso incluído no código 0.6.0 e no [APK registrado](apk-v0.6.0.md). Ensaios abaixo são registros da etapa de implementação; aceite completo do APK instalado e integração física permanecem separados. Consulte o [índice atual](README.md).
+> **Referência atual:** SAMAHI 0.7.0. Os ensaios datados abaixo registram a etapa original. Consulte o [índice atual](README.md) e o [registro do APK integrado](apk-v0.7.0.md).
+
+O app integrado mantém a interface compartilhada entre web e Android, com origem física ou simulada conforme o gateway. A [edição offline](demo-orientador-offline.md) é instalada separadamente.
+
 
 # SAMAHI — interface do produto
 

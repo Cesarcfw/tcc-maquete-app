@@ -1,4 +1,4 @@
-> **Situação atual:** recurso incluído no código 0.6.0 e no [APK registrado](apk-v0.6.0.md). Ensaios abaixo são registros da etapa de implementação; aceite completo do APK instalado e integração física permanecem separados. Consulte o [índice atual](README.md).
+> **Referência atual:** SAMAHI 0.7.0. Os ensaios datados abaixo registram a etapa original. Consulte o [índice atual](README.md) e o [registro do APK integrado](apk-v0.7.0.md).
 
 # Preferências locais — conexão, tema e animações
 
@@ -46,11 +46,11 @@ Navegador isolado em `127.0.0.1:8094`, backend/serviço virtual e banco descart�
 
 ### Validação pendente no telefone
 
-1. Abrir o código atualizado no Expo Go, ou instalar o APK 0.6.0, que inclui a dependência nativa AsyncStorage. APK antigo não recebe a funcionalidade sozinho.
+1. Abrir o código atualizado no Expo Go ou instalar a compilação integrada escolhida para o ensaio. Registrar a versão instalada.
 2. Configurar o endereço LAN real do computador, aguardar salvamento e escolher tema/redução de animações.
 3. Fechar o aplicativo pelo gerenciador do telefone e abrir novamente. Conferir endereço/tema; entrar e conferir a opção de animações.
 4. Repetir com o servidor desligado: configuração deve continuar disponível; a conexão pode falhar normalmente.
-5. Registrar aparelho, Android, versão/build e resultado. Ensaio no navegador não comprova retenção em APK físico. Na etapa inicial desta funcionalidade não houve build; posteriormente ela foi incluída no APK 0.6.0, conforme o registro vinculado no início.
+5. Registrar aparelho, Android, versão/build e resultado. Ensaio no navegador não comprova retenção em APK instalado. A primeira build que incluiu a funcionalidade consta no [registro histórico 0.6.0](apk-v0.6.0.md).
 
 ## Referências
 

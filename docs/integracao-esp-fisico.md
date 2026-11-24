@@ -1,6 +1,6 @@
 # Integração do app com o ESP físico
 
-Preparação de 19/11/2026, branch feat/integracao-esp-fisico. Usa autenticação/permissões existentes e separa origem física da simulação. A edição offline do orientador permanece independente e não controla hardware. O APK anterior não recebe estas alterações automaticamente.
+Integração introduzida em 19/11/2026 e incorporada à main no PR #25. Usa autenticação/permissões existentes e separa origem física da simulação. A edição offline do orientador permanece independente e não controla hardware. O APK anterior não recebe estas alterações automaticamente.
 
 ## Arquitetura
 
@@ -56,7 +56,7 @@ Para reverter, parar Node-RED, preservar registros recentes e restaurar o backup
 
 ## Validação e evidências
 
-Na instalação local de César, a API física recebeu telemetria real em 19/11/2026: 29,3 °C, 53,3% de umidade e 106 ADC, com origem esp32-physical e vínculo quarto-01/ESP32-bancada. Foi uma consulta de leitura; não comprova o acionamento dos LEDs pelo aplicativo. Fluxos e banco foram preservados com backup antes da ativação. O aceite de comandos no conjunto app/placa e a validação móvel desta alteração permanecem pendentes.
+Na instalação local de César, a API física recebeu telemetria real em 19/11/2026: 29,3 °C, 53,3% de umidade e 106 ADC, com origem esp32-physical e vínculo quarto-01/ESP32-bancada. Foi uma consulta de leitura; não comprova o acionamento dos LEDs pelo aplicativo. Fluxos e banco foram preservados com backup antes da ativação. O teste de 19/11 cobriu leitura. A confirmação posterior do Wi-Fi e do pacote por César consta no [registro de rede](rede-esp-notebook-validacao.md). O aceite por comando no APK requer registro próprio.
 
 Testes locais cobrem ausência de leitura, DHT inválido/null, alerta mantido abaixo do disparo, seleção apagada versus amarelo visível, reconhecimento só no app, ACK/IP/pinos/valor, timeout, agenda, permissões e vínculo com backup. O teste de Node-RED isolado usa HTTP/UDP reais em loopback e ESP sintético; não envia pacotes à placa real nem mistura dados no banco de bancada. Isso verifica software/transporte, não emissão de LED ou instalação Android.
 

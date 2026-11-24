@@ -1,6 +1,6 @@
 # Evidências técnicas e material para monografia
 
-Evidências ficam fora da interface operacional do app. Base atual 0.6.0; a origem dos dados continua virtual. [Pacote fechado de Matheus](material-matheus-v0.6.0/SAMAHI_v0.6.0_documentacao_para_Matheus.md) e [catálogo de figuras](material-matheus-v0.6.0/catalogo_figuras.md).
+Evidências ficam fora da interface operacional do app. Na versão 0.7.0, identifique a origem de cada registro: ESP físico, simulador Node-RED ou edição offline. O [registro de rede e notebook](rede-esp-notebook-validacao.md) contém o relato de funcionamento e os limites da evidência. [Pacote fechado de Matheus](material-matheus-v0.6.0/SAMAHI_v0.6.0_documentacao_para_Matheus.md) e [catálogo de figuras](material-matheus-v0.6.0/catalogo_figuras.md).
 
 ## Registro mínimo
 

@@ -11,6 +11,7 @@ Descrever comportamento, requisito/cartão e motivo. Informar base e ordem se o 
 | exportação web | |
 | OpenAPI (se contrato alterado) | |
 | ensaio web / Expo Go / APK | |
+| ESP físico / rede / notebook, quando aplicável | |
 
 ## Documentação e evidências
 
@@ -18,7 +19,7 @@ Descrever comportamento, requisito/cartão e motivo. Informar base e ordem se o 
 - [ ] Contrato, configuração, dados/migração e ADR atualizados quando aplicável.
 - [ ] Notion/Trello atualizados com links e estado real.
 - [ ] Prints/vídeos identificam versão, ambiente e origem de dados.
-- [ ] Segredos, bancos e dados pessoais não foram incluídos.
+- [ ] Segredos, bancos, binários privados do ESP e o pacote do notebook ficaram fora do PR.
 
 ## Compatibilidade, riscos e recuperação
 

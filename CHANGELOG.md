@@ -3,11 +3,17 @@
 
 ## Não lançado
 
+### Documentação da versão integrada
+
+- Guias de instalação, arquitetura, contratos, operação, segurança, testes e evidências atualizados para o código 0.7.0 na main.
+- Registro do modo físico e do relato de funcionamento do Wi-Fi e do pacote portátil. Cenários sem evidência detalhada e o estado da compilação Android são identificados separadamente.
+- ADR da ponte física e rede local acrescentado. Registros históricos e pacote de apoio v0.6.0 preservados.
+
 ### Pacote portátil para notebook
 
 - Gerador de entrega privada Windows x64 com Node portátil oficial, dependências reinstaladas por lockfile, fluxo físico, estados e snapshots SQLite consistentes.
 - Verificador de integridade, iniciador para APK e acesso de firewall por arquivos .cmd. Execução sem download de dependências no notebook.
-- Ensaio isolado da restauração e carregamento dos módulos/fluxos, com contas/quartos preservados; hardware real e notebook de destino ainda exigem aceite.
+- Ensaio isolado da restauração e carregamento dos módulos/fluxos, com contas/quartos preservados. César confirmou o funcionamento do pacote no notebook, com registro detalhado por cenário a complementar.
 - Credenciais, bancos e ZIP da entrega não são publicados no repositório.
 
 ### Rede AP+STA e operação no notebook
@@ -15,7 +21,7 @@
 - Firmware versionado com AP protegido permanente, configuração do Wi-Fi e caminho/IP do notebook via portal autenticado e persistência NVS. Preserva pinagem, UDP/ACK, sensores, alarme local e OTA.
 - Inicializador `Iniciar-SAMAHI-Notebook.cmd` usa o APK instalado sem abrir Expo, mostra a URL do backend e permite reapresentá-la com Enter. Backend também informa o endereço de escuta ao iniciar.
 - Firewall opcional inclui UDP4210 restrito à interface/sub-rede do ensaio. Guia documenta redes separadas, mudança de IP e testes físicos pendentes.
-- A preparação não representa gravação na placa, aceite da rede no hardware nem nova build do APK.
+- César confirmou o funcionamento do Wi-Fi do ESP após a etapa inicial de compilação. O registro de rede distingue o relato, os testes automatizados e as evidências que faltam.
 
 ### APK integrado 0.7.0
 
@@ -43,7 +49,7 @@
 
 - Removida a seleção laranja do app, backend e simulador; novos comandos usam vermelho, amarelo, verde, azul ou apagar. Leitura legada laranja é preservada sem conversão automática.
 - Indicador identificado como protótipo simplificado; documentação não apresenta quatro cores como conjunto completo do Sistema Manchester.
-- Na bancada ESP32/Node-RED, amarelo passa a usar (255,20,0), antes chamado laranja; mistura antiga de amarelo removida. Fluxo exige firmware RGB v2 e nova gravação; integração física ao app continua pendente.
+- Na bancada ESP32/Node-RED, amarelo passa a usar (255,20,0), antes chamado laranja. A ponte física foi introduzida posteriormente e exige firmware compatível.
 - Contratos OpenAPI, requisitos e testes de rejeição de laranja alinhados à mudança.
 
 ### Documentação

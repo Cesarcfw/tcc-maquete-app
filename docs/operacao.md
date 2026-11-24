@@ -1,8 +1,11 @@
 # Operação, backup e solução de problemas
 
+Para a apresentação, prefira o [pacote privado do notebook](pacote-notebook.md) quando já preparado e verificado. A presença de Metro depende do cliente: Expo Go e web de desenvolvimento usam Metro, o APK instalado usa apenas o backend e o Node-RED no notebook.
+
+
 ## Iniciar e encerrar
 
-Siga [instalação](instalacao-configuracao.md) para PC e [telefone](teste-app-integrado.md) para LAN. São três processos: frontend/Metro, backend e Node-RED. A porta da interface não é o endereço da API.
+Siga [instalação](instalacao-configuracao.md) para PC e [telefone](teste-app-integrado.md) para LAN. O desenvolvimento usa frontend/Metro, backend e Node-RED. A porta da interface não é o endereço da API.
 
 Use Ctrl+C no terminal que iniciou o serviço. O iniciador de telefone encerra somente os filhos que abriu; Node-RED já existente é preservado. Não finalize todos os processos `node.exe` para liberar uma porta: isso pode encerrar ferramentas da equipe. Identifique PID, comando e proprietário antes de agir.
 
@@ -19,7 +22,7 @@ Health só verifica resposta do backend. Para saúde funcional, login, quarto ac
 | Sintoma | Conferir |
 | --- | --- |
 | Porta em uso | PID e serviço já ativo; reutilizar serviço correto ou encerrar somente sua instância |
-| Login abre mas quarto não atualiza | Node-RED, fluxo implantado, global samahi, cenário e identidade do dispositivo |
+| Login abre mas quarto não atualiza | Fluxo ativo e identidade do quarto. No físico, confirme destino/UDP do ESP e idade da telemetria. No virtual, confira a configuração global e o cenário. |
 | `/health` abre no PC e não no telefone | IP privado correto, bind do backend, mesma rede, isolamento Wi-Fi e regra específica do firewall |
 | Origem não autorizada (403) | Origem exata do web em SAMAHI_ORIGINS; reiniciar backend após configurar |
 | Conta entra mas controle não aparece | Concessões do grupo e quarto ativo; admin também precisa de concessão operacional |
@@ -47,12 +50,12 @@ O script usa `VACUUM INTO` para obter uma cópia consistente do SQLite, inclusiv
 
 1. Instale a mesma revisão do repositório, dependências e Node-RED configurado. Não execute setup sobre dados já inicializados.
 2. Encerre backend e Node-RED. Faça backup dos dados atuais antes de substituir qualquer arquivo.
-3. Em destino com diretório de dados vazio, copie `samahi.sqlite` e `auth-secret` do mesmo backup. Copie o JSON de luz para o caminho usado pelo Node-RED. Não misture o segredo de outra instalação.
+3. Em destino com diretório de dados vazio, copie `samahi.sqlite` e `auth-secret` do mesmo backup. Copie o JSON de luz para o caminho usado pelo modo ativo do Node-RED. No físico, preserve também `physical-lighting.json` e o banco da bancada separadamente, ou use o empacotador que inclui esses itens. Não misture o segredo de outra instalação.
 4. Se houver banco antigo e arquivos WAL/SHM, não sobreponha seletivamente com o serviço aberto. Preserve o conjunto antigo em backup e prepare diretório novo para o restore.
 5. Atualize o caminho do módulo Node-RED e variáveis. Inicie Node-RED/backend e confira logs, health, conta, ambientes, concessões e agenda.
 6. Reconfigure IP/origens e endereço no telefone; valide luz manual, horário, gás, histórico e perda/retorno de comunicação. Guarde o resultado do ensaio.
 
-Não há teste de restauração do notebook registrado apenas por executar backup no PC. Um plano de recuperação só fica validado após restaurar e conferir o fluxo.
+A restauração em ambiente isolado do pacote foi ensaiada, e César confirmou que o pacote funciona. Um backup posterior deve passar pela mesma conferência. Um plano de recuperação só fica validado após restaurar e conferir o fluxo.
 
 ## Atualizar e voltar uma versão
 

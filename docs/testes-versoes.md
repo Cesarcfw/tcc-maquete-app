@@ -9,6 +9,8 @@
 | Documentação local | `npm run docs:check` | Arquivos dos links Markdown, referências internas OpenAPI e operationId únicos; sem rede, sem validar âncoras ou equivalência com runtime |
 | Domínio/serviços | `npm test` | `tests/*.test.ts` via tsx/Node test runner; agenda, estado, contratos e preferências |
 | Backend HTTP | `npm --prefix backend test` | `backend/test/*.test.mjs`, app real e SQLite temporário; acesso, telefone/headers e monitoramento |
+| Gateway físico | `node --test integration/node-red/physical-runtime.test.cjs` | Requer Node-RED local disponível; usa HTTP/UDP temporário e ACK sintético |
+| Pacote portátil | `node scripts/test-notebook-package.mjs CAMINHO_DO_PACOTE` | Ensaio isolado com snapshot e dependências da entrega; não aciona a placa |
 | Bundle web | `npm run export:web` | Gera `dist/`; não publica nem executa ensaio manual |
 | Contratos documentados | `npx --yes @redocly/cli lint --extends minimal docs/api/backend.openapi.json docs/api/node-red.openapi.json` | Estrutura OpenAPI; não comprova equivalência total com runtime |
 | Integração manual | [Roteiro do telefone](teste-app-integrado.md) | UX/rede/aparelho; registrar ambiente e resultado |
@@ -34,7 +36,7 @@ Uma verificação local pode exigir permissão para abrir sockets e escrever em 
 
 ## Versões e distribuição
 
-App está em **0.6.0**. Backend tem manifest **0.1.0** e esquema próprio **1**; protocolo virtual **1**. São identificadores distintos. Durante 0.x, mudanças incompatíveis devem estar explícitas no PR/changelog, pois a API ainda evolui. Usamos formato SemVer e registro de mudanças inspirado em Keep a Changelog.
+App está em **0.7.0**. Backend tem manifest **0.1.0** e esquema próprio **1**; protocolo de telemetria **1** nos dois modos. São identificadores distintos. Durante 0.x, mudanças incompatíveis devem estar explícitas no PR/changelog, pois a API ainda evolui. Usamos formato SemVer e registro de mudanças inspirado em Keep a Changelog.
 
 Para distribuir Android, ajustar versão do app e configurações de build de forma coerente; Android versionCode deve crescer para permitir atualização. Revisar `app.json`, `app.config.js`, `package.json`, lock e `eas.json`. O código remoto EAS pode administrar o versionCode: conferir o valor efetivo na build, sem presumir que editar um JSON local bastou.
 

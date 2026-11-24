@@ -1,5 +1,8 @@
 # Publicação web no Vercel
 
+Na versão 0.7.0 a exportação web integrada continua separada do backend e do Node-RED do notebook. Para a apresentação com a maquete, o [APK integrado](apk-v0.7.0.md) usa a URL privada mostrada pelo [iniciador do notebook](rede-esp-notebook.md).
+
+
 O Vercel serve a exportação web estática do Expo; o backend local, o banco SQLite e Node-RED continuam sendo serviços separados. A existência de uma URL pública não comprova qual commit está implantado nem conectividade com os dados locais.
 
 ## Fluxo de publicação

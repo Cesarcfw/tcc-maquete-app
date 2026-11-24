@@ -1,5 +1,8 @@
 # Autenticação, contas e concessões
 
+Contas, sessões e concessões valem para a edição integrada, tanto no simulador Node-RED quanto em operação física. A [avaliação offline](demo-orientador-offline.md) usa uma conta local fictícia e não acessa o banco.
+
+
 Referência: backend atual, não o protótipo de contas locais da v0.3. [Modelo de dados](modelo-dados.md) · [API](api/README.md) · [segurança](seguranca.md).
 
 ## Ciclo de vida

@@ -4,7 +4,7 @@
 
 ## Estado atual
 
-Referência desta candidata: **app 0.7.0**, backend 0.1.0 e telemetria 1. Inclui a [integração física quarto-01 / ESP32-bancada](docs/integracao-esp-fisico.md), com ACK, sensores, alerta LED e agenda no gateway. A simulação continua um modo separado, sem fallback automático. Testes locais com ESP sintético não equivalem ao aceite na placa/telefone. Consulte o [registro do APK 0.7.0](docs/apk-v0.7.0.md) para o resultado da compilação e limites; o APK anterior 0.6.0 não contém automaticamente estas mudanças.
+Referência do código na main: **app 0.7.0**, backend 0.1.0 e telemetria 1. Inclui a [integração física quarto-01 / ESP32-bancada](docs/integracao-esp-fisico.md), com ACK, sensores, alerta LED e agenda no gateway. A simulação continua um modo separado, sem fallback automático. Testes locais com ESP sintético não equivalem ao aceite na placa/telefone. Consulte o [registro do APK 0.7.0](docs/apk-v0.7.0.md) para o resultado da compilação e limites; o APK anterior 0.6.0 não contém automaticamente estas mudanças.
 
 - Iluminação: ligar/desligar, intensidade 0–100% e programação Dia/Noite em `America/Sao_Paulo`.
 - Temperatura, umidade, gás e estado de comunicação.
@@ -37,9 +37,9 @@ O setup é executado uma única vez, em instalação vazia, para criar o adminis
 Na tela de login, configure `http://127.0.0.1:3001` e entre com a conta criada. O frontend isolado não oferece o fluxo operacional completo.
 
 - [Instalação e configuração detalhada](docs/instalacao-configuracao.md)
-- [Instalar o fluxo Node-RED](docs/integracao-node-red-local.md)
+- [Instalar o fluxo simulado](docs/integracao-node-red-local.md) ou [ativar o ESP físico](docs/integracao-esp-fisico.md)
 - [Testar no telefone e na rede local](docs/teste-app-integrado.md)
-- [Gerar e instalar APK](docs/gerar-apk.md) · [registro do APK 0.6.0](docs/apk-v0.6.0.md)
+- [Gerar e instalar APK](docs/gerar-apk.md) · [registro do APK 0.7.0](docs/apk-v0.7.0.md)
 
 ## Documentação técnica
 
@@ -77,4 +77,6 @@ A base foi criada com o template Expo `blank-typescript`; sua licença permanece
 
 ## Rede local para apresentação
 
-Para usar o APK instalado com Node-RED e backend no notebook, execute **Iniciar-SAMAHI-Notebook.cmd**. O console mostra a URL completa a colocar no app; Enter exibe novamente. Veja o [guia da rede própria do ESP e Wi-Fi configurável](docs/rede-esp-notebook.md) antes de gravar o novo firmware.
+Quem recebeu o [pacote privado do notebook](docs/pacote-notebook.md) pode usar o Node.js portátil, o backend e o Node-RED já preparados. Quem mantém uma instalação pelo repositório pode iniciar os dois serviços pelo `Iniciar-SAMAHI-Notebook.cmd`, sem Expo. O console mostra a URL do backend para o APK.
+
+Conecte notebook e telefone à mesma rede e configure no [portal do ESP](docs/rede-esp-notebook.md) o caminho e o IP do notebook. César confirmou o funcionamento do Wi-Fi do ESP e do pacote do notebook. O [registro de validação](docs/rede-esp-notebook-validacao.md) distingue esse relato dos testes automatizados e dos cenários ainda sem evidência detalhada.

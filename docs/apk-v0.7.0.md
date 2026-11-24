@@ -1,5 +1,8 @@
 # SAMAHI 0.7.0 — APK integrado com ESP físico
 
+O código 0.7.0 foi integrado à `main`. A confirmação de funcionamento da rede e do pacote portátil tem [registro separado](rede-esp-notebook-validacao.md). Para atribuir resultado a um APK específico, identificar a build instalada.
+
+
 Preparação em 19/11/2026, branch feat/apk-v0.7.0, sobre a integração física do PR #25. Android versionCode **6**, pacote **com.cesarcfw.tccmaqueteapp**, projeto Expo existente. Build interna de APK, sem publicação em loja ou release final.
 
 ## Conteúdo e operação
@@ -23,7 +26,7 @@ Os testes de software e a leitura real da API estão registrados no guia de inte
 
 ## Rastreabilidade da compilação
 
-Build **1813290f-116e-48f6-bae5-384b1fbc8ccd**, enviada em 19/11/2026 às 17:59:13 de Brasília, commit **4c025a34f98c008455063789f669364b22f72103**. [Compilação no Expo](https://expo.dev/accounts/cesarcfw/projects/tcc-maquete-app/builds/1813290f-116e-48f6-bae5-384b1fbc8ccd). Upload de 14,2 MB e uso do keystore existente confirmados. Resultado, artefato e SHA-256 serão registrados após a conclusão. Comando: `npx --yes eas-cli@latest build --platform android --profile preview --non-interactive`.
+Build **1813290f-116e-48f6-bae5-384b1fbc8ccd**, enviada em 19/11/2026 às 17:59:13 de Brasília, commit **4c025a34f98c008455063789f669364b22f72103**. [Compilação no Expo](https://expo.dev/accounts/cesarcfw/projects/tcc-maquete-app/builds/1813290f-116e-48f6-bae5-384b1fbc8ccd). Upload de 14,2 MB e uso do keystore existente confirmados. O registro local consultado contém o envio em fila. Situação final do serviço, artefato e SHA-256 continuam sem confirmação neste repositório. Comando: `npx --yes eas-cli@latest build --platform android --profile preview --non-interactive`.
 
 Antes do envio: tipagem, 31 testes e exportação web aprovados. Inspeção da configuração Android confirmou variante integrated, pacote/versionCode corretos e usesCleartextTraffic=true. Exportação Android local com Hermes também aprovada (895 módulos), sem erro de bundle. Isso ainda não comprova execução no aparelho.
 

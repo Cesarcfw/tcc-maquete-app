@@ -1,6 +1,14 @@
 # Documentação do SAMAHI
 
-Base técnica: código do aplicativo **0.6.0**, backend **0.1.0**, esquema próprio SQLite **1**, protocolo virtual **1**. Revisão documental: **17/10/2026**. Versões de dependências são declaradas nos manifests e fixadas nos lockfiles; não equivalem à versão de um serviço instalado fora do repositório.
+A referência atual é o aplicativo **0.7.0**, o backend **0.1.0**, o esquema SQLite **1** e o protocolo de telemetria **1**. A versão na `main` inclui os PRs #23 a #28 e a limpeza #29. Os manifests e lockfiles identificam as dependências do código.
+
+| Cenário | Onde começar |
+| --- | --- |
+| Operar a maquete com a placa | [Integração física](integracao-esp-fisico.md) e [rede do ESP](rede-esp-notebook.md) |
+| Apresentar com o notebook | [Pacote privado](pacote-notebook.md), [APK integrado](apk-v0.7.0.md) e [roteiro no telefone](teste-app-integrado.md) |
+| Desenvolver sem o ESP | [Instalação local](instalacao-configuracao.md) e [Node-RED simulado](integracao-node-red-local.md) |
+| Explorar interface sem servidor | [Edição offline para avaliação](demo-orientador-offline.md) |
+| Consultar os resultados e evidências | [Rede e notebook](rede-esp-notebook-validacao.md), [evidências](evidencias.md) e [revisão documental](verificacao-documentacao.md) |
 
 ## Guias atuais
 
@@ -8,9 +16,9 @@ Entrega privada preparada em 22/11/2026: [pacote portátil para o notebook Windo
 
 Operação preparada em 22/11/2026: [rede própria do ESP, Wi-Fi configurável e notebook](rede-esp-notebook.md). Novo inicializador para APK instalado mostra a URL de conexão. Consultar o guia para distinguir compilação e ensaio físico.
 
-Atualização em desenvolvimento de 19/11/2026: [integração do ESP físico](integracao-esp-fisico.md), com ponte UDP/ACK, tratamento dos sensores e instalação local. O APK 0.6.0 permanece uma entrega anterior; não contém automaticamente essa integração.
+Integração disponível na main: [ESP físico](integracao-esp-fisico.md), com ponte UDP/ACK, tratamento dos sensores e instalação local. Para os ensaios virtuais, use o guia de [Node-RED simulado](integracao-node-red-local.md).
 
-Compilação candidata atual: [APK integrado 0.7.0](apk-v0.7.0.md), versionCode 6. Consultar o registro para distinguir build, instalação e aceite no telefone.
+Rastreabilidade Android: [APK integrado 0.7.0](apk-v0.7.0.md), versionCode 6 na configuração. O registro distingue envio ao serviço, instalação e aceite no telefone.
 
 | Necessidade | Documento |
 | --- | --- |
@@ -32,7 +40,7 @@ Compilação candidata atual: [APK integrado 0.7.0](apk-v0.7.0.md), versionCode 
 | Consultar escolhas técnicas | [ADRs](adr/README.md) |
 | Consultar termos/fontes | [Glossário](glossario.md) e [referências](referencias.md) |
 
-Detalhes de funcionalidades: [Dia/Noite](modos-dia-noite.md), [histórico](historico-alertas.md), [preferências](preferencias-locais.md), [Manchester](manchester.md), [interface](interface-produto.md) e [identidade visual](identidade-visual/README.md). Esses registros contêm ensaios datados da implantação de cada recurso; a situação de distribuição atual está no [registro do APK 0.6.0](apk-v0.6.0.md).
+Detalhes de funcionalidades: [Dia/Noite](modos-dia-noite.md), [histórico](historico-alertas.md), [preferências](preferencias-locais.md), [Manchester](manchester.md), [interface](interface-produto.md) e [identidade visual](identidade-visual/README.md). Esses registros contêm ensaios datados da implantação de cada recurso; a situação de distribuição atual está no [registro do APK 0.7.0](apk-v0.7.0.md).
 
 ## Registros históricos e entregas fechadas
 

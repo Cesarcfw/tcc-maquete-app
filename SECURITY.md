@@ -1,6 +1,6 @@
 # Relato de problemas de segurança
 
-Este projeto está em desenvolvimento (série 0.x). Não existe SLA de correção ou compromisso de suporte a versões antigas. A referência atual do aplicativo é 0.6.0; a equipe deve reproduzir o problema no código mantido antes de definir a correção.
+Este projeto está em desenvolvimento (série 0.x). Não existe SLA de correção ou compromisso de suporte a versões antigas. A referência atual do código é o aplicativo 0.7.0; a equipe deve reproduzir o problema no código mantido antes de definir a correção.
 
 ## Como relatar
 
