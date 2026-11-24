@@ -18,4 +18,10 @@ A [build no Expo EAS](https://expo.dev/accounts/cesarcfw/projects/tcc-maquete-ap
 
 Antes do envio, passaram lint, tipagem, 31 testes do cliente, verificação da documentação e exportação web. A configuração Expo retornou o pacote integrado, a versão 1.0.0 e o versionCode 7.
 
+## APK produzido
+
+O EAS concluiu a build em 23/11/2026 às 23:10, horário de Brasília. O artefato baixado contém 73.686.093 bytes e tem SHA-256 `b40ada4bbd463e35d424a6250ba4e943f3fbe060c56ddca4b6034acc62c91802`.
+
+A inspeção do APK confirmou pacote `com.cesarcfw.tccmaqueteapp`, versão 1.0.0, versionCode 7, Android mínimo API 24, alvo API 36 e tráfego HTTP permitido para a rede local. O arquivo abriu sem entradas corrompidas e o certificado declarado na assinatura correspondeu ao APK integrado 0.6.0. A instalação e a operação deste APK no telefone precisam de registro próprio.
+
 Fonte do procedimento de build: [documentação do Expo](https://docs.expo.dev/build-reference/apk/).
