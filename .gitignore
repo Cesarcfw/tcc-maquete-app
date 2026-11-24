@@ -3,11 +3,8 @@
 # Material arquivado e dados privados da bancada
 /stitch_maquete_conectada_redesign/
 /PRIVADO/
-/backend/data/
-/backend/backups/
 SAMAHI-Notebook-*-PRIVADO.zip
 **/auth-secret
-.env.*
 **/wifi_config.h
 **/ota_config.h
 **/network_config.h
@@ -66,3 +63,8 @@ playwright-report/
 .env*
 backend/data/
 backend/backups/
+integration/esp32/build*/
+integration/esp32/**/build*/
+integration/esp32/**/*.bin
+integration/esp32/**/*.elf
+integration/esp32/**/*.map

@@ -1,6 +1,15 @@
 import type { LightingSchedule } from "../../shared/lighting-schedule.cjs";
 export type IndicatorColor =
   "red" | "orange" | "yellow" | "green" | "blue" | "off";
+// orange continua legivel em estados antigos, mas nao e uma opcao de comando.
+export const selectableIndicatorColors = [
+  "red",
+  "yellow",
+  "green",
+  "blue",
+] as const;
+export type SelectableIndicatorColor =
+  (typeof selectableIndicatorColors)[number] | "off";
 export type Scenario = "normal" | "offline" | "stale" | "timeout";
 export type GasStatus = "clear" | "detected" | "unavailable";
 export const gasStatusLabels: Record<GasStatus, string> = {
@@ -10,13 +19,24 @@ export const gasStatusLabels: Record<GasStatus, string> = {
 };
 export type Command =
   | { kind: "light"; on: boolean; intensity: number }
-  | { kind: "indicator"; color: IndicatorColor };
+  | { kind: "indicator"; color: SelectableIndicatorColor };
 export type DeviceState = {
   lightMode?: "manual" | "scheduled";
   lightingSchedule?: LightingSchedule;
   lightingPeriod?: "day" | "night" | null;
-  temperature: number;
-  humidity: number;
+  temperature: number | null;
+  humidity: number | null;
+  source?: string;
+  gasRawAdc?: number | null;
+  gasThresholdAdc?: number | null;
+  gasClearThresholdAdc?: number | null;
+  gasAlarmActive?: boolean;
+  gasAlarmFault?: boolean;
+  gasMonitoringConfigured?: boolean;
+  rgbVisibleColor?: IndicatorColor;
+  rgbBlinking?: boolean;
+  rgbAlarmFallback?: boolean;
+  lightingScheduleError?: string | null;
   gas: GasStatus;
   gasAcknowledged: boolean;
   receivedAt: number;
@@ -66,8 +86,11 @@ export function applyCommand(
   state: DeviceState,
   command: Command,
 ): DeviceState {
-  if (command.kind === "indicator")
+  if (command.kind === "indicator") {
+    if (![...selectableIndicatorColors, "off"].includes(command.color))
+      throw new Error("Cor inválida para o indicador deste protótipo.");
     return { ...state, indicator: command.color };
+  }
   if (
     !Number.isInteger(command.intensity) ||
     command.intensity < 0 ||
@@ -94,7 +117,7 @@ export const colorNames: Record<IndicatorColor, string> = {
   blue: "Azul",
   green: "Verde",
   red: "Vermelho",
-  orange: "Laranja",
+  orange: "Laranja (legado)",
   yellow: "Amarelo",
   off: "Desligado",
 };

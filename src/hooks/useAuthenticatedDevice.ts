@@ -3,17 +3,14 @@ import { backendRequest, Reading, Audit } from "../services/backend";
 import {
   Command,
   GasStatus,
-  IndicatorColor,
   Scenario,
   connectionState,
-  initialState,
 } from "../domain/maquette";
 import type { LogEntry } from "./useSimulator";
 import { describeAuditEvent } from "../domain/history";
-import {
-  validLightingSchedule,
-  type LightingSchedule,
-} from "../../shared/lighting-schedule.cjs";
+import { decodeReading, emptyReading } from "../domain/reading";
+import { confirmedReply } from "../../shared/device-contract.cjs";
+import { type LightingSchedule } from "../../shared/lighting-schedule.cjs";
 
 export type AuthenticatedWorkspace = {
   base: string;
@@ -25,7 +22,7 @@ export function useAuthenticatedDevice(
   roomId: string,
   workspace?: AuthenticatedWorkspace,
 ) {
-  const [device, setDevice] = useState(() => initialState(0));
+  const [device, setDevice] = useState(emptyReading);
   const [online, setOnline] = useState(false),
     [pending, setPending] = useState(false);
   const [notice, setNotice] = useState("Aguardando atualização do ambiente.");
@@ -36,22 +33,6 @@ export function useAuthenticatedDevice(
     busy = useRef(false);
   const base = workspace?.base,
     token = workspace?.token;
-  const decode = (t: Reading) => ({
-    lightMode: t.lightMode,
-    lightingSchedule: validLightingSchedule(t.lightingSchedule)
-      ? t.lightingSchedule
-      : undefined,
-    lightingPeriod: t.lightingPeriod,
-    temperature: t.temperatureC ?? 0,
-    humidity: t.humidityPercent ?? 0,
-    gas: (t.gasStatus || "unavailable") as GasStatus,
-    gasAcknowledged: !!t.gasAcknowledged,
-    receivedAt: Date.now() - t.sampleAgeMs,
-    lightOn: !!t.lightOn,
-    intensity: t.lightIntensityPercent ?? 0,
-    lastPositiveIntensity: t.lastPositiveIntensity ?? 65,
-    indicator: (t.indicatorColor || "off") as IndicatorColor,
-  });
   useEffect(() => {
     const lifecycle = generation;
     lifecycle.current++;
@@ -70,7 +51,7 @@ export function useAuthenticatedDevice(
           )
         ).data;
         if (alive && revision === report.current) {
-          setDevice(decode(t));
+          setDevice(decodeReading(t));
           setOnline(true);
         }
       } catch (error) {
@@ -104,7 +85,7 @@ export function useAuthenticatedDevice(
       reading = false;
     };
     const start = setTimeout(() => {
-      setDevice(initialState(0));
+      setDevice(emptyReading());
       setOnline(false);
       setPending(false);
       setLogs([]);
@@ -159,15 +140,18 @@ export function useAuthenticatedDevice(
           telemetry: Reading;
         }>(base, `/api/rooms/${roomId}/commands`, token, { commandId, command })
       ).data;
-      if (
-        reply.commandId !== commandId ||
-        reply.status !== "applied_in_simulator"
-      )
+      if (!confirmedReply(reply, commandId, command.kind))
         throw new Error("Confirmação incompatível.");
       if (current === generation.current) {
-        setDevice(decode(reply.telemetry));
+        setDevice(decodeReading(reply.telemetry));
         setOnline(true);
-        setNotice("Comando confirmado pelo serviço.");
+        setNotice(
+          reply.status === "acknowledged_in_gateway"
+            ? "Alerta reconhecido no app. A sinalização do ESP continua enquanto o alerta estiver ativo."
+            : reply.status === "applied_in_hardware"
+              ? "Comando confirmado pelo ESP físico."
+              : "Comando confirmado pelo simulador.",
+        );
       }
     } catch (error) {
       if (current === generation.current)

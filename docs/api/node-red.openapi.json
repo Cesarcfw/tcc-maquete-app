@@ -24,7 +24,9 @@
         "operationId": "getVirtualTelemetry",
         "summary": "Consultar leitura virtual",
         "description": "Endpoint interno sem autenticação; manter loopback. roomId atendido: quarto-01. Reset preserva luz somente na instância com storage. Leitura stale bloqueia comando; erro de gravação não confirma luz.",
-        "tags": ["Dispositivo virtual"],
+        "tags": [
+          "Dispositivo virtual"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -74,7 +76,9 @@
         "operationId": "sendVirtualCommand",
         "summary": "Aplicar comando no dispositivo virtual",
         "description": "Endpoint interno sem autenticação; manter loopback. roomId atendido: quarto-01. Reset preserva luz somente na instância com storage. Leitura stale bloqueia comando; erro de gravação não confirma luz.",
-        "tags": ["Dispositivo virtual"],
+        "tags": [
+          "Dispositivo virtual"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -164,7 +168,9 @@
         "operationId": "changeSimulation",
         "summary": "Alterar cenário ou sensores virtuais",
         "description": "Endpoint interno sem autenticação; manter loopback. roomId atendido: quarto-01. Reset preserva luz somente na instância com storage. Leitura stale bloqueia comando; erro de gravação não confirma luz.",
-        "tags": ["Dispositivo virtual"],
+        "tags": [
+          "Dispositivo virtual"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -224,7 +230,9 @@
         "operationId": "resetVirtualDevice",
         "summary": "Reiniciar estado virtual",
         "description": "Endpoint interno sem autenticação; manter loopback. roomId atendido: quarto-01. Reset preserva luz somente na instância com storage. Leitura stale bloqueia comando; erro de gravação não confirma luz.",
-        "tags": ["Dispositivo virtual"],
+        "tags": [
+          "Dispositivo virtual"
+        ],
         "responses": {
           "200": {
             "description": "Sucesso.",
@@ -336,7 +344,11 @@
                 "maximum": 100
               }
             },
-            "required": ["kind", "on", "intensity"],
+            "required": [
+              "kind",
+              "on",
+              "intensity"
+            ],
             "description": "on deve ser exatamente intensity > 0; manual pausa agenda."
           },
           {
@@ -353,7 +365,11 @@
                 "$ref": "#/components/schemas/LightingSchedule"
               }
             },
-            "required": ["kind", "enabled", "schedule"]
+            "required": [
+              "kind",
+              "enabled",
+              "schedule"
+            ]
           },
           {
             "type": "object",
@@ -364,10 +380,19 @@
               },
               "color": {
                 "type": "string",
-                "enum": ["red", "orange", "yellow", "green", "blue", "off"]
+                "enum": [
+                  "red",
+                  "yellow",
+                  "green",
+                  "blue",
+                  "off"
+                ]
               }
             },
-            "required": ["kind", "color"]
+            "required": [
+              "kind",
+              "color"
+            ]
           },
           {
             "type": "object",
@@ -377,7 +402,9 @@
                 "type": "string"
               }
             },
-            "required": ["kind"],
+            "required": [
+              "kind"
+            ],
             "description": "Reconhece detecção sem eliminar gás. Autorização sensors:read no backend."
           }
         ],
@@ -392,7 +419,9 @@
             "type": "string"
           }
         },
-        "required": ["error"]
+        "required": [
+          "error"
+        ]
       },
       "Telemetry": {
         "type": "object",
@@ -413,7 +442,10 @@
           },
           "source": {
             "type": "string",
-            "const": "node-red-simulator"
+            "enum": [
+              "node-red-simulator",
+              "esp32-physical"
+            ]
           },
           "sampledAt": {
             "type": "string",
@@ -428,25 +460,38 @@
             "minimum": 0
           },
           "temperatureC": {
-            "type": "number"
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "temperatureValid": {
             "type": "boolean"
           },
           "humidityPercent": {
-            "type": "number"
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "humidityValid": {
             "type": "boolean"
           },
           "gasRawAdc": {
-            "type": "integer",
+            "type": [
+              "integer",
+              "null"
+            ],
             "minimum": 0,
             "maximum": 4095
           },
           "gasStatus": {
             "type": "string",
-            "enum": ["clear", "detected", "unavailable"]
+            "enum": [
+              "clear",
+              "detected",
+              "unavailable"
+            ]
           },
           "gasAcknowledged": {
             "type": "boolean"
@@ -477,18 +522,35 @@
           },
           "lightMode": {
             "type": "string",
-            "enum": ["manual", "scheduled"]
+            "enum": [
+              "manual",
+              "scheduled"
+            ]
           },
           "lightingSchedule": {
             "$ref": "#/components/schemas/LightingSchedule"
           },
           "lightingPeriod": {
-            "type": ["string", "null"],
-            "enum": ["day", "night", null]
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "day",
+              "night",
+              null
+            ]
           },
           "indicatorColor": {
             "type": "string",
-            "enum": ["red", "orange", "yellow", "green", "blue", "off"]
+            "enum": [
+              "red",
+              "orange",
+              "yellow",
+              "green",
+              "blue",
+              "off"
+            ]
           },
           "uptimeMs": {
             "type": "number",
@@ -499,8 +561,12 @@
             "const": 12
           },
           "gasThresholdAdc": {
-            "type": "integer",
-            "const": 2000
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 4094
           },
           "darkThresholdAdc": {
             "type": "integer",
@@ -508,7 +574,12 @@
           },
           "scenario": {
             "type": "string",
-            "enum": ["normal", "offline", "stale", "timeout"]
+            "enum": [
+              "normal",
+              "offline",
+              "stale",
+              "timeout"
+            ]
           },
           "capabilities": {
             "type": "object",
@@ -523,12 +594,10 @@
                 "type": "boolean"
               },
               "manchesterSimulatedOnly": {
-                "type": "boolean",
-                "const": true
+                "type": "boolean"
               },
               "hardware": {
-                "type": "boolean",
-                "const": false
+                "type": "boolean"
               },
               "scheduledLighting": {
                 "type": "boolean"
@@ -541,6 +610,46 @@
               "manchesterSimulatedOnly",
               "hardware",
               "scheduledLighting"
+            ]
+          },
+          "gasClearThresholdAdc": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 4094
+          },
+          "gasAlarmActive": {
+            "type": "boolean"
+          },
+          "gasAlarmFault": {
+            "type": "boolean"
+          },
+          "gasMonitoringConfigured": {
+            "type": "boolean"
+          },
+          "rgbBlinking": {
+            "type": "boolean"
+          },
+          "rgbAlarmFallback": {
+            "type": "boolean"
+          },
+          "rgbVisibleColor": {
+            "type": "string",
+            "enum": [
+              "red",
+              "yellow",
+              "green",
+              "blue",
+              "off",
+              "unknown"
+            ]
+          },
+          "lightingScheduleError": {
+            "type": [
+              "string",
+              "null"
             ]
           }
         },
@@ -561,8 +670,6 @@
           "gasStatus",
           "gasAcknowledged",
           "buzzerOn",
-          "ldrRawAdc",
-          "dark",
           "lightOn",
           "lightIntensityPercent",
           "lastPositiveIntensity",
@@ -571,12 +678,10 @@
           "lightingPeriod",
           "indicatorColor",
           "uptimeMs",
-          "adcBits",
           "gasThresholdAdc",
-          "darkThresholdAdc",
-          "scenario",
           "capabilities"
-        ]
+        ],
+        "description": " Origem fisica nao usa fallback simulado. Valores DHT invalidos sao null; gasAlarmActive e estado latched do firmware e nao comparacao ADC instantanea. sampledAt na ponte fisica e o instante de recepcao no gateway."
       },
       "CommandRequest": {
         "type": "object",
@@ -589,7 +694,10 @@
             "$ref": "#/components/schemas/Command"
           }
         },
-        "required": ["commandId", "command"],
+        "required": [
+          "commandId",
+          "command"
+        ],
         "description": "Node-RED atual aceita somente letras/números/hífen no ID. Use esse subconjunto para interoperabilidade. Não há retry automático seguro de comando unconfirmed."
       },
       "CommandResult": {
@@ -604,13 +712,33 @@
           },
           "status": {
             "type": "string",
-            "const": "applied_in_simulator"
+            "enum": [
+              "applied_in_simulator",
+              "applied_in_hardware",
+              "acknowledged_in_gateway"
+            ]
           },
           "telemetry": {
             "$ref": "#/components/schemas/Telemetry"
+          },
+          "confirmationScope": {
+            "type": "string",
+            "enum": [
+              "firmware_ack",
+              "app-only"
+            ]
+          },
+          "wireCommandId": {
+            "type": "string",
+            "description": "ID UDP correlacionado ao ACK, somente em confirmacao fisica."
           }
         },
-        "required": ["type", "commandId", "status", "telemetry"]
+        "required": [
+          "type",
+          "commandId",
+          "status",
+          "telemetry"
+        ]
       },
       "SimulationInput": {
         "type": "object",
@@ -640,7 +768,12 @@
           },
           "scenario": {
             "type": "string",
-            "enum": ["normal", "offline", "stale", "timeout"]
+            "enum": [
+              "normal",
+              "offline",
+              "stale",
+              "timeout"
+            ]
           }
         },
         "additionalProperties": false,

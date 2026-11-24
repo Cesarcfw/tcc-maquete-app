@@ -46,6 +46,7 @@ import {
   gasStatusLabels,
   IndicatorColor,
   indicatorPriorities,
+  selectableIndicatorColors,
   Scenario,
   toggleLight,
 } from "../domain/maquette";
@@ -75,6 +76,7 @@ import WebInputTheme from "./WebInputTheme";
 import { Panel, Note } from "./SharedPanels";
 import { LightingScheduleControls } from "./LightingScheduleControls";
 import { Brand } from "./Brand";
+import { evaluationUsers } from "../domain/evaluation";
 
 type Screen =
   | "Quartos"
@@ -102,7 +104,7 @@ const navIcons: Record<Screen, string> = {
 const navLabels: Partial<Record<Screen, string>> = {
   Painel: "Visão geral",
   Sensores: "Sensores e gás",
-  Manchester: "Triagem Manchester",
+  Manchester: "Indicador de triagem",
   Usuários: "Usuários e permissões",
 };
 const indicatorColors: Record<IndicatorColor, string> = {
@@ -155,12 +157,24 @@ const makeIdentity = (account: Account): DemoUser => ({
 });
 const makeRooms = (values: SavedRoom[], base: string): RoomDefinition[] =>
   values.map((value) => ({ ...value, active: !!value.active, endpoint: base }));
-export default function App({ workspace }: { workspace: Workspace }) {
+export function OfflineEvaluationApp() {
+  return <App evaluation />;
+}
+
+export default function App({
+  workspace,
+  evaluation = false,
+}: {
+  workspace?: Workspace;
+  evaluation?: boolean;
+}) {
   const [systemReduced, setSystemReduced] = useState(false);
-  const reduceMotion = workspace.reduceMotion;
-  const setReduceMotion = workspace.onReduceMotion;
-  const dark = workspace.dark;
-  const setDark = workspace.onTheme;
+  const [localDark, setLocalDark] = useState(true);
+  const [localReduceMotion, setLocalReduceMotion] = useState(false);
+  const reduceMotion = workspace?.reduceMotion ?? localReduceMotion;
+  const setReduceMotion = workspace?.onReduceMotion ?? setLocalReduceMotion;
+  const dark = workspace?.dark ?? localDark;
+  const setDark = workspace?.onTheme ?? setLocalDark;
   useEffect(() => {
     let live = true;
     AccessibilityInfo.isReduceMotionEnabled().then((value) => {
@@ -197,6 +211,7 @@ export default function App({ workspace }: { workspace: Workspace }) {
         <WebInputTheme />
         <DemoApp
           workspace={workspace}
+          evaluation={evaluation}
           isolated
           dark={dark}
           setDark={setDark}
@@ -514,13 +529,21 @@ function Dashboard({
       <View style={[s.metrics, !wide && s.wrap]}>
         <Metric
           title="Temperatura"
-          value={`${sim.device.temperature.toFixed(1).replace(".", ",")} °C`}
+          value={
+            sim.device.temperature === null
+              ? "Indisponível"
+              : `${sim.device.temperature.toFixed(1).replace(".", ",")} °C`
+          }
           icon="thermometer"
           detail={detail}
         />
         <Metric
           title="Umidade"
-          value={`${sim.device.humidity}%`}
+          value={
+            sim.device.humidity === null
+              ? "Indisponível"
+              : `${sim.device.humidity}%`
+          }
           icon="water-percent"
           detail={detail}
         />
@@ -530,6 +553,14 @@ function Dashboard({
         icon="molecule"
         subtitle="Monitoramento ambiental"
       >
+        {sim.device.source === "esp32-physical" && (
+          <Text variant="bodySmall">
+            MQ-2 físico · {sim.device.gasRawAdc ?? "—"} ADC ·{" "}
+            {sim.device.gasMonitoringConfigured
+              ? `limiares experimentais ${sim.device.gasThresholdAdc}/${sim.device.gasClearThresholdAdc}`
+              : "alarme ainda não configurado no ESP"}
+          </Text>
+        )}
         <Note
           title={
             outdated
@@ -540,13 +571,23 @@ function Dashboard({
           text={
             outdated
               ? "Sem leitura atual. O último estado é preservado."
-              : sim.device.gas === "unavailable"
-                ? "Ausência de leitura não significa ausência de gás."
-                : sim.device.gas === "detected"
-                  ? "Possível presença de gás ou fumaça. Tipo de gás não identificado."
-                  : "Nenhuma detecção informada na última leitura."
+              : sim.device.source === "esp32-physical" &&
+                  sim.device.gasMonitoringConfigured === false
+                ? "Leitura disponível; envie o firmware do alerta para habilitar o monitoramento experimental."
+                : sim.device.gas === "unavailable"
+                  ? "Ausência de leitura não significa ausência de gás."
+                  : sim.device.gas === "detected"
+                    ? "Possível presença de gás ou fumaça. Tipo de gás não identificado."
+                    : sim.device.source === "esp32-physical"
+                      ? "Alerta experimental inativo na última leitura. Isso não comprova ausência de gás."
+                      : "Nenhuma detecção informada na última leitura."
           }
         />
+        {sim.device.gasAlarmFault && (
+          <Text>
+            Falha ou leitura antiga do MQ-2. Um alerta ativo é mantido pelo ESP.
+          </Text>
+        )}
         {sim.device.gas === "detected" && (
           <Button mode="outlined" icon="alert-outline" onPress={onGas}>
             Ver alerta de gás
@@ -565,9 +606,9 @@ function Dashboard({
   );
   const triage = read("indicator") ? (
     <Panel
-      title="Triagem Manchester"
+      title="Indicador de triagem"
       icon="medical-bag"
-      subtitle="Indicador externo · seleção manual"
+      subtitle="Indicador externo · quatro cores · seleção manual"
     >
       <View
         style={[
@@ -593,32 +634,39 @@ function Dashboard({
           {indicatorPriorities[sim.device.indicator]}
         </Text>
       </View>
+      {sim.device.rgbBlinking && (
+        <Text variant="bodySmall">
+          Indicador piscando por alerta ambiental
+          {sim.device.rgbAlarmFallback
+            ? " em amarelo temporário"
+            : " na cor selecionada"}
+          . A classificação de triagem permanece inalterada.
+        </Text>
+      )}
       <View style={s.triageOptions}>
-        {(["red", "orange", "yellow", "green", "blue"] as IndicatorColor[]).map(
-          (color) => (
-            <Button
-              key={color}
-              mode={
-                sim.device.indicator === color ? "contained-tonal" : "outlined"
-              }
-              disabled={!ready || !control("indicator")}
-              style={{ borderColor: indicatorColors[color] }}
-              contentStyle={s.triageButton}
-              accessibilityLabel={`Indicador ${colorNames[color]}`}
-              icon={() => (
-                <View
-                  style={[
-                    s.priorityDot,
-                    { backgroundColor: indicatorColors[color] },
-                  ]}
-                />
-              )}
-              onPress={() => send({ kind: "indicator", color })}
-            >
-              {colorNames[color]} · {indicatorPriorities[color]}
-            </Button>
-          ),
-        )}
+        {selectableIndicatorColors.map((color) => (
+          <Button
+            key={color}
+            mode={
+              sim.device.indicator === color ? "contained-tonal" : "outlined"
+            }
+            disabled={!ready || !control("indicator")}
+            style={{ borderColor: indicatorColors[color] }}
+            contentStyle={s.triageButton}
+            accessibilityLabel={`Indicador ${colorNames[color]}`}
+            icon={() => (
+              <View
+                style={[
+                  s.priorityDot,
+                  { backgroundColor: indicatorColors[color] },
+                ]}
+              />
+            )}
+            onPress={() => send({ kind: "indicator", color })}
+          >
+            {colorNames[color]} · {indicatorPriorities[color]}
+          </Button>
+        ))}
       </View>
       <Button
         mode="outlined"
@@ -630,7 +678,8 @@ function Dashboard({
       </Button>
       <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
         A cor muda após confirmação do serviço. O aplicativo não realiza
-        classificação clínica.
+        classificação clínica. Esta versão usa uma seleção simplificada de
+        quatro cores; não representa o conjunto completo do Sistema Manchester.
       </Text>
     </Panel>
   ) : (
@@ -711,6 +760,7 @@ function Dashboard({
 
 function DemoApp({
   workspace,
+  evaluation = false,
   isolated,
   dark,
   setDark,
@@ -718,6 +768,7 @@ function DemoApp({
   setReduceMotion,
 }: {
   workspace?: Workspace;
+  evaluation?: boolean;
   isolated: boolean;
   dark: boolean;
   setDark: (value: boolean) => void;
@@ -729,7 +780,11 @@ function DemoApp({
   const desktop = width >= 1100,
     wide = width >= 760;
   const [users, setUsers] = useState(() =>
-      workspace ? [makeIdentity(workspace.account)] : initialUsers(),
+      workspace
+        ? [makeIdentity(workspace.account)]
+        : evaluation
+          ? evaluationUsers()
+          : initialUsers(),
     ),
     [rooms, setRooms] = useState(() =>
       workspace
@@ -1059,7 +1114,7 @@ function DemoApp({
     Painel: room.name,
     Iluminação: "Controle de iluminação",
     Sensores: "Sensores e gás",
-    Manchester: "Triagem Manchester",
+    Manchester: "Indicador de triagem",
     Histórico: "Histórico do ambiente",
     Conta: "Minha conta",
     Conexões: "Conexões e dispositivos",
@@ -1103,80 +1158,131 @@ function DemoApp({
     </View>
   );
 
+  const evaluationLogin = (
+    <ScrollView
+      contentContainerStyle={s.loginScroll}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View style={s.spread}>{themeControl}</View>
+      <LoginPresentation>
+        <Panel
+          title="Acesso de avaliação"
+          icon="account-circle-outline"
+          subtitle="Conta de teste pré-configurada"
+        >
+          <View style={s.row}>
+            <Avatar.Text size={42} label="O" />
+            <View style={s.flex}>
+              <Text variant="titleMedium" style={s.bold}>
+                Orientador
+              </Text>
+              <Text variant="bodyMedium">Administrador da demonstração</Text>
+            </View>
+          </View>
+          <Text variant="bodyMedium">
+            Entre para explorar os quartos e controles. Não é necessário
+            cadastrar conta, informar senha ou iniciar um servidor.
+          </Text>
+          <Button
+            mode="contained"
+            icon="login"
+            onPress={() => changeSession(users[0].id)}
+          >
+            Entrar como Orientador
+          </Button>
+          <Note
+            title="Demonstração independente"
+            text="Dados e comandos simulados no aparelho. Nenhum equipamento físico conectado."
+          />
+        </Panel>
+      </LoginPresentation>
+    </ScrollView>
+  );
+
   return (
     <SafeAreaView style={[s.root, { backgroundColor: colors.background }]}>
       <StatusBar style={dark ? "light" : "dark"} />
       {!user ? (
-        <ScrollView contentContainerStyle={s.loginScroll}>
-          <View style={[s.loginPage, wide && s.grid]}>
-            <View style={s.column}>
-              <View style={s.spread}>
-                <Brand />
-                {themeControl}
-              </View>
-              <Text
-                variant={wide ? "displaySmall" : "headlineLarge"}
-                style={s.bold}
-              >
-                Seu ambiente, ao seu alcance.
-              </Text>
-              <Text
-                variant="bodyLarge"
-                style={{ color: colors.onSurfaceVariant }}
-              >
-                Controle da iluminação, acompanhamento de sensores e indicador
-                externo em uma interface.
-              </Text>
-              <Blueprint intensity={65} indicator="blue" />
-              <Note
-                title="Modo de demonstração"
-                text="Dados e comandos simulados. Nenhum equipamento físico conectado."
-              />
-            </View>
-            <View style={s.column}>
-              <Panel
-                title="Escolha um perfil"
-                icon="account-circle-outline"
-                subtitle="Perfis fictícios · sem autenticação real"
-              >
-                {users.map((profile) => (
-                  <View
-                    key={profile.id}
-                    style={[s.profile, { borderColor: colors.outlineVariant }]}
-                  >
-                    <View style={s.row}>
-                      <Avatar.Text size={38} label={profile.name.slice(0, 1)} />
-                      <View style={s.flex}>
-                        <Text variant="titleMedium" style={s.bold}>
-                          {profile.name}
-                        </Text>
-                        <Text variant="bodySmall">
-                          {profile.admin
-                            ? "Administrador"
-                            : "Usuário com permissões específicas"}
-                        </Text>
-                      </View>
-                    </View>
-                    <Button
-                      mode={profile.admin ? "contained" : "outlined"}
-                      accessibilityLabel={`Entrar como ${profile.name}`}
-                      onPress={() => changeSession(profile.id)}
-                    >
-                      Entrar como {profile.name}
-                    </Button>
-                  </View>
-                ))}
+        evaluation ? (
+          evaluationLogin
+        ) : (
+          <ScrollView contentContainerStyle={s.loginScroll}>
+            <View style={[s.loginPage, wide && s.grid]}>
+              <View style={s.column}>
+                <View style={s.spread}>
+                  <Brand />
+                  {themeControl}
+                </View>
                 <Text
-                  variant="bodySmall"
+                  variant={wide ? "displaySmall" : "headlineLarge"}
+                  style={s.bold}
+                >
+                  Seu ambiente, ao seu alcance.
+                </Text>
+                <Text
+                  variant="bodyLarge"
                   style={{ color: colors.onSurfaceVariant }}
                 >
-                  Recarregar reinicia o cadastro local. O estado do Node-RED
-                  permanece enquanto ele estiver rodando.
+                  Controle da iluminação, acompanhamento de sensores e indicador
+                  externo em uma interface.
                 </Text>
-              </Panel>
+                <Blueprint intensity={65} indicator="blue" />
+                <Note
+                  title="Modo de demonstração"
+                  text="Dados e comandos simulados. Nenhum equipamento físico conectado."
+                />
+              </View>
+              <View style={s.column}>
+                <Panel
+                  title="Escolha um perfil"
+                  icon="account-circle-outline"
+                  subtitle="Perfis fictícios · sem autenticação real"
+                >
+                  {users.map((profile) => (
+                    <View
+                      key={profile.id}
+                      style={[
+                        s.profile,
+                        { borderColor: colors.outlineVariant },
+                      ]}
+                    >
+                      <View style={s.row}>
+                        <Avatar.Text
+                          size={38}
+                          label={profile.name.slice(0, 1)}
+                        />
+                        <View style={s.flex}>
+                          <Text variant="titleMedium" style={s.bold}>
+                            {profile.name}
+                          </Text>
+                          <Text variant="bodySmall">
+                            {profile.admin
+                              ? "Administrador"
+                              : "Usuário com permissões específicas"}
+                          </Text>
+                        </View>
+                      </View>
+                      <Button
+                        mode={profile.admin ? "contained" : "outlined"}
+                        accessibilityLabel={`Entrar como ${profile.name}`}
+                        onPress={() => changeSession(profile.id)}
+                      >
+                        Entrar como {profile.name}
+                      </Button>
+                    </View>
+                  ))}
+                  <Text
+                    variant="bodySmall"
+                    style={{ color: colors.onSurfaceVariant }}
+                  >
+                    Recarregar reinicia o cadastro local. O estado do Node-RED
+                    permanece enquanto ele estiver rodando.
+                  </Text>
+                </Panel>
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        )
       ) : (
         <View style={s.shell}>
           {desktop && (
@@ -1273,7 +1379,7 @@ function DemoApp({
                 style={{ backgroundColor: colors.primaryContainer }}
                 textStyle={{ fontSize: 11 }}
               >
-                Conta autenticada
+                {workspace ? "Conta autenticada" : "Conta de teste"}
               </Chip>
               {themeControl}
             </View>

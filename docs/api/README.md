@@ -1,5 +1,7 @@
 # APIs e contratos de integração
 
+Atualização em 19/11/2026: contratos incluem source esp32-physical e confirmação por ACK da placa, além do simulador. Reconhecimento de gás no app tem confirmação app-only; não silencia o equipamento. A [integração física](../integracao-esp-fisico.md) detalha o protocolo UDP, a agenda do gateway, o vínculo de dispositivos e a ativação local. A descrição histórica do serviço virtual abaixo continua válida apenas no modo simulado.
+
 Referência: cliente 0.6.0, backend 0.1.0, protocolo virtual 1. Contratos em **OpenAPI 3.1.1**, serializados em JSON para leitura por ferramentas:
 
 - [Backend autenticado](backend.openapi.json) — API consumida pelo cliente.
@@ -73,7 +75,7 @@ Envelope:
 | --- | --- | --- |
 | light | on boolean; intensity inteiro 0–100; on deve equivaler a intensity > 0 | light:control |
 | lightingSchedule | enabled boolean; schedule com timeZone, dayStart, nightStart, dayIntensity, nightIntensity | light:control |
-| indicator | color red/orange/yellow/green/blue/off | indicator:control |
+| indicator | color red/yellow/green/blue/off (laranja não aceito em novos comandos) | indicator:control |
 | acknowledgeGas | Sem campos adicionais necessários | sensors:read |
 
 Agenda:

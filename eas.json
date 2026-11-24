@@ -3,11 +3,21 @@
     "appVersionSource": "local"
   },
   "build": {
+    "evaluation": {
+      "distribution": "internal",
+      "developmentClient": false,
+      "env": {
+        "APP_VARIANT": "evaluation",
+        "EXPO_NO_DOTENV": "1"
+      },
+      "android": { "buildType": "apk" }
+    },
     "preview": {
       "distribution": "internal",
       "developmentClient": false,
       "env": {
-        "EXPO_PUBLIC_NODE_RED_URL": "https://servico.exemplo"
+        "APP_VARIANT": "integrated",
+        "EXPO_NO_DOTENV": "1"
       },
       "android": {
         "buildType": "apk"

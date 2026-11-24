@@ -3,6 +3,49 @@
 
 ## Não lançado
 
+### Pacote portátil para notebook
+
+- Gerador de entrega privada Windows x64 com Node portátil oficial, dependências reinstaladas por lockfile, fluxo físico, estados e snapshots SQLite consistentes.
+- Verificador de integridade, iniciador para APK e acesso de firewall por arquivos .cmd. Execução sem download de dependências no notebook.
+- Ensaio isolado da restauração e carregamento dos módulos/fluxos, com contas/quartos preservados; hardware real e notebook de destino ainda exigem aceite.
+- Credenciais, bancos e ZIP da entrega não são publicados no repositório.
+
+### Rede AP+STA e operação no notebook
+
+- Firmware versionado com AP protegido permanente, configuração do Wi-Fi e caminho/IP do notebook via portal autenticado e persistência NVS. Preserva pinagem, UDP/ACK, sensores, alarme local e OTA.
+- Inicializador `Iniciar-SAMAHI-Notebook.cmd` usa o APK instalado sem abrir Expo, mostra a URL do backend e permite reapresentá-la com Enter. Backend também informa o endereço de escuta ao iniciar.
+- Firewall opcional inclui UDP4210 restrito à interface/sub-rede do ensaio. Guia documenta redes separadas, mudança de IP e testes físicos pendentes.
+- A preparação não representa gravação na placa, aceite da rede no hardware nem nova build do APK.
+
+### APK integrado 0.7.0
+
+- Preparação Android versionCode 6, mesmo pacote e assinatura do SAMAHI integrado, com integração física da bancada.
+- Perfil preview fixa a variante integrated e não carrega arquivos .env locais; endereço do backend configurado no aparelho.
+- Build interna não representa release final nem aceite de instalação/controle físico no telefone.
+
+### Preparação da integração com ESP físico
+
+- Ponte Node-RED para ESP32-bancada: DHT22/MQ-2, luz PWM e triagem, sem fallback simulado.
+- Comandos físicos exigem ACK correlacionado; timeout preserva estado. Reconhecimento de gás restrito ao app não silencia o ESP.
+- Agenda Dia/Noite de Brasília persistida no gateway e aplicada com ACK; depende de Node-RED ligado.
+- Falha DHT aparece como indisponível; ADC e amarelo temporário do alerta permanecem separados da classificação de triagem.
+- Instalador/vínculo com backup preservam contas, concessões e histórico da bancada. Aceite físico e móvel continuam separados dos testes locais.
+
+
+### Edição de avaliação offline
+
+- Perfil EAS `evaluation` com nome e pacote Android próprios, permitindo instalação junto ao app autenticado.
+- Tela de acesso com conta local Orientador, sem senha nem cadastro, e mesmas telas de ambientes/controles em simulação independente.
+- Agenda Dia/Noite também funciona no simulador local; comandos manuais pausam a agenda. Nenhum backend, Node-RED ou hardware é acionado nessa edição.
+- Inicializador web separado e guia com limitações e roteiro de evidências. Autenticação da edição principal preservada.
+
+### Indicador de quatro cores
+
+- Removida a seleção laranja do app, backend e simulador; novos comandos usam vermelho, amarelo, verde, azul ou apagar. Leitura legada laranja é preservada sem conversão automática.
+- Indicador identificado como protótipo simplificado; documentação não apresenta quatro cores como conjunto completo do Sistema Manchester.
+- Na bancada ESP32/Node-RED, amarelo passa a usar (255,20,0), antes chamado laranja; mistura antiga de amarelo removida. Fluxo exige firmware RGB v2 e nova gravação; integração física ao app continua pendente.
+- Contratos OpenAPI, requisitos e testes de rejeição de laranja alinhados à mudança.
+
 ### Documentação
 
 - Revisão técnica do código 0.6.0: arquitetura, mapa de módulos, requisitos/aceitação, configuração, dados, autenticação, segurança, operação, testes e distribuição.

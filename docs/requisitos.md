@@ -13,7 +13,7 @@ Base: código 0.6.0. “Implementado” descreve código disponível; não repre
 | RF07 | Dia/Noite | Horários distintos HH:mm e intensidades 0–100; período em Brasília; manual pausa; reativar retoma | shared, schedule, testes com relógio injetado |
 | RF08 | Persistência da luz | Reiniciar instância recupera modo/agenda/intensidade; falha de gravação não confirma alteração | fileStorage, testes temporários |
 | RF09 | Gás | ADC ≥ 2000 detecta; unavailable separa indisponibilidade; reconhecer não remove detecção | simulador e alerta; testes/UI |
-| RF10 | Indicador Manchester | Vermelho/laranja/amarelo/verde/azul/off manuais; alterar não depende do gás | comando indicator, testes |
+| RF10 | Indicador de triagem simplificado | Vermelho/amarelo/verde/azul/off manuais; laranja não selecionável; alterar não depende do gás | comando indicator, testes |
 | RF11 | Histórico | Transições de gás/conexão são persistidas durante consultas; repetição não duplica transição | suíte monitoring; histórico por quarto |
 | RF12 | Preferências | Endereço válido, tema e redução de movimento reaparecem; dados inválidos usam fallback seguro | preferences, testes e recarregamento |
 | RF13 | Comandos identificados | ACK correlacionado ao commandId; repetição confirmada idêntica não reaplica no backend | rota commands, suítes HTTP |

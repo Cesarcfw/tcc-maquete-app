@@ -4,6 +4,14 @@ Base técnica: código do aplicativo **0.6.0**, backend **0.1.0**, esquema próp
 
 ## Guias atuais
 
+Entrega privada preparada em 22/11/2026: [pacote portátil para o notebook Windows x64](pacote-notebook.md), com runtime, dependências e snapshots. O ZIP fica fora do GitHub.
+
+Operação preparada em 22/11/2026: [rede própria do ESP, Wi-Fi configurável e notebook](rede-esp-notebook.md). Novo inicializador para APK instalado mostra a URL de conexão. Consultar o guia para distinguir compilação e ensaio físico.
+
+Atualização em desenvolvimento de 19/11/2026: [integração do ESP físico](integracao-esp-fisico.md), com ponte UDP/ACK, tratamento dos sensores e instalação local. O APK 0.6.0 permanece uma entrega anterior; não contém automaticamente essa integração.
+
+Compilação candidata atual: [APK integrado 0.7.0](apk-v0.7.0.md), versionCode 6. Consultar o registro para distinguir build, instalação e aceite no telefone.
+
 | Necessidade | Documento |
 | --- | --- |
 | Entender a solução e seus limites | [Arquitetura](arquitetura.md) |

@@ -2,6 +2,8 @@
 
 ## Visão geral
 
+A preparação de integração física mantém este esquema. O helper backend/link-physical.mjs altera o vínculo padrão do quarto com backup, registra audit e limpa somente caches de última leitura/conexão. A agenda física fica no runtime Node-RED em data/physical-lighting.json, separada da agenda simulada. Ver [integração física](integracao-esp-fisico.md).
+
 SQLite em `backend/data/samahi.sqlite` por padrão; aberto via `node:sqlite`. WAL, foreign keys habilitadas e `busy_timeout=5000`. O domínio grava JSON serializado em colunas TEXT; não existe servidor PostgreSQL. O código executado é a referência do DDL: `backend/core.mjs`.
 
 ```mermaid
