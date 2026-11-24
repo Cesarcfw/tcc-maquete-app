@@ -3,6 +3,13 @@
 
 ## Não lançado
 
+### Indicador de quatro cores
+
+- Removida a seleção laranja do app, backend e simulador; novos comandos usam vermelho, amarelo, verde, azul ou apagar. Leitura legada laranja é preservada sem conversão automática.
+- Indicador identificado como protótipo simplificado; documentação não apresenta quatro cores como conjunto completo do Sistema Manchester.
+- Na bancada ESP32/Node-RED, amarelo passa a usar (255,20,0), antes chamado laranja; mistura antiga de amarelo removida. Fluxo exige firmware RGB v2 e nova gravação; integração física ao app continua pendente.
+- Contratos OpenAPI, requisitos e testes de rejeição de laranja alinhados à mudança.
+
 ### Documentação
 
 - Revisão técnica do código 0.6.0: arquitetura, mapa de módulos, requisitos/aceitação, configuração, dados, autenticação, segurança, operação, testes e distribuição.

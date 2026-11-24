@@ -73,7 +73,7 @@ Envelope:
 | --- | --- | --- |
 | light | on boolean; intensity inteiro 0–100; on deve equivaler a intensity > 0 | light:control |
 | lightingSchedule | enabled boolean; schedule com timeZone, dayStart, nightStart, dayIntensity, nightIntensity | light:control |
-| indicator | color red/orange/yellow/green/blue/off | indicator:control |
+| indicator | color red/yellow/green/blue/off (laranja não aceito em novos comandos) | indicator:control |
 | acknowledgeGas | Sem campos adicionais necessários | sensors:read |
 
 Agenda:

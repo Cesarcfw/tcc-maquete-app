@@ -12,7 +12,7 @@ export type DemoUser = {
 export const groupLabels: Record<Group, string> = {
   light: "Iluminação",
   sensors: "Sensores",
-  indicator: "Manchester",
+  indicator: "Indicador de triagem",
   history: "Histórico",
 };
 export function emptyGrants(): Record<Group, Level> {

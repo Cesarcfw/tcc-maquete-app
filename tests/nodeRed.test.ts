@@ -22,10 +22,11 @@ test("Node-RED confirma luz, preserva intensidade ao apagar e mantém Manchester
   );
   assert.equal(send({ kind: "light", on: true, intensity: 101 }).status, 400);
   assert.equal(sim.telemetry().lightIntensityPercent, 0);
-  send({ kind: "indicator", color: "orange" });
+  assert.equal(send({ kind: "indicator", color: "yellow" }).status, 200);
+  assert.equal(send({ kind: "indicator", color: "orange" }).status, 400);
   sim.handle("simulation", "quarto-01", { gasRawAdc: 3628 });
   assert.equal(sim.telemetry().gasStatus, "detected");
-  assert.equal(sim.telemetry().indicatorColor, "orange");
+  assert.equal(sim.telemetry().indicatorColor, "yellow");
   send({ kind: "acknowledgeGas" });
   assert.equal(sim.telemetry().gasAcknowledged, true);
   sim.handle("simulation", "quarto-01", { gasRawAdc: 843 });
