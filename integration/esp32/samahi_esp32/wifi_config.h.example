@@ -1,0 +1,4 @@
+#pragma once
+const char* WIFI_NOME = "NOME_DO_WIFI";
+const char* WIFI_SENHA = "SENHA_DO_WIFI";
+IPAddress IP_PC(192, 168, 1, 9);

@@ -1,0 +1,4 @@
+#pragma once
+// Copiar para network_config.h (ignorado pelo Git) e escolher senha exclusiva.
+const char* AP_NOME = "SAMAHI-Bancada";
+const char* AP_SENHA = "SUBSTITUA_POR_SENHA_EXCLUSIVA";

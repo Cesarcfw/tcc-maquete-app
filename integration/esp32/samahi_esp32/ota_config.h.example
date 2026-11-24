@@ -1,0 +1,3 @@
+#pragma once
+// Copie para ota_config.h e escolha uma senha exclusiva antes de compilar.
+const char* OTA_SENHA = "ALTERE-ANTES-DE-USAR";

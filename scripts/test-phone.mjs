@@ -5,8 +5,10 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
+import { connectionSummary } from "./connection-summary.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const apkOnly = process.argv.includes("--apk");
 const privateIP = (ip) =>
   /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(ip);
 const addresses = Object.entries(networkInterfaces()).flatMap(
@@ -92,16 +94,18 @@ async function freePort(port, address) {
   });
 }
 await freePort(3002, host);
-await freePort(8082, "0.0.0.0");
+if (!apkOnly) await freePort(8082, "0.0.0.0");
 if (!existsSync(resolve(root, "backend/data/samahi.sqlite")))
   throw new Error(
     "Configure o administrador primeiro com Configurar-Administrador.cmd.",
   );
 const children = new Set();
 let stopping = false;
+let consoleInput;
 function stop(code = 0) {
   if (stopping) return;
   stopping = true;
+  consoleInput?.close();
   for (const child of children) child.kill("SIGTERM");
   process.exitCode = code;
 }
@@ -206,23 +210,45 @@ try {
   console.log(
     "O editor do Node-RED permanece somente no computador. Ctrl+C encerra os servicos abertos por este iniciador.\n",
   );
-  start(
-    [
-      resolve(root, "node_modules/expo/bin/cli"),
-      "start",
-      "--clear",
-      "--go",
-      "--lan",
-      "--port",
-      "8082",
-    ],
-    root,
-    {
-      REACT_NATIVE_PACKAGER_HOSTNAME: host,
-      EXPO_PUBLIC_BACKEND_URL: backendURL,
-      APP_VARIANT: "integrated",
-    },
-  );
+  if (apkOnly) {
+    const showConnection = () => {
+      console.log(connectionSummary(host, 3002));
+      console.log(`No portal do ESP, o IP deste notebook e: ${host}`);
+      console.log(`Teste no telefone: ${backendURL}/health`);
+      console.log(
+        "Pressione Enter para mostrar o endereco novamente. Ctrl+C encerra os servicos deste iniciador.",
+      );
+    };
+    showConnection();
+    if (process.stdin.isTTY) {
+      consoleInput = createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+      consoleInput.on("line", showConnection);
+      consoleInput.on("SIGINT", () => {
+        consoleInput.close();
+        stop();
+      });
+    }
+  } else
+    start(
+      [
+        resolve(root, "node_modules/expo/bin/cli"),
+        "start",
+        "--clear",
+        "--go",
+        "--lan",
+        "--port",
+        "8082",
+      ],
+      root,
+      {
+        REACT_NATIVE_PACKAGER_HOSTNAME: host,
+        EXPO_PUBLIC_BACKEND_URL: backendURL,
+        APP_VARIANT: "integrated",
+      },
+    );
 } catch (error) {
   console.error(error.message);
   stop(1);

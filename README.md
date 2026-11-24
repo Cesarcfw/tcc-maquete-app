@@ -74,3 +74,7 @@ César: app/backend; Gabriel: hardware e firmware; Matheus: monografia. Todos ap
 [Trello da equipe](https://trello.com/b/GiwurIG1/tcc-monografia-aplicativo-e-maquete) · [Notion do aplicativo](https://app.notion.com/p/3ecc1303cee08168a95bf47b2694b67d)
 
 A base foi criada com o template Expo `blank-typescript`; sua licença permanece em [LICENSE](LICENSE). Referências visuais e fontes técnicas são identificadas na documentação. Revisar o material acadêmico antes da incorporação à monografia.
+
+## Rede local para apresentação
+
+Para usar o APK instalado com Node-RED e backend no notebook, execute **Iniciar-SAMAHI-Notebook.cmd**. O console mostra a URL completa a colocar no app; Enter exibe novamente. Veja o [guia da rede própria do ESP e Wi-Fi configurável](docs/rede-esp-notebook.md) antes de gravar o novo firmware.
