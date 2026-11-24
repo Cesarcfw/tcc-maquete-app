@@ -14,6 +14,8 @@ A edição Avaliação usa outro pacote Android. O APK integrado exige que o not
 
 ## Rastreabilidade
 
-O registro da compilação deve identificar ID da build, commit enviado, status, tamanho e SHA-256 do APK verificado. O teste no telefone deve identificar a instalação usada e as funções que foram observadas.
+A [build no Expo EAS](https://expo.dev/accounts/cesarcfw/projects/tcc-maquete-app/builds/c935ec2c-94ba-47dd-bf30-fd1e5b72468f) foi solicitada em 23/11/2026 às 23:04, horário de Brasília, com o commit `38d2d9352b7c89d05db6be55b90dbead304c9636`. O Expo confirmou o envio do código e o uso da assinatura remota existente. O teste no telefone deve identificar a instalação usada e as funções observadas.
+
+Antes do envio, passaram lint, tipagem, 31 testes do cliente, verificação da documentação e exportação web. A configuração Expo retornou o pacote integrado, a versão 1.0.0 e o versionCode 7.
 
 Fonte do procedimento de build: [documentação do Expo](https://docs.expo.dev/build-reference/apk/).
