@@ -63,7 +63,7 @@ Capturas web responsivas não comprovam funcionamento nativo. Nenhum teste com s
 
 ## Referências
 
-Referência visual principal: arquivos fornecidos por César na pasta stitch_maquete_conectada_redesign, preservados nesta branch.
+O export visual fornecido por César está arquivado na [tag v0.6.0](https://github.com/Cesarcfw/tcc-maquete-app/tree/v0.6.0/stitch_maquete_conectada_redesign).
 
 - [React — estado de componentes](https://react.dev/learn/state-a-components-memory).
 - [React — useEffect](https://react.dev/reference/react/useEffect).

@@ -41,7 +41,7 @@ Não usar documentos desta seção como instrução atual de instalação.
 - Versões: [0.1.0](registro-v0.1.0.md), [0.2.0](registro-v0.2.0.md), [0.3.0](registro-v0.3.0.md); [redesign Stitch](redesign-stitch-samahi.md) e [protótipo de contas](prototipo-figma-contas-permissoes.md).
 - Builds: [APK 0.4.1](apk-v0.4.1.md), [APK 0.5.0](apk-v0.5.0.md). Build não significa aceite funcional.
 - Documentação anterior preservada: [arquitetura v0.3](arquitetura-v0.3.0.md), [manual v0.3](manual-desenvolvimento-v0.3.0.md), [autenticação inicial](autenticacao-persistencia-registro-inicial.md), [Node-RED inicial](integracao-node-red-registro-inicial.md), [APK inicial](gerar-apk-registro-inicial.md), [Vercel inicial](publicacao-vercel-registro-inicial.md), [evidências iniciais](evidencias-registro-inicial.md) e [teste móvel inicial](teste-app-integrado-registro-inicial.md).
-- [Pacote fechado para Matheus — 0.6.0](material-matheus-v0.6.0/SAMAHI_v0.6.0_documentacao_para_Matheus.md): PDF, DOCX, Markdown e figuras. Mantido como fotografia da entrega; não reescrito por esta revisão.
+- [Registro da entrega para Matheus — 0.6.0](material-matheus-v0.6.0/SAMAHI_v0.6.0_documentacao_para_Matheus.md): texto e figuras da entrega. O PDF e o DOCX originais estão na [tag v0.6.0](https://github.com/Cesarcfw/tcc-maquete-app/tree/v0.6.0/docs/material-matheus-v0.6.0).
 
 ## Convenções de manutenção
 

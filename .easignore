@@ -29,6 +29,10 @@ playwright-report/
 /ios
 /android
 backend/
+integration/esp32/
+PRIVADO/
+SAMAHI-Notebook-*-PRIVADO.zip
+**/auth-secret
 # Documentação e evidências não são necessárias para compilar o aplicativo.
 docs/
 .github/
