@@ -4,6 +4,8 @@ Base técnica: código do aplicativo **0.6.0**, backend **0.1.0**, esquema próp
 
 ## Guias atuais
 
+Atualização em desenvolvimento de 19/11/2026: [integração do ESP físico](integracao-esp-fisico.md), com ponte UDP/ACK, tratamento dos sensores e instalação local. O APK 0.6.0 permanece uma entrega anterior; não contém automaticamente essa integração.
+
 | Necessidade | Documento |
 | --- | --- |
 | Entender a solução e seus limites | [Arquitetura](arquitetura.md) |

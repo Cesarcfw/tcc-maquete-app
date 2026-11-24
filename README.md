@@ -4,7 +4,7 @@
 
 ## Estado atual
 
-Referência desta documentação: **aplicativo 0.6.0**, backend 0.1.0 e protocolo do dispositivo virtual 1. Há login real, permissões verificadas no servidor, SQLite e comunicação HTTP com Node-RED. A integração atual atende **quarto-01 / ESP32-quarto-01 por simulação**; o ESP físico ainda precisa ser integrado. O APK 0.6.0 foi gerado; a aceitação completa no aparelho instalado é uma atividade separada.
+Referência: **app 0.6.0**, backend 0.1.0 e telemetria 1. A branch atual prepara a [integração física quarto-01 / ESP32-bancada](docs/integracao-esp-fisico.md), com ACK, sensores, alerta LED e agenda no gateway. A simulação continua um modo separado, sem fallback automático. Testes locais com ESP sintético não equivalem ao aceite na placa/telefone. O APK anterior não contém automaticamente estas mudanças.
 
 - Iluminação: ligar/desligar, intensidade 0–100% e programação Dia/Noite em `America/Sao_Paulo`.
 - Temperatura, umidade, gás e estado de comunicação.

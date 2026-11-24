@@ -3,6 +3,15 @@
 
 ## Não lançado
 
+### Preparação da integração com ESP físico
+
+- Ponte Node-RED para ESP32-bancada: DHT22/MQ-2, luz PWM e triagem, sem fallback simulado.
+- Comandos físicos exigem ACK correlacionado; timeout preserva estado. Reconhecimento de gás restrito ao app não silencia o ESP.
+- Agenda Dia/Noite de Brasília persistida no gateway e aplicada com ACK; depende de Node-RED ligado.
+- Falha DHT aparece como indisponível; ADC e amarelo temporário do alerta permanecem separados da classificação de triagem.
+- Instalador/vínculo com backup preservam contas, concessões e histórico da bancada. Aceite físico e móvel continuam separados dos testes locais.
+
+
 ### Edição de avaliação offline
 
 - Perfil EAS `evaluation` com nome e pacote Android próprios, permitindo instalação junto ao app autenticado.
