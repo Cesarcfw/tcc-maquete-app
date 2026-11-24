@@ -3,7 +3,7 @@
   "info": {
     "title": "SAMAHI — Node-RED interno",
     "version": "1.0.0",
-    "description": "Documentação do protocolo virtual 1 usado pelo app 0.6.0. Versão do contrato não é versão instalada do Node-RED. Não expor API de cenários/editor na rede."
+    "description": "Protocolo de telemetria 1 usado pelo app 0.7.0. Leitura e comandos são usados no modo físico ou simulado. Cenários e reset são exclusivos do simulador. A API interna e o editor ficam em loopback."
   },
   "servers": [
     {
@@ -14,18 +14,22 @@
   "security": [],
   "tags": [
     {
+      "name": "Dispositivo",
+      "description": "Leitura e comandos no gateway físico ou simulado."
+    },
+    {
       "name": "Dispositivo virtual",
-      "description": "Operações de dispositivo virtual no serviço documentado."
+      "description": "Cenários e reset do simulador."
     }
   ],
   "paths": {
     "/api/v1/rooms/{roomId}/telemetry": {
       "get": {
         "operationId": "getVirtualTelemetry",
-        "summary": "Consultar leitura virtual",
+        "summary": "Consultar leitura do dispositivo",
         "description": "Endpoint interno sem autenticação; manter loopback. roomId atendido: quarto-01. Reset preserva luz somente na instância com storage. Leitura stale bloqueia comando; erro de gravação não confirma luz.",
         "tags": [
-          "Dispositivo virtual"
+          "Dispositivo"
         ],
         "responses": {
           "200": {
@@ -74,10 +78,10 @@
     "/api/v1/rooms/{roomId}/commands": {
       "post": {
         "operationId": "sendVirtualCommand",
-        "summary": "Aplicar comando no dispositivo virtual",
+        "summary": "Aplicar comando na origem ativa e aguardar confirmação",
         "description": "Endpoint interno sem autenticação; manter loopback. roomId atendido: quarto-01. Reset preserva luz somente na instância com storage. Leitura stale bloqueia comando; erro de gravação não confirma luz.",
         "tags": [
-          "Dispositivo virtual"
+          "Dispositivo"
         ],
         "responses": {
           "200": {
@@ -131,7 +135,7 @@
             }
           },
           "504": {
-            "description": "Timeout reportado pelo serviço virtual.",
+            "description": "Timeout do dispositivo ou ausência de ACK físico.",
             "content": {
               "application/json": {
                 "schema": {

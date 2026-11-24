@@ -1,5 +1,8 @@
 # Edição de avaliação offline para o orientador
 
+A edição offline é um perfil separado do SAMAHI 0.7.0. Para operar sensores e LEDs, use o [APK integrado](apk-v0.7.0.md) e a [rede da maquete](rede-esp-notebook.md).
+
+
 ## Objetivo
 
 APK independente para explorar a interface do SAMAHI sem cadastro, senha, backend, Node-RED ou ESP32. Compartilha as telas e componentes da aplicação principal, mas apresenta a conta local **Orientador** e o botão **Entrar como Orientador** na tela de acesso. A conta não existe no banco real, não tem senha embutida e não autentica em nenhum serviço.

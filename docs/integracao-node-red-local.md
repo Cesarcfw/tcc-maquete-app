@@ -1,5 +1,8 @@
 # Integração Node-RED local
 
+Fluxo de desenvolvimento com telemetria simulada no Node-RED. Para o ESP32 da maquete, use o [fluxo físico](integracao-esp-fisico.md).
+
+
 Fluxo operacional: cliente → backend autenticado → Node-RED → ESP virtual. O telefone precisa alcançar o backend, não o editor Node-RED.
 
 ## Preparar uma instância
@@ -77,6 +80,6 @@ Cenários: normal, offline (503), stale (para amostragem e envelhece leitura), t
 
 O script `integration/node-red/check-api.cjs` executa cenários e muda estado; rode somente em instância de ensaio apropriada. Para editar nós, altere `build-flow.cjs` e gere `flows.json` com `node integration/node-red/build-flow.cjs` na raiz.
 
-## Integração física pendente
+## Usar o modo físico
 
-O firmware Wokwi histórico não é a implementação deste serviço. Antes de substituir a origem virtual, definir junto com Gabriel transporte, payload/qualidade da leitura, tempo, identidade, segurança, PWM, agenda local e ACK de aplicação. Backend e cliente hoje exigem os identificadores virtuais no contrato; essa substituição exige mudança coordenada e evidências reais.
+Esta página documenta exclusivamente o simulador. Para usar a placa, siga a [integração física](integracao-esp-fisico.md) e o [guia de rede](rede-esp-notebook.md). A API física substitui a rota virtual no mesmo Node-RED. Cenários e reset continuam exclusivos do fluxo simulado.

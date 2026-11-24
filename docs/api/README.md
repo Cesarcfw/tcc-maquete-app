@@ -1,11 +1,11 @@
 # APIs e contratos de integração
 
-Atualização em 19/11/2026: contratos incluem source esp32-physical e confirmação por ACK da placa, além do simulador. Reconhecimento de gás no app tem confirmação app-only; não silencia o equipamento. A [integração física](../integracao-esp-fisico.md) detalha o protocolo UDP, a agenda do gateway, o vínculo de dispositivos e a ativação local. A descrição histórica do serviço virtual abaixo continua válida apenas no modo simulado.
+Atualização em 19/11/2026: contratos incluem source esp32-physical e confirmação por ACK da placa, além do simulador. Reconhecimento de gás no app tem confirmação app-only; não silencia o equipamento. A [integração física](../integracao-esp-fisico.md) detalha o protocolo UDP, a agenda do gateway, o vínculo de dispositivos e a ativação local. As diferenças operacionais estão identificadas nas seções abaixo.
 
-Referência: cliente 0.6.0, backend 0.1.0, protocolo virtual 1. Contratos em **OpenAPI 3.1.1**, serializados em JSON para leitura por ferramentas:
+Referência: cliente 0.7.0, backend 0.1.0, protocolo de telemetria 1. Contratos em **OpenAPI 3.1.1**, serializados em JSON para leitura por ferramentas:
 
 - [Backend autenticado](backend.openapi.json) — API consumida pelo cliente.
-- [Node-RED interno](node-red.openapi.json) — serviço virtual e cenários de ensaio.
+- [Node-RED interno](node-red.openapi.json) — serviço local com modo físico ou simulado. Cenários e reset são exclusivos do simulador.
 
 Os arquivos descrevem o comportamento esperado a partir do código; não geram rotas nem fazem validação automática do runtime. Para abrir em um visualizador OpenAPI, importe o arquivo local sem enviar banco/token. Validação estrutural em [testes](../testes-versoes.md).
 
@@ -46,15 +46,15 @@ Node-RED entrega tipo/protocolo/fonte, identidade, sequência, uptime, sampledAt
 
 | Campo/regra | Significado |
 | --- | --- |
-| `source` | Atualmente exatamente `node-red-simulator` |
+| `source` | `node-red-simulator` no modo virtual ou `esp32-physical` no modo físico |
 | `sampleAgeMs` | Idade informada pelo serviço; ≥10000 caracteriza stale |
 | `gasRawAdc` | Inteiro 0–4095, não ppm |
-| `gasStatus` | clear/detected/unavailable; threshold virtual 2000 |
-| `gasAcknowledged` | Reconhecimento não limpa detecção nem desliga buzzer virtual |
+| `gasStatus` | clear/detected/unavailable. Limiar virtual 2000. No físico, estado do firmware com histerese experimental, não inferido a partir do ADC bruto. |
+| `gasAcknowledged` | Reconhecimento não limpa detecção. No físico, é registrado no gateway e não altera sinalização local. |
 | `ldrRawAdc`, `dark` | Informação de luminosidade; virtual escuro ≥1500, sem controlar luz |
 | `lightMode` | manual ou scheduled |
 | `lightingPeriod` | day/night quando programado, null no manual |
-| `capabilities.hardware` | false no payload interno; não é integração física |
+| `capabilities.hardware` | true para hardware físico e false para simulação, quando o campo está presente |
 
 Limite relevante: o backend checa identidade/fonte e idade na leitura, mas não valida cada valor contra o schema completo. O cliente autenticado também não reutiliza automaticamente o parser estrito do caminho legado direto. Não atribuir ao OpenAPI uma proteção que não está no runtime.
 
@@ -99,7 +99,7 @@ Agenda:
 
 HH:mm 00:00–23:59, inícios diferentes, intensidades inteiras 0–100. Agenda pode atravessar meia-noite. Comando manual pausa programação; agenda reativada aplica período atual.
 
-Resposta esperada contém `type: command_result`, mesmo commandId, `status: applied_in_simulator` e telemetry. O cliente só substitui o estado reportado após ACK compatível. Para agenda, backend também compara modo e cada campo da configuração devolvida. Não há promessa de comparação completa do estado aplicado para cada outro kind.
+O resultado usa `type: command_result`, o mesmo commandId e telemetria. O simulador usa `applied_in_simulator`. Na ponte física, luz, agenda e indicador usam `applied_in_hardware` com `confirmationScope: firmware_ack` e `wireCommandId`. Reconhecimento do gás usa `acknowledged_in_gateway` com `confirmationScope: app-only`. O cliente só substitui o estado reportado após ACK compatível. Para agenda, backend também compara modo e cada campo da configuração devolvida. Não há promessa de comparação completa do estado aplicado para cada outro kind.
 
 ### Repetição e falha
 
@@ -111,10 +111,10 @@ Não há retry automático de comando incerto nem garantia exatamente uma vez no
 
 Rotas de domínio retornam JSON `{ "error": "mensagem" }` nos erros tratados. Better Auth e respostas de rota inexistente podem ter outros formatos. Cliente tem timeout 8 s, backend→Node-RED 5 s; amostragem/polling configurados em cerca de 2 s, sem garantia rígida de latência.
 
-400 inválido; 401 sessão; 403 privilégio/origem; 404 ausente/oculto; 409 conflito/inativo/antigo; 413 corpo grande; 429 limite auth; 500 falha interna; 502 incompatibilidade; 503 indisponibilidade; 504 timeout reportado pelo virtual. Alguns erros são propagados do upstream; não há catálogo estável de códigos de erro de negócio além do HTTP/mensagem atual. Mensagens 5xx do domínio são mascaradas.
+400 inválido; 401 sessão; 403 privilégio/origem; 404 ausente/oculto; 409 conflito/inativo/antigo; 413 corpo grande; 429 limite auth; 500 falha interna; 502 incompatibilidade; 503 indisponibilidade; 504 timeout, inclusive falta de ACK físico no gateway. Alguns erros são propagados do upstream; não há catálogo estável de códigos de erro de negócio além do HTTP/mensagem atual. Mensagens 5xx do domínio são mascaradas.
 
 ## 6. Node-RED e evolução
 
-Base interna `/api/v1/rooms/{roomId}` com GET telemetry, POST commands, POST simulation e POST reset. Somente quarto-01 é servido. Não há autenticação própria nesses endpoints: manter em loopback. [Instalação e cenários](../integracao-node-red-local.md).
+Base interna `/api/v1/rooms/{roomId}` com GET telemetry e POST commands nos dois modos. POST simulation e POST reset pertencem ao simulador. Somente quarto-01 é servido. Não há autenticação própria nesses endpoints: manter em loopback. [Instalação e cenários](../integracao-node-red-local.md).
 
-Rotas do backend ainda não têm prefixo de versão; dispositivo virtual tem `/api/v1` e protocolVersion 1. Mudança incompatível requer PR explícito, revisão de clientes/firmware, OpenAPI e testes. Integração física vai exigir adaptar checagem de fonte/ACK e identidade, não apenas trocar o endereço.
+Rotas do backend ainda não têm prefixo de versão; ambos os gateways usam `/api/v1` e protocolVersion 1. Mudança incompatível requer PR explícito, revisão de clientes/firmware, OpenAPI e testes. No modo físico, manter fonte, identidade e correlacionamento de ACK coerentes com o [contrato de bancada](../integracao-esp-fisico.md).

@@ -1,6 +1,6 @@
 # Gerar e distribuir o APK interno
 
-Build em preparação: [SAMAHI 0.7.0](apk-v0.7.0.md). Entrega anterior: [SAMAHI 0.6.0](apk-v0.6.0.md). Esta página descreve o procedimento; não declara aceite físico.
+Registro da compilação integrada: [SAMAHI 0.7.0](apk-v0.7.0.md). Entrega anterior: [SAMAHI 0.6.0](apk-v0.6.0.md). Esta página descreve o procedimento; não declara aceite físico.
 
 ## Pré-requisitos
 

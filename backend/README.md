@@ -1,5 +1,8 @@
 # Backend local do SAMAHI
 
+A mesma API atende o modo [simulado](../docs/integracao-node-red-local.md) e o [físico](../docs/integracao-esp-fisico.md). O cadastro do quarto precisa apontar para a identidade servida pelo gateway. No iniciador do notebook, o backend escuta no IP privado selecionado, na porta 3002.
+
+
 Node.js 24.15+ da série 24, Express e Better Auth com SQLite local. Manifest do backend 0.1.0; esquema próprio 1. Não é servidor PostgreSQL e não é o processo Node-RED.
 
 Na raiz do repositório:

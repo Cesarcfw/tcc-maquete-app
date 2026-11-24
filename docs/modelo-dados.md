@@ -2,7 +2,7 @@
 
 ## Visão geral
 
-A preparação de integração física mantém este esquema. O helper backend/link-physical.mjs altera o vínculo padrão do quarto com backup, registra audit e limpa somente caches de última leitura/conexão. A agenda física fica no runtime Node-RED em data/physical-lighting.json, separada da agenda simulada. Ver [integração física](integracao-esp-fisico.md).
+A integração física mantém o esquema próprio do backend na versão 1. O helper backend/link-physical.mjs altera o vínculo padrão do quarto com backup, registra audit e limpa somente caches de última leitura/conexão. A agenda física fica no runtime Node-RED em data/physical-lighting.json, separada da agenda simulada. Ver [integração física](integracao-esp-fisico.md).
 
 SQLite em `backend/data/samahi.sqlite` por padrão; aberto via `node:sqlite`. WAL, foreign keys habilitadas e `busy_timeout=5000`. O domínio grava JSON serializado em colunas TEXT; não existe servidor PostgreSQL. O código executado é a referência do DDL: `backend/core.mjs`.
 
@@ -48,6 +48,8 @@ O diagrama mostra somente relacionamentos com FK declarada no domínio. `user` p
 Better Auth gerencia usuários, credenciais de conta, sessões, verificação e limitação de tentativas (`user`, `account`, `session`, `verification`, `rateLimit` na configuração instalada). O esquema é migrado pela biblioteca ao inicializar. Não há senha em texto simples na tabela própria de domínio; hashing é delegado ao Better Auth. O [guia oficial do banco](https://www.better-auth.com/docs/concepts/database) descreve o modelo da biblioteca; para inspecionar a instalação concreta use `sqlite_master`.
 
 ### Outros armazenamentos
+
+A instância física guarda a agenda em `data/physical-lighting.json` e pode registrar a série bruta da bancada em um segundo SQLite. No ESP32, rede e destino do notebook são mantidos em NVS. O [empacotador](pacote-notebook.md) copia os snapshots e a agenda, preservando bancos independentes entre computadores.
 
 | Local | Conteúdo | Sobrevive a quê? |
 | --- | --- | --- |

@@ -1,6 +1,6 @@
 # Tecnologias e dependências
 
-Referência dos manifests na revisão do app 0.6.0. A versão declarada (com `~`/`^`) define intervalo; a resolução exata reproduzível está no `package-lock.json` correspondente. Não executar atualização geral de pacotes sem revisar compatibilidade.
+Referência dos manifests na revisão do app 0.7.0. A versão declarada (com `~`/`^`) define intervalo; a resolução exata reproduzível está no `package-lock.json` correspondente. Não executar atualização geral de pacotes sem revisar compatibilidade.
 
 ## Cliente
 
@@ -18,10 +18,11 @@ Referência dos manifests na revisão do app 0.6.0. A versão declarada (com `~`
 | Safe Area Context | ~5.7.0 | Áreas seguras da tela |
 | Expo Vector Icons | ^15.1.1 | Ícones |
 | Expo Status Bar | ~57.0.1 | Barra de status |
+| Expo Constants | ~57.0.24 | Leitura da configuração para selecionar a edição integrada ou de avaliação |
 
 Entradas em `package.json`; sem biblioteca de navegação dedicada: a composição e seleção de telas são controladas pelo estado da aplicação. Não há Redux, WebSocket, Firebase ou cliente PostgreSQL implementado apenas por existir uma necessidade futura de dados.
 
-## Servidor e dispositivo virtual
+## Servidor, gateway e firmware
 
 | Tecnologia | Declaração | Responsabilidade |
 | --- | --- | --- |
@@ -30,7 +31,10 @@ Entradas em `package.json`; sem biblioteca de navegação dedicada: a composiç�
 | Better Auth | 1.7.10 | Contas, credenciais, sessões e recursos administrativos |
 | cors | 2.8.5 | Cabeçalhos de origens permitidas |
 | SQLite | Embutido no Node; versão depende do runtime | Banco em arquivo; não tem pacote npm de servidor separado |
-| Node-RED | 5.0.8 na instalação local registrada | Fluxo HTTP e amostragem do ESP virtual; instalação separada |
+| Node-RED | 5.0.8 na instalação local registrada | API HTTP local, simulador e ponte UDP/ACK para a placa; instalação separada |
+| Core Arduino-ESP32 | 3.3.12 no registro de compilação | Wi-Fi AP/STA, UDP, OTA, NVS e PWM LEDC |
+| Arduino IDE e bibliotecas | IDE 2.3.11 no registro de bancada, DHT sensor library e Adafruit Unified Sensor | Gravação e leitura do DHT22 |
+| Node.js portátil | 24.22.3 Windows x64 na entrega registrada | Execução do backend e Node-RED no notebook |
 
 O backend tem `package.json` e lock próprios. Node-RED da pasta vizinha tem dependências próprias e não é instalado pelo `npm ci` do aplicativo. O módulo do simulador usa apenas módulos Node e a regra local compartilhada.
 

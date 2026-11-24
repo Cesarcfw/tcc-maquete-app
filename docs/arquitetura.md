@@ -1,6 +1,6 @@
 # Arquitetura de software
 
-**Referência: SAMAHI 0.6.0.** Visões de contexto, estrutura, execução e implantação, inspiradas em arc42/C4. [Índice](README.md) · [decisões](adr/README.md).
+**Referência: SAMAHI 0.7.0.** Visões de contexto, estrutura, execução e implantação, inspiradas em arc42/C4. [Índice](README.md) · [decisões](adr/README.md).
 
 Versões declaradas e função de cada biblioteca: [tecnologias e dependências](tecnologias.md).
 
@@ -14,7 +14,7 @@ Prioridades: autorização no servidor; estado apresentado somente após confirm
 
 - Frontend Expo/React Native/TypeScript; backend Node.js/Express/Better Auth; SQLite local; Node-RED separado.
 - Operação inicial no PC, transferível ao notebook. Rede local HTTP é o cenário atual de ensaio.
-- Dispositivo implementado: virtual, um quarto. Não há transporte para ESP físico implementado nesta cadeia.
+- Dois modos de operação no Node-RED para o Quarto 01: ESP32 físico via UDP ou simulador executado no gateway. Cada instalação ativa somente um modo na mesma rota. A edição de avaliação roda localmente no cliente.
 - Vercel publica o cliente estático. Não hospeda o SQLite local nem o Node-RED por consequência dessa publicação.
 - O indicador usa seleção manual independente e simplificada de quatro cores (sem laranja), sem representar todo o Sistema Manchester. Gás por ADC não informa espécie/toxicidade/concentração calibrada.
 - Não há coleta contínua de incidentes no backend sem requisições de telemetria, nem notificações push.
@@ -27,25 +27,28 @@ flowchart LR
   C -->|HTTP JSON + sessão| B[Backend Node.js / Express]
   B -->|Autenticação e concessões| DB[(SQLite local)]
   B -->|HTTP interno| N[Node-RED]
-  N --> V[ESP virtual quarto-01]
+  N <-->|UDP e ACK| E[ESP32 físico]
+  E <--> H[Sensores e LEDs]
+  N -->|Modo separado| V[Simulador do Quarto 01]
   N --> F[(Arquivo da iluminação)]
   C --> P[(Preferências locais)]
   W[Vercel: arquivos web] --> C
 ```
 
-O diagrama representa processos lógicos. SQLite é arquivo aberto pelo backend, não um servidor de banco em outra porta. O ESP virtual é código executado pelo processo Node-RED. O browser/Android não acessa o banco ou os cenários diretamente pelo fluxo autenticado.
+O diagrama representa processos lógicos. SQLite é arquivo aberto pelo backend, não um servidor de banco em outra porta. O simulador roda no processo Node-RED. No modo físico, o gateway recebe amostras e envia comandos por UDP. A origem da telemetria chega ao backend e ao app. O browser/Android não acessa o banco ou os cenários diretamente pelo fluxo autenticado.
 
 | Componente | Responsabilidade | Persistência/limite |
 | --- | --- | --- |
 | Cliente | Login, catálogo, painel, formulários, estado pendente e mensagens | Preferências locais; token em memória |
 | Backend | Sessão, administração, concessões, validação, proxy de dispositivo e auditoria | SQLite + segredo local |
-| Node-RED | Entradas HTTP, amostragem virtual e cenários de teste | Processo separado; endpoints locais sem autenticação própria |
+| Node-RED | API HTTP interna, gateway físico ou amostragem simulada e agenda | Processo separado; endpoints locais sem autenticação própria |
 | Simulador | Modelo do quarto, ACK, sensores virtuais e aplicação de horários | Luz em JSON; sensores/cenários/indicador em memória |
+| ESP32 físico | Amostrar DHT22 e MQ-2, aplicar PWM, RGB e alarme local | Configuração da rede em NVS; destino do notebook selecionado no portal |
 | Shared | Validação da agenda e cálculo do período | Sem estado; usa relógio recebido |
 
 ## 4. Organização interna
 
-Entrada `index.ts` → `App.tsx` → `src/ui/ConnectedApp.tsx`. O login monta o workspace autenticado usado pelo painel em `DemoApp.tsx`; esse nome é legado e não significa acesso anônimo. Hooks orquestram I/O; domínio mantém regras; serviços encapsulam HTTP e preferências. Código legado de demonstração continua no repositório, mas não é fallback automático da entrada atual.
+Entrada `index.ts` → `App.tsx` → `src/ui/ConnectedApp.tsx`. O login monta o workspace autenticado usado pelo painel em `DemoApp.tsx`; esse nome é legado e não significa acesso anônimo. Hooks orquestram I/O; domínio mantém regras; serviços encapsulam HTTP e preferências. A configuração Expo escolhe explicitamente a edição integrada ou a edição offline de avaliação. A perda do ESP não troca automaticamente a origem.
 
 No backend, `core.mjs` cria banco, autenticação e serviços de acesso/auditoria; `server.mjs` define middleware e rotas; `setup.mjs` inicializa a primeira conta; `backup.mjs` exporta os dados. `createApp(options)` e `createCore(options)` aceitam configuração injetada para testes isolados. `shared/lighting-schedule.cjs` é consumido por cliente, backend e Node-RED.
 
@@ -69,14 +72,21 @@ sequenceDiagram
   participant C as Cliente
   participant B as Backend
   participant D as SQLite
-  participant N as Node-RED virtual
+  participant N as Node-RED
+  participant E as ESP32
   U->>C: Alterar função
   C->>B: POST commands (commandId, command)
   B->>B: Validar sessão, acesso e conteúdo
   B->>D: Inserir pending
   B->>N: Enviar comando
-  N->>N: Aplicar / persistir luz
-  N-->>B: applied_in_simulator + telemetria
+  alt Modo físico: luz, agenda ou indicador
+    N->>E: Comando UDP com ID físico
+    E-->>N: ACK correlacionado
+    N-->>B: applied_in_hardware
+  else Modo simulado
+    N->>N: Aplicar no simulador
+    N-->>B: applied_in_simulator
+  end
   B->>D: confirmed + auditoria
   B-->>C: ACK e telemetria filtrada
   C-->>U: Exibir estado confirmado
@@ -86,7 +96,7 @@ Na falha, o comando fica `unconfirmed`, a auditoria recebe `command_unconfirmed`
 
 ### Horários
 
-O Node-RED aplica a programação nos ticks do simulador mesmo com o app fechado. Usa o relógio do computador convertido para `America/Sao_Paulo`. Não consulta um serviço de hora nem define a hora do ESP. Manual pausa a agenda, e reativar aplica o período atual. Arquivo inválido impede inicialização da instância persistente; falha de gravação impede confirmação da alteração. Detalhes em [Dia/Noite](modos-dia-noite.md).
+O Node-RED decide o período mesmo com o app fechado. O simulador aplica no próprio processo. No modo físico, o gateway aguarda telemetria recente, envia o PWM ao ESP32 quando necessário e exige ACK. A agenda física usa armazenamento próprio. Usa o relógio do computador convertido para `America/Sao_Paulo`. Não consulta um serviço de hora nem define a hora do ESP. Manual pausa a agenda, e reativar aplica o período atual. Arquivo inválido impede inicialização da instância persistente; falha de gravação impede confirmação da alteração. Detalhes em [Dia/Noite](modos-dia-noite.md).
 
 ## 6. Implantação
 
@@ -94,6 +104,8 @@ O Node-RED aplica a programação nos ticks do simulador mesmo com o app fechado
 | --- | --- | --- | --- |
 | PC local | Expo web 8081 | loopback 3001 | loopback 1880 |
 | Telefone na LAN | Expo Go via Metro 8082 ou APK | IP privado do PC, 3002 no iniciador | permanece no PC em loopback |
+| Notebook de apresentação | APK integrado sem Metro | IP privado exibido pelo iniciador, porta 3002 | Loopback 1880; UDP 4210 no notebook e 4211 no ESP |
+| Avaliação offline | Android ou web local | Sem backend | Simulação dentro do cliente |
 | Web Vercel | HTTPS estático | serviço local separado, sujeito a conectividade e política do navegador | não publicado automaticamente |
 
 O APK empacota a interface e pode executar sem Metro. Ele ainda precisa alcançar o backend, que precisa alcançar Node-RED. Firewall, isolamento Wi-Fi e mudança de IP são dependências da implantação, não erros resolvidos pelo build. [Roteiro operacional](operacao.md).
@@ -104,7 +116,7 @@ O APK empacota a interface e pode executar sem Metro. Ele ainda precisa alcança
 - Dados: SQLite WAL e foreign keys; preferências locais versionadas; estado de luz externo ao banco. [Modelo](modelo-dados.md).
 - Tempo: timestamps de auditoria ISO UTC; agenda em Brasília; idade de leitura fornecida pelo serviço, não medição do tráfego.
 - Observabilidade: histórico funcional dos últimos 100 eventos por quarto; não equivale a plataforma de métricas/tracing ou log inviolável.
-- Compatibilidade: `source: node-red-simulator` e `status: applied_in_simulator` são verificados explicitamente. Trocar apenas o endereço por um ESP real não conclui a integração.
+- Compatibilidade: origem, identidade e ACK precisam corresponder. O modo físico usa `esp32-physical` e `applied_in_hardware`. Reconhecer gás em modo físico produz `acknowledged_in_gateway` com alcance `app-only`. O alarme local permanece sob controle do firmware.
 
 ## 8. Qualidade, riscos e evolução
 
@@ -112,4 +124,4 @@ Há testes de domínio/contrato e HTTP com SQLite temporário, CI e exportação
 
 Riscos conhecidos: HTTP na LAN; Node-RED sem autenticação de aplicação; processo/arquivo único sem alta disponibilidade; histórico dependente de consultas; sem retenção automática; último comando concorrente pode prevalecer; validação de telemetria do backend é parcial, não um parser completo de cada campo; relógio do host influencia horários; estado de indicador/gás não persiste no simulador.
 
-Próximas evoluções precisam de decisão e teste próprios: transporte/ACK físico com Gabriel, identidade/autenticação de dispositivo, HTTPS e implantação de rede, monitoramento autônomo, migrações incrementais e política de retenção. Não fazem parte da garantia atual. [ADRs](adr/README.md) registram as escolhas já materializadas.
+Próximas evoluções precisam de decisão e teste próprios: identidade criptográfica de dispositivo e proteção do transporte físico, HTTPS e implantação de rede, monitoramento autônomo, migrações incrementais e política de retenção. Não fazem parte da garantia atual. [ADRs](adr/README.md) registram as escolhas já materializadas.

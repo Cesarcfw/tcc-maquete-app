@@ -1,6 +1,6 @@
 # Referências técnicas e padrões de documentação
 
-Fontes primárias para estudo e atribuição. Lista consolidada na revisão de 17/10/2026; links servem para consultar a tecnologia, não para comprovar resultados do SAMAHI. Os comportamentos específicos são sustentados pelo código/testes e registros versionados deste repositório. Documentação “latest” de uma biblioteca pode diferir da versão fixada no lockfile.
+Fontes primárias para estudo e atribuição. A lista da revisão de 17/10/2026 foi complementada com o firmware da versão 0.7.0. Os resultados do SAMAHI são sustentados pelo código, pelos testes e pelos registros de bancada. Consulte os lockfiles e os registros de compilação para identificar a versão adotada.
 
 ## Estrutura documental
 
@@ -40,6 +40,14 @@ Não há alegação de certificação ISO, conformidade integral arc42/C4 ou ado
 | [MDN — Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat) | Conversão da hora para America/Sao_Paulo |
 | [Vercel — Deployments](https://vercel.com/docs/deployments) | Publicação da interface; não descreve uma API SAMAHI hospedada |
 | [Android — Adaptive icons](https://developer.android.com/develop/ui/compose/system/icon_design_adaptive) | Ícone adaptativo |
+
+## Firmware e sensores
+
+| Fonte | Uso no projeto |
+| --- | --- |
+| [Espressif — Wi-Fi no Arduino-ESP32](https://docs.espressif.com/projects/arduino-esp32/en/latest/api/wifi.html) | Modos AP/STA usados na rede da maquete |
+| [Espressif — Preferences](https://docs.espressif.com/projects/arduino-esp32/en/latest/api/preferences.html) | Registro de destino e configuração de rede em NVS |
+| [Winsen — MQ-2](https://www.winsen-sensor.com/sensors/combustible-sensor/mq2.html) | Características do sensor. Os limiares ADC do SAMAHI são resultado do projeto de bancada. |
 
 ## Tema e referências visuais
 

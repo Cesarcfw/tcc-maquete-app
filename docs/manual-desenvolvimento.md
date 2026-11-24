@@ -1,6 +1,6 @@
 # Manual de desenvolvimento e leitura do código
 
-Referência: 0.6.0. Leia [arquitetura](arquitetura.md) antes de alterar integrações.
+Referência: 0.7.0. Leia [arquitetura](arquitetura.md) antes de alterar integrações.
 
 ## Mapa do repositório
 
@@ -24,7 +24,12 @@ Referência: 0.6.0. Leia [arquitetura](arquitetura.md) antes de alterar integra�
 | `backend/server.mjs` | HTTP, autorização, redaction, proxy, observação e comandos |
 | `backend/setup.mjs`, `backup.mjs` | Rotinas administrativas locais |
 | `integration/node-red/simulator.cjs` | Dispositivo virtual, persistência de luz e cenários |
-| `integration/node-red/build-flow.cjs`, `flows.json` | Gerador e fluxo importável |
+| `integration/node-red/build-flow.cjs`, `flows.json` | Gerador e fluxo simulado |
+| `integration/node-red/physical.cjs`, `nodes/physical-gateway.js` | Ponte física, ACK UDP, agenda e integração Node-RED |
+| `integration/node-red/build-physical-flow.cjs`, `physical-flows.json` | Gerador e rotas da ponte física |
+| `integration/esp32/samahi_esp32/` | Firmware, alarme de gás e portal AP/STA |
+| `backend/link-physical.mjs` | Vínculo do quarto ao ESP de bancada |
+| `scripts/package-notebook.mjs`, `scripts/notebook-package/` | Geração e execução da entrega privada |
 | `scripts/test-phone.mjs` | Rede local e serviços para teste móvel |
 | `plugins/withLocalNetwork.js` | Configuração Android de rede local para preview |
 | `tests/`, `backend/test/` | Ensaios automatizados |
@@ -34,23 +39,23 @@ Os nomes exatos podem ser conferidos com `rg --files src backend shared integrat
 
 ## Como estudar um caso completo
 
-1. **Luz manual:** localizar o controle em `DemoApp.tsx`; seguir `useAuthenticatedDevice.send`; ler POST commands no backend; seguir `handle('commands')` no simulador; conferir testes e auditoria.
-2. **Horários:** começar pela função pura em `shared/lighting-schedule.cjs`, depois formulário, validação do backend e persistência no simulador.
+1. **Luz manual:** localizar o controle em `DemoApp.tsx`; seguir `useAuthenticatedDevice.send`; ler POST commands no backend; seguir `handle('commands')` no simulador ou o envio e ACK em `physical.cjs`; conferir testes e auditoria.
+2. **Horários:** começar pela função pura em `shared/lighting-schedule.cjs`, depois formulário, validação do backend e persistência no gateway correspondente ao modo.
 3. **Gás/histórico:** seguir `gasStatus` → telemetria → observação de transição no backend → `describeAuditEvent` → renderização/alerta. Reconhecimento não altera detecção.
 4. **Endereço salvo:** `backendAddress` → `usePreferences` → `preferences.ts`. O endereço salvo válido prevalece sobre o valor inicial de build; senha e token não entram no snapshot.
 
 ## Como acrescentar uma função
 
-Defina requisito, grupo/permissão, comando, resposta e falha antes de criar a tela. Atualize tipos/domínio, backend, dispositivo virtual e contrato OpenAPI no mesmo PR. Faça o componente usar estado reportado e indicação pendente; não simule confirmação na interface autenticada.
+Defina requisito, grupo/permissão, comando, resposta e falha antes de criar a tela. Atualize tipos/domínio, backend, gateways aplicáveis e contrato OpenAPI no mesmo PR. Faça o componente usar estado reportado e indicação pendente; não simule confirmação na interface autenticada.
 
-Para trocar o simulador pelo hardware, primeiro acordar transporte e identidade com Gabriel. O backend hoje aceita a fonte virtual e o cliente aceita ACK virtual; adaptar esses pontos junto com testes, firmware e documentação. Não renomear um resultado virtual para parecer confirmação física.
+Para alterar o caminho físico, acordar identidade, formato UDP e confirmação com Gabriel. Atualizar o firmware e a ponte em conjunto, incluindo cenários de perda de ACK e leitura antiga. Conservar tipo de origem e tipo de confirmação nos dois modos e no histórico.
 
 ## Alterar dados e contratos
 
 - Mudança incompatível de tabelas exige migração explícita, backup e teste de atualização de banco existente. O esquema atual usa criação aditiva e `user_version=1`; isso não é um framework de migrações do domínio.
 - Better Auth gerencia seu próprio esquema; não alterar tabelas internas manualmente para adicionar funções do domínio.
 - Atualizar ambos os lados de qualquer comando e [OpenAPI](api/README.md). Manter compatibilidade de fixtures, exemplos e mensagens.
-- Atualizar o gerador e regenerar `flows.json` quando mudar nós. Não alterar só o JSON gerado e perder a mudança na próxima geração.
+- Atualizar o gerador e regenerar `flows.json` ou `physical-flows.json` ao mudar o gerador correspondente. Não alterar só o JSON gerado e perder a mudança na próxima geração.
 - Componentes e nomes legados não provam exposição operacional. Seguir imports a partir da entrada antes de remover arquivos.
 
 ## Rotina de entrega

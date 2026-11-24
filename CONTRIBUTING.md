@@ -40,7 +40,8 @@ Para API documentada, validar os dois OpenAPI conforme [guia de testes](docs/tes
 | --- | --- |
 | HTTP/payload/permissão | `docs/api`, autenticação e requisitos |
 | Tabela/arquivo/preferência | Modelo de dados, operação e migração pertinente |
-| Configuração/iniciador | Instalação, telefone, rede e solução de problemas |
+| Configuração/iniciador | Instalação, telefone, rede, pacote portátil e solução de problemas |
+| Protocolo ou pinagem do ESP32 | Firmware, guia de integração física, contratos, testes da ponte e revisão do diagrama |
 | Escolha estrutural | Arquitetura e ADR com contexto/consequências |
 | Função/visual | Guia da função e roteiro de evidências |
 | Build/distribuição | APK/Vercel, versão/commit/hash e validação separada |
@@ -51,4 +52,4 @@ Usar as marcações **TIRE PRINT DESTA PARTE** e **MOSTRE FUNCIONANDO EM VÍDEO 
 
 Formato SemVer, série 0.x em desenvolvimento; [procedimento de versões](docs/testes-versoes.md). Ajustar manifests e configurações de build juntos, sem afirmar que o manifest do backend deve ter o mesmo número do app. Changelog preserva registros antigos e abre seção Não lançado para alterações ainda sem distribuição.
 
-Não versionar `.env`, senhas, tokens, keystores, banco, segredo ou backups. Preservar licenças e autoria de dependências/assets. [SECURITY.md](SECURITY.md) descreve relato privado de vulnerabilidade. Antes de usar texto na monografia, a equipe deve revisar redação, atribuição, resultados e limitações.
+Mantenha fora do Git arquivos `.env`, senhas, tokens, keystores, bancos, segredos, backups, configurações reais do firmware, binários do ESP e o ZIP privado do notebook. Preserve licenças e autoria de dependências e recursos visuais. [SECURITY.md](SECURITY.md) descreve relato privado de vulnerabilidade. Antes de usar texto na monografia, a equipe deve revisar redação, atribuição, resultados e limitações.

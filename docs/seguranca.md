@@ -1,5 +1,8 @@
 # Segurança e limites operacionais
 
+A implantação da maquete combina HTTP na rede privada e UDP entre o notebook e o ESP32. A validação de IP, porta, dispositivo e identificador dos comandos reduz confirmações incorretas. O canal UDP ainda carece de autenticação criptográfica. O portal do ESP deve ser usado na rede privada da bancada, com senha própria e acesso limitado à equipe.
+
+
 Modelo proporcional ao cenário local atual. Não há avaliação de conformidade clínica, auditoria externa ou teste de invasão documentado. [Relato privado](../SECURITY.md).
 
 ## Ativos e fronteiras
@@ -32,6 +35,10 @@ Senha é processada pelo Better Auth, sem implementação própria de criptograf
 O preview Android permite tráfego HTTP local por plugin condicionado ao perfil EAS. Essa configuração atende ao ensaio atual e deve ser revista para uma distribuição mais ampla. Um frontend HTTPS no Vercel não torna um backend HTTP privado acessível/seguro: há alcance de rede e políticas de conteúdo misto/acesso à rede local do navegador.
 
 Não publicar editor Node-RED, SQLite, `auth-secret`, backups ou serviço administrativo por encaminhamento indiscriminado de portas. Os arquivos são ignorados no Git, mas ignore não remove segredos já publicados em commits anteriores. Se ocorrer exposição, revogar o segredo/credencial no serviço responsável e tratar o histórico conforme o incidente.
+
+## Artefatos privados
+
+Distribuir o [pacote portátil](pacote-notebook.md) apenas por canal restrito à equipe. Ele pode conter o segredo do backend, hashes de senha, dados de conta, bancos e a credencial do AP. Na compilação do ESP, os três headers reais de configuração e os binários que incorporam credenciais ficam fora do GitHub, dos Releases e das plataformas de build da interface. Publicar os modelos `.example` e o gerador é suficiente para preservar a receita.
 
 ## Dados e disponibilidade
 

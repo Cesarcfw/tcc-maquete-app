@@ -1,4 +1,4 @@
-> **Situação atual:** recurso incluído no código 0.6.0 e no [APK registrado](apk-v0.6.0.md). Ensaios abaixo são registros da etapa de implementação; aceite completo do APK instalado e integração física permanecem separados. Consulte o [índice atual](README.md).
+> **Referência atual:** SAMAHI 0.7.0. Os ensaios datados abaixo registram a etapa original. Consulte o [índice atual](README.md) e o [registro do APK integrado](apk-v0.7.0.md).
 
 # Iluminação: modos Dia e Noite
 
@@ -23,7 +23,7 @@ O Node-RED continua com ESP virtual; a regra está em integration/node-red/simul
 
 O cálculo usa Date.now e Intl.DateTimeFormat com timeZone America/Sao_Paulo e hourCycle h23. Portanto, não usa o fuso selecionado no telefone nem o fuso padrão do computador. O relógio do computador precisa estar correto/sincronizado; escolher o fuso não corrige um relógio errado. Não há consulta ao Observatório Nacional a cada execução.
 
-A função comum de validação/cálculo está em shared/lighting-schedule.cjs, com tipos em lighting-schedule.d.cts. O app compartilha a validação, mas não é a autoridade da hora nem aplica a luz localmente.
+A função comum está em `shared/lighting-schedule.cjs`, com tipos em `lighting-schedule.d.cts`. Na edição integrada, o Node-RED calcula o período pelo relógio do host. No modo físico, ele envia a intensidade ao ESP32 e aguarda ACK. Na edição de avaliação offline, o simulador roda no próprio cliente.
 
 ## Autorização e contrato
 
@@ -85,7 +85,7 @@ Para transferir ao notebook: parar Node-RED/backend, gerar o backup, restaurar b
 - Testes com relógio injetado: limites de Dia/Noite, madrugada e intervalo invertido; 0%, pausa manual, LDR independente e gás/Manchester preservados.
 - Persistência em arquivo temporário e reinício; falha de gravação sem mudança do estado confirmado.
 - Backend: permissões, rejeição de configuração inválida e de ACK sem configuração/mode aplicados; fluxo nativo com ativação de horários.
-- Revisão/ensaio completo de César no APK instalado e integração física com Gabriel permanecem pendentes. O APK 0.6.0 já foi gerado; ver o registro de build vinculado no início deste documento. O firmware físico deverá respeitar a autoridade dos comandos/programação; não manter uma regra antiga de LDR concorrendo com ela.
+- Este ensaio histórico usou o simulador. No modo atual físico, o Node-RED calcula o período, guarda a agenda em `physical-lighting.json` e envia PWM com ACK. Comando manual confirmado pausa a agenda. A regra usa o relógio do notebook e não depende de LDR. Consulte a [integração física](integracao-esp-fisico.md).
 
 ## Referências
 

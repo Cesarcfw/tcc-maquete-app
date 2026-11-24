@@ -67,7 +67,7 @@ O AP não fornece internet. Para abrir o Vercel é necessária conectividade ext
 
 ## Validação e evidências
 
-Ver o [registro de verificação](rede-esp-notebook-validacao.md) antes de afirmar sucesso físico. Compilar firmware não comprova Wi-Fi/OTA nem persistência na placa. O firmware anterior de bancada foi preservado fora do repositório para reversão.
+O [registro de verificação](rede-esp-notebook-validacao.md) reúne a compilação e o relato posterior de César sobre o Wi-Fi e o pacote. Resultados detalhados de OTA, persistência e reconexão devem ser registrados por cenário. O firmware anterior de bancada foi preservado fora do repositório para reversão.
 
 - **TIRE PRINT DESTA PARTE:** console com URL real e interface selecionada; portal salvo sem senha; versão do firmware e telemetria física.
 - **MOSTRE FUNCIONANDO EM VÍDEO OU GIF:** ligar tudo sem internet, login, DHT/MQ-2, luz on/off/intensidade e triagem com ACK; reiniciar o ESP e confirmar persistência; usar AP enquanto STA conectado; desligar o roteador e reconfigurar pelo AP; trocar de rede e atualizar IPs. Registrar alerta local mesmo sem notebook e a agenda voltando ao ligá-lo.

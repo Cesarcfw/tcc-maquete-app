@@ -30,7 +30,7 @@ As cópias do PC e notebook são independentes, sem sincronização automática.
 - Oito testes backend/transporte/banner executados com os módulos e Node do pacote: autenticação/permissões, histórico, cliente nativo, cadeia física com ACK sintético e saída de URL aprovados. Não enviam comandos ao ESP real.
 - Ensaio adicional de restauração em dados/portas temporários: todos os tipos do fluxo completo carregaram; API física devolveu 503 sem ESP, sem fallback simulado; backend iniciou sobre cópia do snapshot preservando contas/quartos e respondeu health 200. Saídas UDP do ensaio foram limitadas ao loopback e injects desativados.
 - Lint, tipagem, 31 testes do app e exportação web aprovados na fonte. A etapa não altera telas ou protocolo do dispositivo.
-- Ainda não foi executado no notebook Windows 10 informado, nem foi comprovado o conjunto ESP + telefone + notebook nessa máquina. O uso inicial no destino é parte do aceite.
+- Após o ensaio isolado, César confirmou que o pacote do notebook funcionou. O [registro de validação](rede-esp-notebook-validacao.md) distingue esse relato dos testes reproduzíveis e dos cenários sem evidência detalhada.
 
 ## Manutenção do empacotador
 

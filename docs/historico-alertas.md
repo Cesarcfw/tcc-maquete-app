@@ -1,4 +1,7 @@
-> **Situação atual:** recurso incluído no código 0.6.0 e no [APK registrado](apk-v0.6.0.md). Ensaios abaixo são registros da etapa de implementação; aceite completo do APK instalado e integração física permanecem separados. Consulte o [índice atual](README.md).
+> **Referência atual:** SAMAHI 0.7.0. Os ensaios datados abaixo registram a etapa original. Consulte o [índice atual](README.md) e o [registro do APK integrado](apk-v0.7.0.md).
+
+No modo físico, a telemetria observada pelo backend também alimenta o histórico. O banco de amostras brutas da bancada é separado da auditoria do aplicativo. Consulte [integração física](integracao-esp-fisico.md) e [modelo de dados](modelo-dados.md).
+
 
 # Histórico de falhas e alertas
 

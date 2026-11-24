@@ -1,5 +1,8 @@
 # Instalação e configuração
 
+Este guia é para instalar pelo código-fonte. Para executar a apresentação em outro Windows x64 sem instalar dependências globalmente, use o [pacote portátil privado](pacote-notebook.md).
+
+
 ## Requisitos
 
 - Node.js **24.15+ da série 24** (backend usa `node:sqlite`), npm e Git.
@@ -17,7 +20,9 @@ npm --prefix backend run setup
 
 Informe nome, email e senha de 12 a 128 caracteres no terminal. O setup recusa instalações com usuários existentes. Não o use para recuperar senha. Banco e segredo são criados em `backend/data/`, porque `npm --prefix backend` executa o script no diretório do backend.
 
-Prepare [Node-RED](integracao-node-red-local.md), inicie-o, e em outros terminais:
+Escolha e prepare um modo do Node-RED. Use o [simulador](integracao-node-red-local.md) para desenvolvimento sem placa ou a [ponte física](integracao-esp-fisico.md) para a maquete. Inicie o Node-RED configurado e abra outros terminais:
+
+A ponte física usa a instância de bancada e seus módulos locais. Em um computador que só tem o clone, prepare essa instância antes de rodar o instalador físico. Para a apresentação, o pacote privado já leva esses arquivos e os dados da instalação.
 
 ```powershell
 npm --prefix backend start
@@ -65,6 +70,9 @@ No telefone, `127.0.0.1` aponta para o próprio telefone. Use `http://IP-DO-PC:3
 | `Configurar-Administrador.cmd` | Setup inicial do backend |
 | `Iniciar-Backend.cmd` | Backend com configuração padrão/ambiente atual |
 | `Iniciar-App-Integrado.cmd` | `test:phone`: backend LAN 3002, Metro 8082, reutiliza Node-RED existente ou inicia instalação vizinha configurada |
+| `Preparar-ESP-Fisico.cmd` | Instala o fluxo físico e vincula o Quarto 01 ao ESP32 da bancada com backup |
+| `Iniciar-SAMAHI-Notebook.cmd` | Backend LAN 3002 e Node-RED para APK instalado, sem Metro |
+| `Iniciar-Demo-Orientador.cmd` | Edição offline de avaliação em web local |
 | `Liberar-Acesso-App.cmd` | Regra Windows específica para o teste, com elevação e opção de remoção |
 | `Iniciar-App-Node-RED.cmd` | Iniciador legado da integração direta; não é a receita operacional da entrada com login |
 
@@ -72,4 +80,4 @@ No telefone, `127.0.0.1` aponta para o próprio telefone. Use `http://IP-DO-PC:3
 
 Use `npm ci` nos dois pacotes, preserve lockfiles e revise compatibilidade Expo antes de atualizar React/React Native isoladamente. Não é necessário instalar PostgreSQL, Redis, Docker ou DBeaver para executar esta versão. DBeaver é um visualizador opcional para SQLite.
 
-Após atualizar módulos do simulador, reinicie Node-RED para recarregar o `require`; reinicie backend para carregar código de servidor e recarregue o cliente. Preserve `backend/data/`. [Backup e restauração](operacao.md).
+Após atualizar módulos do simulador ou da ponte física, reinicie Node-RED para recarregar o `require`; reinicie backend para carregar código de servidor e recarregue o cliente. Preserve `backend/data/`. [Backup e restauração](operacao.md).
