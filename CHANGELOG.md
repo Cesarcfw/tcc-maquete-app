@@ -3,6 +3,13 @@
 
 ## Não lançado
 
+### Pacote portátil para notebook
+
+- Gerador de entrega privada Windows x64 com Node portátil oficial, dependências reinstaladas por lockfile, fluxo físico, estados e snapshots SQLite consistentes.
+- Verificador de integridade, iniciador para APK e acesso de firewall por arquivos .cmd. Execução sem download de dependências no notebook.
+- Ensaio isolado da restauração e carregamento dos módulos/fluxos, com contas/quartos preservados; hardware real e notebook de destino ainda exigem aceite.
+- Credenciais, bancos e ZIP da entrega não são publicados no repositório.
+
 ### Rede AP+STA e operação no notebook
 
 - Firmware versionado com AP protegido permanente, configuração do Wi-Fi e caminho/IP do notebook via portal autenticado e persistência NVS. Preserva pinagem, UDP/ACK, sensores, alarme local e OTA.
