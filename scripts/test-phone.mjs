@@ -209,6 +209,7 @@ try {
     [
       resolve(root, "node_modules/expo/bin/cli"),
       "start",
+      "--clear",
       "--go",
       "--lan",
       "--port",
