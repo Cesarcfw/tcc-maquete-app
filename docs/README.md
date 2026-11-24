@@ -1,11 +1,11 @@
 # Documentação do SAMAHI
 
-A referência atual é o aplicativo **0.7.0**, o backend **0.1.0**, o esquema SQLite **1** e o protocolo de telemetria **1**. A versão na `main` inclui os PRs #23 a #28 e a limpeza #29. Os manifests e lockfiles identificam as dependências do código.
+A referência deste código é o aplicativo **1.0.0**, o backend **0.1.0**, o esquema SQLite **1** e o protocolo de telemetria **1**. Os manifests e lockfiles identificam as dependências do código. A preparação do APK está registrada no [guia da candidata 1.0.0](apk-v1.0.0.md).
 
 | Cenário | Onde começar |
 | --- | --- |
 | Operar a maquete com a placa | [Integração física](integracao-esp-fisico.md) e [rede do ESP](rede-esp-notebook.md) |
-| Apresentar com o notebook | [Pacote privado](pacote-notebook.md), [APK integrado](apk-v0.7.0.md) e [roteiro no telefone](teste-app-integrado.md) |
+| Apresentar com o notebook | [Pacote privado](pacote-notebook.md), [APK integrado](apk-v1.0.0.md) e [roteiro no telefone](teste-app-integrado.md) |
 | Desenvolver sem o ESP | [Instalação local](instalacao-configuracao.md) e [Node-RED simulado](integracao-node-red-local.md) |
 | Explorar interface sem servidor | [Edição offline para avaliação](demo-orientador-offline.md) |
 | Consultar os resultados e evidências | [Rede e notebook](rede-esp-notebook-validacao.md), [evidências](evidencias.md) e [revisão documental](verificacao-documentacao.md) |
@@ -18,7 +18,7 @@ Operação preparada em 22/11/2026: [rede própria do ESP, Wi-Fi configurável e
 
 Integração disponível na main: [ESP físico](integracao-esp-fisico.md), com ponte UDP/ACK, tratamento dos sensores e instalação local. Para os ensaios virtuais, use o guia de [Node-RED simulado](integracao-node-red-local.md).
 
-Rastreabilidade Android: [APK integrado 0.7.0](apk-v0.7.0.md), versionCode 6 na configuração. O registro distingue envio ao serviço, instalação e aceite no telefone.
+Rastreabilidade Android: [candidata 1.0.0](apk-v1.0.0.md), versionCode 7, e [compilação anterior 0.7.0](apk-v0.7.0.md), versionCode 6. Os registros distinguem compilação, instalação e aceite no telefone.
 
 | Necessidade | Documento |
 | --- | --- |

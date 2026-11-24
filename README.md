@@ -4,7 +4,7 @@
 
 ## Estado atual
 
-Referência do código na main: **app 0.7.0**, backend 0.1.0 e telemetria 1. Inclui a [integração física quarto-01 / ESP32-bancada](docs/integracao-esp-fisico.md), com ACK, sensores, alerta LED e agenda no gateway. A simulação continua um modo separado, sem fallback automático. Testes locais com ESP sintético não equivalem ao aceite na placa/telefone. Consulte o [registro do APK 0.7.0](docs/apk-v0.7.0.md) para o resultado da compilação e limites; o APK anterior 0.6.0 não contém automaticamente estas mudanças.
+Referência do aplicativo: **1.0.0**, backend 0.1.0 e protocolo de telemetria 1. O aplicativo inclui a [integração física quarto-01 / ESP32-bancada](docs/integracao-esp-fisico.md), com ACK, sensores, sinalização local e agenda no gateway. O simulador e a edição offline continuam disponíveis para ensaios separados. Consulte o [registro do APK 1.0.0](docs/apk-v1.0.0.md) para instalação e aceite no telefone.
 
 - Iluminação: ligar/desligar, intensidade 0–100% e programação Dia/Noite em `America/Sao_Paulo`.
 - Temperatura, umidade, gás e estado de comunicação.
@@ -39,7 +39,7 @@ Na tela de login, configure `http://127.0.0.1:3001` e entre com a conta criada. 
 - [Instalação e configuração detalhada](docs/instalacao-configuracao.md)
 - [Instalar o fluxo simulado](docs/integracao-node-red-local.md) ou [ativar o ESP físico](docs/integracao-esp-fisico.md)
 - [Testar no telefone e na rede local](docs/teste-app-integrado.md)
-- [Gerar e instalar APK](docs/gerar-apk.md) · [registro do APK 0.7.0](docs/apk-v0.7.0.md)
+- [Gerar e instalar APK](docs/gerar-apk.md) · [registro do APK 1.0.0](docs/apk-v1.0.0.md)
 
 ## Documentação técnica
 

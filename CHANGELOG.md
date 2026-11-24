@@ -3,6 +3,11 @@
 
 ## Não lançado
 
+### APK integrado 1.0.0
+
+- Primeira candidata à entrega do protótipo do TCC. Android com versionCode 7, pacote e perfil integrado já usados na versão anterior.
+- Procedimento de instalação e aceite registrados no guia do APK. A distribuição e a release são etapas separadas.
+
 ### Documentação da versão integrada
 
 - Guias de instalação, arquitetura, contratos, operação, segurança, testes e evidências atualizados para o código 0.7.0 na main.
